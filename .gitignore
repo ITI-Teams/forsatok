@@ -1,0 +1,23 @@
+# Global ignores for the whole repository
+
+# OS / IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Node and vendor
+node_modules/
+vendor/
+
+# Build / Dist folders
+dist/
+build/
+tmp/
