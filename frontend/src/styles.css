@@ -2,6 +2,6 @@
 @import "tailwindcss";
 @import "tailwindcss";
 @import "tailwindcss-primeui";
-@source "node_modules/flowbite-angular"
+@source "../node_modules/flowbite-angular";
 @custom-variant dark (&:where(.my-app-dark, .my-app-dark *));
 
