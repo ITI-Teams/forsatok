@@ -17,23 +17,28 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+Route::get('/admin', function () {
+    return view('dashboard.index');
+})->name('admin');
+
+
 require __DIR__.'/auth.php';
 
 
 
 
-Route::get('/register',[RegisterController::class,'showRegister'])->name('auth.register');
-Route::post('/register',[RegisterController::class,'register']);
+// Route::get('/register',[RegisterController::class,'showRegister'])->name('auth.register');
+// Route::post('/register',[RegisterController::class,'register']);
 
-Route::get('/login',[LoginController::class,'showLogin'])->name('auth.login');
-Route::post('/login',[LoginController::class,'login']);
+// Route::get('/login',[LoginController::class,'showLogin'])->name('auth.login');
+// Route::post('/login',[LoginController::class,'login']);
 
 
-Route::get('/forgot-password',[ForgotPasswordController::class,'showForgotPassword'])->name('forgot-password');
-Route::post('/forgot-password',[ForgotPasswordController::class,'sendResetLink']);
+// Route::get('/forgot-password',[ForgotPasswordController::class,'showForgotPassword'])->name('forgot-password');
+// Route::post('/forgot-password',[ForgotPasswordController::class,'sendResetLink']);
 
-Route::get('/verify-email',[VerifyEmailController::class,'showVerifyEmail'])->name('verify-email');
-Route::post('/verify-email',[VerifyEmailController::class,'verifyEmail']);
+// Route::get('/verify-email',[VerifyEmailController::class,'showVerifyEmail'])->name('verify-email');
+// Route::post('/verify-email',[VerifyEmailController::class,'verifyEmail']);
 
-Route::get('/reset-password/{token}',[ResetPasswordController::class,'showResetPassword'])->name('reset-password');
-Route::post('/reset-password',[ResetPasswordController::class,'resetPassword']);
+// Route::get('/reset-password/{token}',[ResetPasswordController::class,'showResetPassword'])->name('reset-password');
+// Route::post('/reset-password',[ResetPasswordController::class,'resetPassword']);
