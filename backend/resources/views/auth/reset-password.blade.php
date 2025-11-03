@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Reset Password</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .auth-image {
@@ -16,17 +15,13 @@
 </head>
 
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
-
     <div class="container">
         <div class="card shadow rounded-4 overflow-hidden mx-auto" style="max-width: 900px;">
             <div class="row g-0">
                 <div class="col-md-6 d-none d-md-block auth-image"></div>
-
                 <div class="col-md-6 p-4 d-flex flex-column justify-content-center">
-
-                    <h2 class="fw-bold mb-2">Login</h2>
-                    <p class="text-muted mb-4">Welcome back! Please login to your account.</p>
-
+                    <h2 class="fw-bold mb-2">Reset Password</h2>
+                    <p class="text-muted mb-4">Enter your new password below.</p>
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">
@@ -36,44 +31,32 @@
                             </ul>
                         </div>
                     @endif
-
-                    @if (session('status'))
-                        <div class="alert alert-success">{{ session('status') }}</div>
-                    @endif
-
-                    <form method="POST" action="{{ route('auth.login') }}">
+                    <form method="POST" action="{{ route('reset-password') }}">
                         @csrf
+                        <input type="hidden" name="token" value="{{ $token }}">
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" placeholder="username@gmail.com"
-                                value="{{ old('email') }}" required >
+                            <input type="email" class="form-control" name="email"
+                                value="{{ $email ?? old('email') }}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Password</label>
+                            <label class="form-label">New Password</label>
                             <input type="password" class="form-control" name="password" required>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                                <label class="form-check-label" for="remember">Remember Me</label>
-                            </div>
-                            <a href="{{ route('forgot-password') }}" class="text-decoration-none">Forgot Password?</a>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" name="password_confirmation" required>
                         </div>
-
                         <button type="submit" class="btn w-100 text-white"
-                            style="background: linear-gradient(90deg, #6a11cb, #2575fc);">Login</button>
+                            style="background: linear-gradient(90deg, #6a11cb, #2575fc);">Reset Password</button>
                     </form>
-
-                    <div class="text-center mt-3">
-                        <small>New User? <a href="{{ route('auth.register') }}">Signup</a></small>
-                    </div>
+                    <div class="text-center mt-3"><small>Remembered your password? <a
+                                href="{{ route('auth.login') }}">Login</a></small></div>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 
 </html>
