@@ -1,0 +1,90 @@
+<div class="h-screen w-screen overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
+  <div class="w-full max-w-7xl max-h-[80vh] flex bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden">
+    
+    <!-- Left Side - Image with Overlay -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-purple-900/80 to-pink-900/90 z-10"></div>
+      
+      <!-- Background Image -->
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=1200&fit=crop" 
+           alt="Abstract" 
+           class="absolute inset-0 w-full h-full object-cover">
+      
+      <!-- Content Overlay -->
+      <div class="relative z-20 p-12 flex flex-col justify-between">
+        <!-- Main Content -->
+        <div class="space-y-6">
+          <h2 class="text-5xl font-bold text-white leading-tight">
+            Verify your<br>identity
+          </h2>
+          <p class="text-purple-200 text-lg leading-relaxed max-w-md">
+            Enter the verification code we sent to your email to continue.
+          </p>
+        </div> 
+      </div>
+    </div>
+
+    <!-- Right Side - Verification Code Form -->
+    <div class="w-full lg:w-1/2 flex flex-col overflow-hidden">
+      <div class="flex-1 flex items-center justify-center p-6 lg:p-8">
+        <div class="w-full max-w-md space-y-6">
+          <!-- Header -->
+          <div class="mb-6">
+            <h1 class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
+              Verification Code
+            </h1>
+            <p class="text-gray-600 text-base">
+              We sent you verification code on <span class="font-semibold text-gray-800">{{email}}</span>
+            </p>
+          </div>
+
+          <form (ngSubmit)="onSubmit()" class="space-y-6">
+            <!-- OTP Input Fields -->
+            <div class="flex justify-center gap-3">
+            <input 
+                *ngFor="let digit of digits; let i = index"
+                #otpInput
+                type="text" 
+                maxlength="1"
+                [(ngModel)]="digits[i]"
+                [name]="'digit' + i"
+                (input)="onDigitInput($event, i)"
+                (keydown)="onKeyDown($event, i)"
+                class="w-16 h-16 text-center text-2xl font-semibold bg-gray-50 border-2 border-gray-200 rounded-2xl focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all duration-300">
+            </div>
+
+
+            <!-- Resend Code Timer -->
+            <div class="text-right">
+              <p class="text-sm text-gray-600">
+                Resend Code in: <span class="font-semibold text-gray-800">{{formatTime(timeLeft)}}</span>
+              </p>
+            </div>
+
+            <!-- Verify Button -->
+            <button 
+              type="submit"
+              [disabled]="!isCodeComplete()"
+              routerLink="/reset-pass"
+              class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2.5 rounded-3xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 text-md cursor-pointer">
+              Verify Code
+            </button>
+
+            <!-- Resend Code Link -->
+            <div class="text-center pt-2">
+              <button 
+                type="button"
+                (click)="resendCode()"
+                [disabled]="timeLeft > 0"
+                class="text-gray-600 hover:underline text-purple-600 font-medium text-sm transition disabled:text-gray-400 disabled:cursor-not-allowed">
+                Didn't receive the code? <span class="font-semibold">Resend</span>
+              </button>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
