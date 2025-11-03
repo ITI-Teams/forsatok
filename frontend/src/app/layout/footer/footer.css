@@ -1,0 +1,3 @@
+button svg circle {
+  transition: stroke-dashoffset 0.2s linear;
+}
