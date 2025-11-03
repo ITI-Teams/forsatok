@@ -1,0 +1,199 @@
+<div class="h-screen w-screen overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
+  <div class="w-full max-w-7xl max-h-[80vh] flex bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden">
+    
+    <!-- Left Side - Image with Overlay -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-purple-900/80 to-pink-900/90 z-10"></div>
+      
+      <!-- Background Image -->
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=1200&fit=crop" 
+           alt="Abstract" 
+           class="absolute inset-0 w-full h-full object-cover">
+      
+      <!-- Content Overlay -->
+      <div class="relative z-20 p-12 flex flex-col justify-between">
+        <!-- Main Content -->
+        <div class="space-y-6">
+          <h2 class="text-5xl font-bold text-white leading-tight">
+            Secure your<br>account
+          </h2>
+          <p class="text-purple-200 text-lg leading-relaxed max-w-md">
+            Create a strong password to protect your account and personal information.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Reset Password Form -->
+    <div class="w-full lg:w-1/2 flex flex-col overflow-hidden">
+      <div class="flex-1 flex items-center justify-center p-6 lg:p-8 overflow-y-auto">
+        <div class="w-full max-w-md space-y-6">
+          <!-- Header -->
+          <div class="mb-6">
+            <h1 class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
+              Reset Password
+            </h1>
+          </div>
+
+          <form (ngSubmit)="onSubmit()" class="space-y-6">
+            <!-- New Password Field -->
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700">
+                New Password
+              </label>
+              <div class="relative">
+                <input 
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  [(ngModel)]="newPassword"
+                  name="newPassword"
+                  placeholder="Enter new password"
+                  (input)="validatePassword()"
+                  class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-3xl focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all duration-300 pr-12 placeholder-gray-400 placeholder:text-sm"
+                  required>
+                <button 
+                  type="button"
+                  (click)="toggleNewPassword()"
+                  class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                  <svg *ngIf="!showNewPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  <svg *ngIf="showNewPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Password Strength Indicator -->
+            <div *ngIf="newPassword" class="space-y-2">
+              <div class="flex gap-1">
+                <div class="h-2 flex-1 rounded-full transition-all duration-300"
+                     [ngClass]="{
+                       'bg-red-500': passwordStrength === 'weak',
+                       'bg-gray-200': passwordStrength !== 'weak'
+                     }"></div>
+                <div class="h-2 flex-1 rounded-full transition-all duration-300"
+                     [ngClass]="{
+                       'bg-yellow-500': passwordStrength === 'medium',
+                       'bg-gray-200': passwordStrength !== 'medium'
+                     }"></div>
+                <div class="h-2 flex-1 rounded-full transition-all duration-300"
+                     [ngClass]="{
+                       'bg-green-500': passwordStrength === 'strong',
+                       'bg-gray-200': passwordStrength !== 'strong'
+                     }"></div>
+              </div>
+              <p class="text-sm font-medium"
+                 [ngClass]="{
+                   'text-red-600': passwordStrength === 'weak',
+                   'text-yellow-600': passwordStrength === 'medium',
+                   'text-green-600': passwordStrength === 'strong'
+                 }">
+                Password strength: {{ passwordStrength }}
+              </p>
+            </div>
+
+            <!-- Password Requirements -->
+            <!-- <div class="bg-gray-50 rounded-2xl p-4 space-y-2">
+              <p class="text-sm font-semibold text-gray-700 mb-3">Password must contain:</p>
+              <div class="space-y-2">
+                <div class="flex items-center gap-2 text-sm">
+                  <svg class="w-4 h-4" [ngClass]="passwordRequirements.minLength ? 'text-green-500' : 'text-gray-400'" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span [ngClass]="passwordRequirements.minLength ? 'text-gray-700' : 'text-gray-500'">
+                    At least 8 characters
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 text-sm">
+                  <svg class="w-4 h-4" [ngClass]="passwordRequirements.uppercase ? 'text-green-500' : 'text-gray-400'" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span [ngClass]="passwordRequirements.uppercase ? 'text-gray-700' : 'text-gray-500'">
+                    One uppercase letter
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 text-sm">
+                  <svg class="w-4 h-4" [ngClass]="passwordRequirements.lowercase ? 'text-green-500' : 'text-gray-400'" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span [ngClass]="passwordRequirements.lowercase ? 'text-gray-700' : 'text-gray-500'">
+                    One lowercase letter
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 text-sm">
+                  <svg class="w-4 h-4" [ngClass]="passwordRequirements.number ? 'text-green-500' : 'text-gray-400'" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span [ngClass]="passwordRequirements.number ? 'text-gray-700' : 'text-gray-500'">
+                    One number
+                  </span>
+                </div>
+              </div>
+            </div> -->
+
+            <!-- Confirm Password Field -->
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700">
+                Confirm Password
+              </label>
+              <div class="relative">
+                <input 
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  [(ngModel)]="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Confirm new password"
+                  (input)="checkPasswordMatch()"
+                  class="w-full px-5 py-4 bg-gray-50 border-2 rounded-3xl focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all duration-300 pr-12 placeholder-gray-400 placeholder:text-sm"
+                  [ngClass]="{
+                    'border-gray-200': !confirmPassword || !passwordMismatch,
+                    'border-red-400': confirmPassword && passwordMismatch
+                  }"
+                  required>
+                <button 
+                  type="button"
+                  (click)="toggleConfirmPassword()"
+                  class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                  <svg *ngIf="!showConfirmPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  <svg *ngIf="showConfirmPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                  </svg>
+                </button>
+              </div>
+              <p *ngIf="confirmPassword && passwordMismatch" class="text-sm text-red-600 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                Passwords do not match
+              </p>
+            </div>
+
+            <!-- Reset Password Button -->
+            <button 
+              type="submit"
+              [disabled]="!isFormValid()"
+              routerLink="/login"
+              class="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-4 rounded-3xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 text-md cursor-pointer">
+              Reset Password
+            </button>
+
+            <!-- Back to Login Link -->
+            <!-- <div class="text-center pt-2">
+              <a 
+                routerLink="/login"
+                class="text-gray-600 hover:text-purple-600 font-medium text-sm transition">
+                Back to <span class="font-semibold">Login</span>
+              </a>
+            </div> -->
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
