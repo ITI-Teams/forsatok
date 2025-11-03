@@ -16,7 +16,7 @@ export class Header {
   openMegaId: string | null = null;
   openDropdown: string | null = null;
 
-  isLoggedIn = false;
+  isLoggedIn = true;
   hasNotifications = false;
 
   constructor(private themeService: ThemeService) { }
