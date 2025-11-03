@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\Users;
 
 use Livewire\Component;
-use App\Application\Users\Requests\CreateUserRequest;
-use App\Application\Users\Actions\CreateUserAction;
+use App\Domains\Users\Requests\CreateUserRequest;
+use App\Domains\Users\Actions\CreateUserAction;
 
 class CreateUser extends Component
 {
