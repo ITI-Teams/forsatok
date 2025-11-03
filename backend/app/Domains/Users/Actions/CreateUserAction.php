@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Application\Users\Actions;
+namespace App\Domains\Users\Actions;
 
 
 use App\Domains\Users\Models\User;

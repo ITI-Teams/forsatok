@@ -17,6 +17,11 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+Route::get('/admin', function () {
+    return view('dashboard.index');
+})->name('admin');
+
+
 require __DIR__.'/auth.php';
 
 
