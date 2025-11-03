@@ -1,23 +1,3 @@
-{{-- <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout> --}}
-
-
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -25,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Forgot Password</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .auth-image {
@@ -44,8 +24,8 @@
 
                 <div class="col-md-6 p-4 d-flex flex-column justify-content-center">
 
-                    <h2 class="fw-bold mb-2">Login</h2>
-                    <p class="text-muted mb-4">Welcome back! Please login to your account.</p>
+                    <h2 class="fw-bold mb-2">Forgot Password</h2>
+                    <p class="text-muted mb-4">Enter your email to receive a password reset link.</p>
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -61,31 +41,19 @@
                         <div class="alert alert-success">{{ session('status') }}</div>
                     @endif
 
-                    <form method="POST" action="{{ route('auth.login') }}">
+                    <form method="POST" action="{{ route('forgot-password') }}">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" name="email" placeholder="username@gmail.com"
-                                value="{{ old('email') }}" required >
+                                value="{{ old('email') }}" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" required>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                                <label class="form-check-label" for="remember">Remember Me</label>
-                            </div>
-                            <a href="{{ route('forgot-password') }}" class="text-decoration-none">Forgot Password?</a>
-                        </div>
-
                         <button type="submit" class="btn w-100 text-white"
-                            style="background: linear-gradient(90deg, #6a11cb, #2575fc);">Login</button>
+                            style="background: linear-gradient(90deg, #6a11cb, #2575fc);">Send Reset Link</button>
                     </form>
 
                     <div class="text-center mt-3">
-                        <small>New User? <a href="{{ route('auth.register') }}">Signup</a></small>
+                        <small>Remembered your password? <a href="{{ route('auth.login') }}">Login</a></small>
                     </div>
                 </div>
             </div>
