@@ -3,6 +3,9 @@
 namespace App\Domains\Users\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Domains\Applications\Models\JobApplication;
+use App\Domains\Employers\Models\CompanyReview;
+use App\Domains\Jobs\Models\SavedJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,5 +48,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class, 'candidate_id');
+    }
+
+    public function savedJobs()
+    {
+        return $this->hasMany(SavedJob::class);
+    }
+
+    public function companyReviews()
+    {
+        return $this->hasMany(CompanyReview::class, 'employer_id');
     }
 }
