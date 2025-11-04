@@ -1,11 +1,10 @@
 import { Component, HostListener } from '@angular/core';
 import { ThemeService } from '../../shared/services/theme-service';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-footer',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './footer.html',
   styleUrls: ['./footer.css'],
 })
@@ -20,7 +19,7 @@ export class Footer {
   }
 
   get logoSrc() {
-    return this.isDark ? '/images/jobhub-logo-white.png' : '/images/jobhub-logo-black.png';
+    return this.isDark ? '/images/logo2.png' : '/images/logo1.png';
   }
 
   scrollToTop(): void {
