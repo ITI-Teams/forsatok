@@ -21,4 +21,15 @@ class Category extends Model
     {
         return $this->hasMany(JobPost::class);
     }
+
+    protected static function booted(): void
+    {
+        static::creating(function ($category) {
+            $category->slug = Str::slug($category->name);
+        });
+
+        static::updating(function ($category) {
+            $category->slug = Str::slug($category->name);
+        });
+    }
 }
