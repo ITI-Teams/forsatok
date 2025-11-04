@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Jobs\Actions;
+namespace App\Domains\Jobs\Actions\Category;
 
 use App\Domains\Jobs\Models\Category;
 
