@@ -1,12 +1,12 @@
 import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { ThemeService } from '../../shared/services/theme-service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink,],
   templateUrl: './header.html',
   styleUrls: ['./header.css']
 })
@@ -16,10 +16,14 @@ export class Header {
   openMegaId: string | null = null;
   openDropdown: string | null = null;
 
-  isLoggedIn = true;
+  isLoggedIn = false;
   hasNotifications = false;
 
-  constructor(private themeService: ThemeService) { }
+  constructor(private themeService: ThemeService, private router: Router) { }
+
+  isActive(route: string): boolean {
+    return this.router.url === route || this.router.url === route + '/' || this.router.url.startsWith(route + '/');
+  }
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
@@ -58,7 +62,7 @@ export class Header {
   }
 
   get logoSrc() {
-    return this.isDark ? '/images/jobhub-logo-white.png' : '/images/jobhub-logo-black.png';
+    return this.isDark ? '/images/logo2.png' : '/images/logo1.png';
   }
 
   logout() {
