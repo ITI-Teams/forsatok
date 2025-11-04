@@ -1,14 +1,11 @@
 <?php
 
-use App\Domains\Users\Actions\CreateUserAction;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Livewire\Users\EditUser;
-
 use Livewire\Volt\Volt;
 
 Route::view('/', 'welcome');
@@ -24,17 +21,9 @@ Route::view('profile', 'profile')
 Route::get('/admin', function () {
     return view('dashboard.index');
 })->name('admin');
-// Volt::route('category', 'category.category-form')
-//         ->name('category')
-//         ->layout('layouts.app');
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/users/create', CreateUserAction::class)->name('users.create');
-    // Route::get('/users/edit/{userId}', EditUser::class)->name('users.edit');
-});
-
-
+Volt::route('category', 'category.category-form')
+        ->name('category')
+        ->layout('layouts.app');
 
 require __DIR__.'/auth.php';
 
