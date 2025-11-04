@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use Livewire\Volt\Volt;
 
 Route::view('/', 'welcome');
 
@@ -20,7 +21,9 @@ Route::view('profile', 'profile')
 Route::get('/admin', function () {
     return view('dashboard.index');
 })->name('admin');
-
+Volt::route('category', 'category.category-form')
+        ->name('category')
+        ->layout('layouts.app');
 
 require __DIR__.'/auth.php';
 
