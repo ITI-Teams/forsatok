@@ -7,5 +7,12 @@
         <li><a wire:navigate href="{{ route('employer.profile') }}" class="nav-link {{ request()->routeIs('employer.profile') ? 'active' : '' }}"><i class="bi bi-person-badge"></i><span>Employer Profile</span></a></li>
         <li><a wire:navigate href="{{ route('list') }}" class="nav-link {{ request()->routeIs('list') ? 'active' : '' }}"><i class="fa-solid fa-user-gear"></i><span>Lists</span></a></li>
         <li><a wire:navigate href="{{ route('form') }}" class="nav-link {{ request()->routeIs('form') ? 'active' : '' }}"><i class="fa-solid fa-user-gear"></i><span>Forms</span></a></li>
+        <li>
+            <a wire:navigate href="{{ route('categories.index') }}" 
+            class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Categories</span>
+            </a>
+        </li>
     </ul>
 </nav>
