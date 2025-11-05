@@ -14,5 +14,12 @@
                 <span>Categories</span>
             </a>
         </li>
+        <li>
+            <a wire:navigate href="{{ route('skills.index') }}" 
+            class="nav-link {{ request()->routeIs('skills.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-lightbulb"></i> <span>Skills</span>
+            </a>
+        </li>
+
     </ul>
 </nav>
