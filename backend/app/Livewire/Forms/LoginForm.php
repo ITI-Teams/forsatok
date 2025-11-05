@@ -30,11 +30,21 @@ class LoginForm extends Form
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
+        if (!Auth::attempt($this->only(['email', 'password']), $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'form.email' => trans('auth.failed'),
+            ]);
+        }
+
+        $user = Auth::user();
+
+        if ($user && $user->type === 'candidate') {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'form.email' => 'You are not authorized to login from this portal.',
             ]);
         }
 
