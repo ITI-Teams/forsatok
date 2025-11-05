@@ -3,6 +3,8 @@
     <ul class="nav flex-column px-2">
         <li><a wire:navigate href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><i class="bi bi-house"></i><span>Dashboard</span></a></li>
         <li><a wire:navigate href="{{ route('admin') }}" class="nav-link {{ request()->routeIs('admin') ? 'active' : '' }}"><i class="bi bi-house"></i><span>admin</span></a></li>
+        <li><a wire:navigate href="{{ route('admin') }}" class="nav-link {{ request()->routeIs('admin') ? 'active' : '' }}"><i class="bi bi-house"></i><span>Jobs List</span></a></li>
+
 {{--        <li><a wire:navigate href="{{ route('products') }}" class="nav-link {{ request()->routeIs('products') ? 'active' : '' }}"><i class="bi bi-box"></i><span>Products</span></a></li>--}}
 {{--        <li><a wire:navigate href="{{ route('orders') }}" class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}"><i class="bi bi-cart"></i><span>Orders</span></a></li>--}}
 {{--        <li><a wire:navigate href="{{ route('customers') }}" class="nav-link {{ request()->routeIs('customers') ? 'active' : '' }}"><i class="bi bi-person"></i><span>Customers</span></a></li>--}}
