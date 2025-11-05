@@ -11,7 +11,7 @@ class CreateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // adapt this according to your auth rules
+        
         return true;
     }
 
@@ -25,9 +25,10 @@ class CreateUserRequest extends FormRequest
     public static function creationRules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            // 'name' => ['required', 'string', 'max:255'],
+            // 'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            // 'password' => ['required', 'string', 'min:8', 'confirmed'],
+            // 'type' => ['required', 'in:admin,employer,candidate'],
         ];
     }
 
