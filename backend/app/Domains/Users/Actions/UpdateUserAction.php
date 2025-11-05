@@ -1,19 +1,14 @@
 <?php
-
-
 namespace App\Domains\Users\Actions;
-
 
 use App\Domains\Users\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-
-class CreateUserAction
+class UpdateUserAction
 {
-    public function execute(array $data): User
+    public function execute(User $user, array $data): User
     {
-
-        return User::create($data);
+       $user->update($data);
+       return $user;
     }
 }
-
