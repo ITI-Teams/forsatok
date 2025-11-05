@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Employers;
 
-use App\Domains\Employers\Models\EmployerInfo;
+use App\Domains\Employers\Actions\GetCurrentEmployerInfoAction;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -11,13 +11,14 @@ class EmployerProfile extends Component
     public $company_name, $industry, $location, $about, $website, $email, $phone;
     public $average_rating, $total_reviews;
 
-    public function mount(): void
+    public function mount(GetCurrentEmployerInfoAction $getInfo): void
     {
         if (! Auth::check()) {
             $this->redirectRoute('login');
             return;
         }
-        $info = EmployerInfo::with('reviews')->where('user_id', Auth::id())->first();
+
+        $info = $getInfo->execute(Auth::id());
         $user = Auth::user();
 
         if ($info) {
@@ -39,7 +40,7 @@ class EmployerProfile extends Component
             $this->average_rating = 0;
             $this->total_reviews = 0;
         }
-        
+
         $this->email = $user->email ?? null;
     }
 

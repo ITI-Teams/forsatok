@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Employers;
 
+use App\Domains\Employers\Actions\GetCurrentEmployerInfoAction;
 use App\Domains\Employers\Actions\UpdateEmployerInfoAction;
 use App\Domains\Employers\Models\EmployerInfo;
 use App\Domains\Employers\Requests\UpdateEmployerInfoRequest;
@@ -48,16 +49,16 @@ class EditEmployerInfo extends Component
         $this->validateOnly($propertyName, $rules, $messages);
     }
 
-    public function mount(): void
+    public function mount(GetCurrentEmployerInfoAction $getInfo): void
     {
-        $info = EmployerInfo::firstOrNew(['user_id' => Auth::id()]);
+        $info = $getInfo->execute(Auth::id());
         $user = Auth::user();
 
-        $this->company_name = $info->company_name;
-        $this->industry = $info->industry;
-        $this->location = $info->location;
-        $this->about = $info->about;
-        $this->website = $info->website;
+        $this->company_name = $info->company_name ?? null;
+        $this->industry = $info->industry ?? null;
+        $this->location = $info->location ?? null;
+        $this->about = $info->about ?? null;
+        $this->website = $info->website ?? null;
         $this->phone = null; // Phone not stored in employer_infos table
         $this->email = $user->email ?? '';
     }
