@@ -4,7 +4,7 @@
         <!-- Main Card -->
         <div class="card border-0 shadow-sm rounded-3">
 
-            <!-- Header Section -->
+            <!-- Header -->
             <div class="px-4 py-3 border-bottom d-flex align-items-center justify-content-between"
                  style="background-color: #f8f9fa;">
                 <div>

@@ -13,7 +13,7 @@
     <div class="d-flex justify-content-between mb-3">
         <input type="text" wire:model.live="search"
                class="form-control w-50"
-               placeholder="🔍 Search by category name...">
+               placeholder="🔍 Search by category name..">
 
         <a href="{{ route('categories.create') }}" 
             class="btn btn-primary d-flex align-items-center gap-2">
