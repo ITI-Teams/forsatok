@@ -22,7 +22,10 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::get('/admin', function () {
-    return view('dashboard.index');
+    // return view('dashboard.index');
+    // return view ('livewire.jobs.index');
+    // return view ('livewire.category.category-form');
+
 })->name('admin');
 
 Route::get('/list', function () {

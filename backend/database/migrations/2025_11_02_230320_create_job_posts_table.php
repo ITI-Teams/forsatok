@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('employer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->string('title');
+            $table->string('experince');
             $table->text('description');
             $table->decimal('salary_min', 10, 2)->nullable();
             $table->decimal('salary_max', 10, 2)->nullable();

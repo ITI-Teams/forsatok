@@ -1,0 +1,375 @@
+ :root {
+    --primary-color: #FF4D00;
+    --sidebar-bg: #ffffff;
+    --sidebar-active: #FFF5F2;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 240px;
+    background: var(--sidebar-bg);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar .logo {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar .logo-icon {
+    width: 45px;
+    height: 45px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.sidebar .logo-text h5 {
+    margin: 0;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.sidebar .logo-text small {
+    color: #95a5a6;
+    font-size: 12px;
+}
+
+.user-profile {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-profile img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.user-profile .user-info h6 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.user-profile .user-info small {
+    color: #95a5a6;
+    font-size: 12px;
+}
+
+.sidebar-menu {
+    padding: 20px 0;
+}
+
+.sidebar-menu .menu-item {
+    padding: 12px 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #7f8c8d;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.sidebar-menu .menu-item:hover,
+.sidebar-menu .menu-item.active {
+    background: var(--sidebar-active);
+    color: var(--primary-color);
+    border-left: 3px solid var(--primary-color);
+}
+
+.sidebar-menu .menu-item i {
+    width: 20px;
+}
+
+.sidebar-menu .submenu {
+    padding-left: 55px;
+    display: block;
+}
+
+.sidebar-menu .submenu .menu-item {
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.badge-new {
+    background: #e74c3c;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.main-content {
+    padding: 0;
+}
+
+.top-navbar {
+    background: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-navbar h4 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.top-navbar .search-box {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 30px;
+}
+
+.top-navbar .search-box input {
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    padding: 8px 15px;
+}
+
+.top-navbar .nav-icons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.top-navbar .nav-icon {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.top-navbar .nav-icon:hover {
+    background: #e9ecef;
+}
+
+.top-navbar .nav-icon .badge-notify {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 10px;
+}
+
+.top-navbar .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.content-area {
+    padding: 30px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-add {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-add:hover {
+    background: #e64500;
+    color: white;
+}
+
+.action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: white;
+}
+
+.action-btn.btn-teal {
+    background: #00695c;
+}
+
+.action-btn.btn-phone {
+    background: #00695c;
+}
+
+.action-btn.btn-info {
+    background: #00695c;
+}
+
+.job-table {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.table {
+    margin: 0;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    color: #2c3e50;
+    font-weight: 600;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    color: #7f8c8d;
+}
+
+.table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #28a745;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #dc3545;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-icon.view {
+    background: #d4edda;
+    color: #28a745;
+}
+
+.action-icon.edit {
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+.action-icon.delete {
+    background: #f8d7da;
+    color: #dc3545;
+}
+
+.action-icon:hover {
+    transform: scale(1.1);
+}
+
+.settings-icon {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settings-icon .icon-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.settings-icon .icon-btn.settings {
+    background: var(--primary-color);
+}
+
+.settings-icon .icon-btn.theme {
+    background: #00695c;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .top-navbar .search-box {
+        display: none;
+    }
+}
+
