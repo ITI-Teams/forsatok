@@ -1,12 +1,13 @@
 <?php
 
+use App\Livewire\Category\CategoryForm;
+use App\Livewire\Category\CategoryList;
+use App\Livewire\Category\CategoryTrash;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use Livewire\Volt\Volt;
+use App\Livewire\User\UserForm;
+use App\Livewire\User\UserList;
+use App\Livewire\User\UserTrash;
 
 Route::view('/', 'welcome');
 
@@ -21,27 +22,21 @@ Route::view('profile', 'profile')
 Route::get('/admin', function () {
     return view('dashboard.index');
 })->name('admin');
-Volt::route('category', 'category.category-form')
-        ->name('category')
-        ->layout('layouts.app');
+
+Route::prefix('categories')->group(function () {
+    Route::get('/', CategoryList::class)->name('categories.index');
+    Route::get('/create', CategoryForm::class)->name('categories.create');
+    Route::get('/edit/{category}', CategoryForm::class)->name('categories.edit');
+    Route::get('/trash', CategoryTrash::class)->name('categories.trash');
+});
+
+Route::prefix('users')->group(function () {
+    Route::get('/', UserList::class)->name('users.index');
+    Route::get('/create', UserForm::class)->name('users.create');
+    Route::get('/edit/{user}', UserForm::class)->name('users.edit');
+    Route::get('/trash', UserTrash::class)->name('users.trash');
+});
+
+
 
 require __DIR__.'/auth.php';
-
-
-
-
-// Route::get('/register',[RegisterController::class,'showRegister'])->name('auth.register');
-// Route::post('/register',[RegisterController::class,'register']);
-
-// Route::get('/login',[LoginController::class,'showLogin'])->name('auth.login');
-// Route::post('/login',[LoginController::class,'login']);
-
-
-// Route::get('/forgot-password',[ForgotPasswordController::class,'showForgotPassword'])->name('forgot-password');
-// Route::post('/forgot-password',[ForgotPasswordController::class,'sendResetLink']);
-
-// Route::get('/verify-email',[VerifyEmailController::class,'showVerifyEmail'])->name('verify-email');
-// Route::post('/verify-email',[VerifyEmailController::class,'verifyEmail']);
-
-// Route::get('/reset-password/{token}',[ResetPasswordController::class,'showResetPassword'])->name('reset-password');
-// Route::post('/reset-password',[ResetPasswordController::class,'resetPassword']);
