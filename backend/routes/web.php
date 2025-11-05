@@ -23,6 +23,13 @@ Route::get('/admin', function () {
     return view('dashboard.index');
 })->name('admin');
 
+Route::get('/list', function () {
+    return view('list');
+})->name('list');
+Route::get('/form', function () {
+    return view('form');
+})->name('form');
+
 Route::prefix('categories')->group(function () {
     Route::get('/', CategoryList::class)->name('categories.index');
     Route::get('/create', CategoryForm::class)->name('categories.create');
