@@ -11,7 +11,7 @@ class EmployerInfo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'company_name', 'website', 'industry', 'description', 'location', 'phone', 'logo_path'
+        'user_id', 'company_name', 'website', 'industry', 'about', 'location', 'logo_path'
     ];
 
     public function user()
@@ -22,5 +22,26 @@ class EmployerInfo extends Model
     public function jobs()
     {
         return $this->hasMany(JobPost::class, 'employer_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(CompanyReview::class, 'company_id');
+    }
+
+    /**
+     * Calculate average rating for this company
+     */
+    public function getAverageRatingAttribute()
+    {
+        return round($this->reviews()->avg('rating') ?? 0, 1);
+    }
+
+    /**
+     * Get total reviews count
+     */
+    public function getTotalReviewsAttribute()
+    {
+        return $this->reviews()->count();
     }
 }

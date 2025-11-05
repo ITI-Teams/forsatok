@@ -9,11 +9,11 @@ class CompanyReview extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['employer_id', 'candidate_id', 'rating', 'comment'];
+    protected $fillable = ['company_id', 'candidate_id', 'rating', 'review'];
 
-    public function employer()
+    public function company()
     {
-        return $this->belongsTo(User::class, 'employer_id');
+        return $this->belongsTo(EmployerInfo::class, 'company_id');
     }
 
     public function candidate()

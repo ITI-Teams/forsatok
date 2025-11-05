@@ -12,14 +12,8 @@ class CreateUserAction
 {
     public function execute(array $data): User
     {
-        $payload = [
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ];
 
-
-        return User::create($payload);
+        return User::create($data);
     }
 }
 
