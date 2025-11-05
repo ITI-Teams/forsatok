@@ -1,3 +1,4 @@
+
 <nav class="sidebar d-flex flex-column overflow-hidden" id="sidebar">
     <div class="text-center py-3 fs-5 fw-bold text-primary border-bottom">F</div>
     <ul class="nav flex-column mt-2">
