@@ -98,5 +98,14 @@
                 <span>Forms</span>
             </a>
         </li>
+
+        <li>
+            <a wire:navigate href="{{ route('categories.index') }}"
+               class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Categories</span>
+
+            </a>
+        </li>
     </ul>
 </nav>
