@@ -2,49 +2,74 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule,ToastModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
 export class Login {
-
-  email: string = '';
-  password: string = '';
+  form = { email: '', password: '' };
+  showPassword = false;
+  loading = false;
   agreeToTerms: boolean = false;
-  showPassword: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+    private messageService: MessageService
+  ) {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
-  onSubmit() {
-    if (!this.agreeToTerms) {
-      alert('Please agree to the Terms & Condition');
-      return;
-    }
-
-    if (!this.email || !this.password) {
-      alert('Please fill all fields');
-      return;
-    }
-
-    console.log('Login data:', {
-      email: this.email,
-      password: this.password
-    });
-
-  
+  showToast(severity: string, summary: string, detail: string) {
+    this.messageService.add({ severity, summary, detail, life: 2500 });
   }
 
+  onSubmit() {
+    if (!this.form.email || !this.form.password) {
+      this.showToast('warn', 'Missing fields', 'Please enter your email and password.');
+      return;
+    }
+    if (!this.agreeToTerms) {
+      this.showToast('warn', 'Terms & Condition', 'Please agree to the Terms & Condition');
+      return;
+    }
+
+    this.loading = true;
+
+    this.auth.login(this.form).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+          this.showToast('success', 'Welcome!', 'Login successful.');
+          this.router.navigate(['/home']);
+        } else {
+          this.showToast('error', 'Error', 'Token not received.');
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        if (err.status === 401) {
+          this.showToast('error', 'Unauthorized', 'Invalid email or password.');
+        } else if (err.status === 0) {
+          this.showToast('error', 'Network Error', 'Cannot reach the server.');
+        } else {
+          this.showToast('error', 'Error', 'Something went wrong, please try again.');
+        }
+      },
+    });
+  }
 
   continueWithLinkedIn() {
-    console.log('Continue with LinkedIn');
-    
+    this.showToast('info', 'Coming Soon', 'LinkedIn login will be available soon.');
   }
 }
