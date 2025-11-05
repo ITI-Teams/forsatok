@@ -1,16 +1,17 @@
 <div class="h-screen w-screen overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
+  <p-toast></p-toast>
   <div class="w-full max-w-5xl max-h-[80vh] flex bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden">
-    
+
     <!-- Left Side - Image with Overlay -->
     <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
       <!-- Gradient Overlay -->
       <div class="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-purple-900/80 to-pink-900/90 z-10"></div>
-      
+
       <!-- Background Image -->
-      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=1200&fit=crop" 
-           alt="Abstract" 
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=1200&fit=crop"
+           alt="Abstract"
            class="absolute inset-0 w-full h-full object-cover">
-      
+
       <!-- Content Overlay -->
       <div class="relative z-20 p-12 flex flex-col justify-between">
         <!-- Main Content -->
@@ -21,7 +22,7 @@
           <p class="text-purple-200 text-base leading-relaxed max-w-md">
             Access your account and continue your journey with us.
           </p>
-        </div> 
+        </div>
       </div>
     </div>
 
@@ -35,7 +36,7 @@
               Log in
             </h1>
             <p class="text-gray-600 text-sm">
-              Don't have an account? 
+              Don't have an account?
               <a routerLink="/register" class="text-purple-600 hover:underline font-semibold ml-1 transition">
                 Create an Account
               </a>
@@ -46,9 +47,9 @@
             <!-- Email Field -->
             <div class="group">
               <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
-              <input 
-                type="email" 
-                [(ngModel)]="email"
+              <input
+                type="email"
+                [(ngModel)]="form.email"
                 name="email"
                 placeholder="john52martinez@gmail.com"
                 class="w-full px-4 py-3 text-sm bg-gray-50 border-2 border-gray-200 rounded-3xl placeholder-gray-400 placeholder:text-sm focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all duration-300">
@@ -58,13 +59,13 @@
             <div class="group">
               <label class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
               <div class="relative">
-                <input 
-                  [type]="showPassword ? 'text' : 'password'" 
-                  [(ngModel)]="password"
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  [(ngModel)]="form.password"
                   name="password"
                   placeholder="Password"
                   class="w-full px-4 py-3 text-sm bg-gray-50 border-2 border-gray-200 rounded-3xl placeholder-gray-400 placeholder:text-sm focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none transition-all duration-300 pr-12">
-                <button 
+                <button
                   type="button"
                   (click)="togglePasswordVisibility()"
                   class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition">
@@ -87,16 +88,18 @@
             </div>
 
             <!-- Submit Button -->
-            <button 
+            <button
               type="submit"
-              class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-3xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 text-md cursor-pointer">
-              Log in
+              [disabled]="loading"
+              class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2.5 rounded-3xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 text-md cursor-pointer">
+              <span *ngIf="!loading">Login</span>
+              <span *ngIf="loading" class="animate-pulse">Logging in...</span>
             </button>
 
             <!-- Terms Checkbox -->
             <div class="flex items-start">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="agreeToTerms"
                 name="agreeToTerms"
                 id="terms"
@@ -116,7 +119,7 @@
             <!-- Social Login Buttons -->
             <div class="grid grid-cols-1 gap-3">
 
-              <button 
+              <button
                 type="button"
                 (click)="continueWithLinkedIn()"
                 class="flex items-center justify-center px-3 py-2 bg-white border-2 border-gray-200 rounded-3xl hover:border-purple-300 hover:bg-purple-50 transition-all duration-300 group cursor-pointer">

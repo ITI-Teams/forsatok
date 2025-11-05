@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-
+import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 // Import Auth Pages
 import { Register } from './features/auth/register/register';
 import { Login } from './features/auth/login/login';
@@ -36,11 +37,11 @@ export const routes: Routes = [
   },
 
   // Auth Pages
-  { path: 'register', component: Register },
-  { path: 'login', component: Login },
-  { path: 'forget-pass', component: ForgetPass },
-  { path: 'ver-code', component: VerCode },
-  { path: 'reset-pass', component: ResetPass },
+  { path: 'register', component: Register,canActivate: [guestGuard] },
+  { path: 'login', component: Login,canActivate: [guestGuard] },
+  { path: 'forget-pass', component: ForgetPass,canActivate: [guestGuard] },
+  { path: 'ver-code', component: VerCode,canActivate: [guestGuard] },
+  { path: 'reset-pass', component: ResetPass,canActivate: [guestGuard] },
 
   // 404 Page
   { path: '**', component: NotFound }
