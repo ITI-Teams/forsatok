@@ -3,6 +3,8 @@
 use App\Livewire\Category\CategoryForm;
 use App\Livewire\Category\CategoryList;
 use App\Livewire\Category\CategoryTrash;
+use App\Livewire\Employers\EditEmployerInfo;
+use App\Livewire\Employers\EmployerProfile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Livewire\Volt\Volt;
@@ -33,5 +35,11 @@ Route::prefix('categories')->group(function () {
     Route::get('/create', CategoryForm::class)->name('categories.create');
     Route::get('/edit/{category}', CategoryForm::class)->name('categories.edit');
     Route::get('/trash', CategoryTrash::class)->name('categories.trash');
+});
+
+// Employer Info
+Route::prefix('employer')->middleware(['auth'])->group(function () {
+    Route::get('/', EmployerProfile::class)->name('employer.profile');
+    Route::get('/edit', EditEmployerInfo::class)->name('employer.profile.edit');
 });
 require __DIR__.'/auth.php';
