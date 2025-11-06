@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use App\Domains\Users\Actions\DeleteUserAction;
 use App\Domains\Users\Actions\RestoreUserAction;
 use App\Domains\Users\Models\User;
+use Illuminate\Validation\UnauthorizedException;
 use Livewire\Component;
 
 class UserTrash extends Component
@@ -24,14 +25,23 @@ class UserTrash extends Component
     public function restore($id, RestoreUserAction $restore)
     {
         $restore->execute($id);
-        session()->flash('message', '✅ User restored successfully!');
+        session()->flash('message', 'User restored successfully!');
         $this->loadTrashed();
     }
 
     public function forceDelete($id, DeleteUserAction $forceDelet)
     {
-        $forceDelet->execute($id);
-        session()->flash('message', '❌ User permanently deleted!');
+        try {
+            $forceDelet->execute($id);
+            session()->flash( 'User deleted permanently.');
+        } catch (UnauthorizedException $e) {
+            session()->flash( $e->getMessage());
+        } catch (\LogicException $e) {
+            session()->flash($e->getMessage());
+        } catch (\Exception $e) {
+            session()->flash('Failed to delete user.');
+        }
+
         $this->loadTrashed();
     }
 

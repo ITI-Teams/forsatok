@@ -12,10 +12,10 @@
             <i class="fa-solid fa-users me-2 text-primary"></i> Users List
         </h4>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('users.create') }}" class="btn btn-primary px-4">
+            <a wire:navigate href="{{ route('users.create') }}" class="btn btn-primary px-4">
                 <i class="fa-solid fa-plus me-2"></i> New User
             </a>
-            <a href="{{ route('users.trash') }}" class="btn btn-outline-secondary px-4">
+            <a wire:navigate href="{{ route('users.trash') }}" class="btn btn-outline-secondary px-4">
                 <i class="fa-solid fa-trash me-2"></i> Trashed Users
             </a>
         </div>
@@ -44,12 +44,10 @@
                                 <td>{{ ucfirst($user->type) }}</td>
                                 <td>{{ $user->created_at->format('Y-m-d') }}</td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-info me-2">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning me-2 ">
+                                    <a wire:navigate href="{{ route('users.edit', $user->id) }}"
+                                       class="btn btn-sm btn-warning me-2 ">
                                         <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
+                                    </a>
                                     <button class="btn btn-sm btn-danger" wire:click="delete({{ $user->id }})">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>

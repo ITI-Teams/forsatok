@@ -30,7 +30,7 @@
         {{-- Users --}}
         <li>
             <a wire:navigate href="{{ route('users.index') }}"
-               class="nav-link {{ request()->routeIs('users') ? 'active' : '' }}">
+               class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-gear"></i>
                 <span>Users</span>
             </a>
