@@ -19,14 +19,14 @@ import { CandidateProfile } from './features/candidate-profile/candidate-profile
 // ============ Routes ============
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path:'contact-us' , component :ContactUs},
-  { path:'candidate-profile', component :CandidateProfile},
   // Public pages In Layout Component
   {
     path: '',
     component: Layout,
     children: [
       { path: 'home', component: Home },
+      { path:'contact-us' , component :ContactUs},
+      { path:'candidate-profile', component :CandidateProfile},
       // { path: 'blog', component: Blog },
       // { path: 'contact', component: Contact },
       { path: 'employers', component: Employers },
