@@ -2,7 +2,7 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h1 class="h4 fw-bold text-dark">Skills</h1>
-        <a href="{{ route('skills.trash') }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
+        <a wire:navigate href="{{ route('skills.trash') }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
             <i class="fa-solid fa-trash"></i> View Trash
         </a>
     </div>
@@ -11,7 +11,7 @@
         <input type="text" wire:model.live="search" class="form-control w-50"
                placeholder="🔍 Search for skill...">
 
-        <a href="{{ route('skills.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
+        <a wire:navigate href="{{ route('skills.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
             <i class="fa-solid fa-plus"></i> Add New Skill
         </a>
     </div>
@@ -44,7 +44,7 @@
                                 {{ $skill->category ? $skill->category->name : '—' }}
                             </td>
                             <td class="text-center px-4 py-3">
-                                <a href="{{ route('skills.edit', $skill->id) }}" 
+                                <a wire:navigate href="{{ route('skills.edit', $skill->id) }}"
                                    class="btn btn-sm btn-primary px-3">
                                     <i class="fa-solid fa-pen"></i> Edit
                                 </a>

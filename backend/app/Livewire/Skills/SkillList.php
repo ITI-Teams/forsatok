@@ -27,12 +27,12 @@ class SkillList extends Component
         $skill = Skill::findOrFail($id);
         $delete->execute($skill);
 
-        session()->flash('message', '🗑️ Skill moved to trash!');
+        session()->flash('message', 'Skill moved to trash!');
         $this->loadSkills();
     }
 
     public function render()
     {
-        return view('livewire.skills.skill-list')->layout('layouts.app');
+        return view('livewire.skill.skill-list')->layout('layouts.app');
     }
 }
