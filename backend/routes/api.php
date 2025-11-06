@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,4 +20,11 @@ Route::prefix('auth')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('candidate/logout', [CandidateAuthController::class, 'logout']);
     });
+});
+
+// Save Job Routs
+Route::middleware('auth:sanctum')->prefix('jobs')->group(function () {
+    Route::get('/saved', [SaveJobController::class, 'index']);
+    Route::post('/save', [SaveJobController::class, 'store']);
+    Route::delete('/unsave/{id}', [SaveJobController::class, 'destroy']);
 });

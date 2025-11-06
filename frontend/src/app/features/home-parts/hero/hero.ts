@@ -7,7 +7,7 @@ interface Candidate {
 
 interface CompanyIcon {
   faClass: string;
-  colorClass: string; // بدل color العادي
+  colorClass: string;
   position: any;
 }
 
