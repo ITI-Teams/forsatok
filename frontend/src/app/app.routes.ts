@@ -14,21 +14,27 @@ import { Home } from './features/home/home';
 import { NotFound } from './features/not-found/not-found';
 import { Employers } from './features/employers/employers';
 import { ContactUs } from './features/contact-us/contact-us';
+import { CandidateProfile } from './features/candidate-profile/candidate-profile';
+import { Candidates } from './features/candidates/candidates';
+import {Jobs} from './features/jobs/jobs';
+
 
 // ============ Routes ============
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  {path :'contact-us' ,component :ContactUs},
   // Public pages In Layout Component
   {
     path: '',
     component: Layout,
     children: [
       { path: 'home', component: Home },
+      { path:'jobs', component :Jobs},
+      { path:'contact-us' , component :ContactUs},
+      { path:'candidate-profile', component :CandidateProfile},
       // { path: 'blog', component: Blog },
       // { path: 'contact', component: Contact },
       { path: 'employers', component: Employers },
-      // { path: 'candidates', component: Candidates },
+      { path: 'candidates', component: Candidates },
       // {
       // path: 'jobs',
       // component: Jobs

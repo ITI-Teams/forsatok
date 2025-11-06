@@ -1,8 +1,8 @@
 <div class="container">
 
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="h4 fw-bold text-dark">🗑️ Trashed Skills</h1>
-        <a href="{{ route('skills.index') }}" 
+        <h1 class="h4 fw-bold text-dark">Trashed Skills</h1>
+        <a wire:navigate href="{{ route('skills.index') }}"
            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
             <i class="fa-solid fa-arrow-left"></i> Back
         </a>
