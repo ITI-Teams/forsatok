@@ -1,5 +1,5 @@
 <?php
-
+use App\Domains\Jobs\Actions\Job\ShowJobAction;
 use App\Livewire\Admin\Permissions\PermissionIndex;
 use App\Livewire\Admin\Roles\RoleIndex;
 use App\Livewire\Admin\Roles\RolePermission;
@@ -9,7 +9,12 @@ use App\Livewire\Category\CategoryList;
 use App\Livewire\Category\CategoryTrash;
 use App\Livewire\Employers\EditEmployerInfo;
 use App\Livewire\Employers\EmployerProfile;
+use App\Livewire\Jobs\JobForm;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Livewire\Jobs\JobList;
+use App\Livewire\Jobs\JobShow;
+use App\Livewire\Jobs\JobTrash;
 use App\Livewire\User\UserForm;
 use App\Livewire\User\UserList;
 use App\Livewire\User\UserTrash;
@@ -28,9 +33,6 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::get('/admin', function () {
-    // return view('dashboard.index');
-    // return view ('livewire.jobs.index');
-    // return view ('livewire.category.category-form');
 
 })->name('admin');
 
@@ -62,12 +64,25 @@ Route::prefix('users')->group(function () {
     Route::get('/edit/{user}', UserForm::class)->name('users.edit');
     Route::get('/trash', UserTrash::class)->name('users.trash');
 });
+
+
+// job routes
+Route::prefix('jobs')->middleware(['auth'])->name('jobs.')->group(function () {
+    Route::get('/', JobList::class)->name('index');
+    Route::get('/create', JobForm::class)->name('create');
+    Route::get('/{job}/edit', JobForm::class)->name('edit');
+    Route::get('/jobs/{id}', JobShow::class)->name('show');
+    Route::get('/trash', JobTrash::class)->name('trash');
+});
+
+
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/roles', RoleIndex::class)->name('admin.roles');
     Route::get('/roles/permissions', RolePermission::class)->name('admin.roles.permissions');
     Route::get('/permissions', PermissionIndex::class)->name('admin.permissions');
     Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
 });
+
 
 
 
