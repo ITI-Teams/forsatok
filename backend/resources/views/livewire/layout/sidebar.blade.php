@@ -10,11 +10,27 @@
                 <span>Dashboard</span>
             </a>
         </li>
+        {{-- Categories --}}
+        <li>
+            <a wire:navigate href="{{ route('categories.index') }}"
+               class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Categories</span>
+
+            </a>
+        </li>
+        {{-- Skills --}}
+        <li>
+            <a wire:navigate href="{{ route('skills.index') }}"
+               class="nav-link {{ request()->routeIs('skills.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-lightbulb"></i> <span>Skills</span>
+            </a>
+        </li>
 
         {{-- Users --}}
         <li>
             <a wire:navigate href="{{ route('users.index') }}"
-               class="nav-link {{ request()->routeIs('users') ? 'active' : '' }}">
+               class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-gear"></i>
                 <span>Users</span>
             </a>
@@ -99,13 +115,7 @@
             </a>
         </li>
 
-        <li>
-            <a wire:navigate href="{{ route('categories.index') }}"
-               class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-layer-group"></i>
-                <span>Categories</span>
 
-            </a>
-        </li>
+
     </ul>
 </nav>

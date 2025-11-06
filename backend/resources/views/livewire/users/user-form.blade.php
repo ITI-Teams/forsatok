@@ -5,7 +5,7 @@
             <i class="fa-solid fa-user-pen me-2 text-primary"></i>
             @if ($userId) Edit User @else Create User @endif
         </h4>
-        <a href="{{ route('users.index') }}" class="btn btn-outline-secondary d-flex align-items-center">
+        <a wire:navigate href="{{ route('users.index') }}" class="btn btn-outline-secondary d-flex align-items-center">
             <i class="fa-solid fa-arrow-left me-2"></i> Back to List
         </a>
     </div>

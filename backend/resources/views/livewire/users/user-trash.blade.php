@@ -1,10 +1,43 @@
-{{-- <x-app-layout> --}}
-    <div class="container-fluid px-3 px-md-4 py-3 bg-body text-body">
+<div class="container-fluid px-3 px-md-4 py-3 bg-body text-body">
+    @if (session()->has('message'))
+        <div id="success-toast"
+             class="position-fixed top-0 end-0 p-3"
+             style="z-index: 1080;">
+            <div class="toast show align-items-center text-white bg-success border-0 shadow-lg"
+                 role="alert"
+                 aria-live="assertive"
+                 aria-atomic="true"
+                 data-bs-delay="3000"
+                 style="min-width: 280px;">
+                <div class="d-flex">
+                    <div class="toast-body fw-semibold">
+                        <i class="fa-solid fa-circle-check me-2"></i>{{ session('message') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast"
+                            aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toastEl = document.querySelector('#success-toast .toast');
+                if (toastEl) {
+                    const toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+                    setTimeout(() => {
+                        toast.hide();
+                    }, 3000);
+                }
+            });
+        </script>
+    @endif
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <h4 class="fw-semibold mb-0">
             <i class="fa-solid fa-trash-can me-2 text-danger"></i> Deleted Users
         </h4>
-        <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">
+        <a wire:navigate href="{{ route('users.index') }}" class="btn btn-outline-secondary">
             <i class="fa-solid fa-arrow-left me-2"></i> Back to Users
         </a>
     </div>
@@ -56,17 +89,17 @@
                                     <td class="text-nowrap">{{ $user->deleted_at->diffForHumans() }}</td>
                                     <td class="text-nowrap text-end">
                                         <div class="d-flex flex-wrap justify-content-end gap-2">
-                                            <button type="button" 
-                                                    wire:click="restore({{ $user->id }})"
+                                            <button type="button"
+                                                    onclick="confirmUserRestore({{ $user->id }})"
                                                     class="btn btn-sm btn-outline-success d-flex align-items-center"
-                                                    onclick="confirm('Are you sure you want to restore this user?') || event.stopImmediatePropagation()">
+                                                    >
                                                 <i class="fa-solid fa-trash-arrow-up me-1"></i>
                                                 Restore
                                             </button>
                                             <button type="button"
-                                                    wire:click="forceDelete({{ $user->id }})"
+                                                    onclick="confirmUserForceDelete({{ $user->id }})"
                                                     class="btn btn-sm btn-outline-danger d-flex align-items-center"
-                                                    onclick="confirm('This action cannot be undone. Delete permanently?') || event.stopImmediatePropagation()">
+                                                    >
                                                 <i class="fa-solid fa-trash me-1"></i>
                                                 Delete
                                             </button>
@@ -82,4 +115,37 @@
     </div>
 </div>
 
-{{-- </x-app-layout> --}}
+<!-- SweetAlert Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmUserForceDelete(id) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action will permanently delete this User!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete permanently"
+        }).then((result) => {
+            if (result.isConfirmed) {
+            @this.call('forceDelete', id);
+            }
+        });
+    }
+    function confirmUserRestore(id) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Are you sure you want to restore this user?",
+            icon: "success",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, restore"
+        }).then((result) => {
+            if (result.isConfirmed) {
+            @this.call('restore', id);
+            }
+        });
+    }
+</script>

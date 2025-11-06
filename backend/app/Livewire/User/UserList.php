@@ -25,7 +25,7 @@ class UserList extends Component
         $user = User::findOrFail($id);
         $delete->execute($user);
 
-        session()->flash('message', '🗑️ User moved to trash!');
+        session()->flash('message', 'User moved to trash!');
         $this->loadUsers();
     }
 
