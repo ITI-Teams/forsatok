@@ -9,7 +9,7 @@ class SavedJob extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'job_id'];
+    protected $fillable = ['candidate_id', 'job_post_id'];
 
     public function user()
     {
