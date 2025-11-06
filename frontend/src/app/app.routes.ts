@@ -16,6 +16,8 @@ import { Employers } from './features/employers/employers';
 import { ContactUs } from './features/contact-us/contact-us';
 import { CandidateProfile } from './features/candidate-profile/candidate-profile';
 import { Candidates } from './features/candidates/candidates';
+import {Jobs} from './features/jobs/jobs';
+
 
 // ============ Routes ============
 export const routes: Routes = [
@@ -26,6 +28,7 @@ export const routes: Routes = [
     component: Layout,
     children: [
       { path: 'home', component: Home },
+      { path:'jobs', component :Jobs},
       { path:'contact-us' , component :ContactUs},
       { path:'candidate-profile', component :CandidateProfile},
       // { path: 'blog', component: Blog },
