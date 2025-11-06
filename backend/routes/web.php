@@ -1,6 +1,9 @@
 <?php
-
 use App\Domains\Jobs\Actions\Job\ShowJobAction;
+use App\Livewire\Admin\Permissions\PermissionIndex;
+use App\Livewire\Admin\Roles\RoleIndex;
+use App\Livewire\Admin\Roles\RolePermission;
+use App\Livewire\Admin\Users\UserRolePermission;
 use App\Livewire\Category\CategoryForm;
 use App\Livewire\Category\CategoryList;
 use App\Livewire\Category\CategoryTrash;
@@ -15,6 +18,9 @@ use App\Livewire\Jobs\JobTrash;
 use App\Livewire\User\UserForm;
 use App\Livewire\User\UserList;
 use App\Livewire\User\UserTrash;
+use App\Livewire\Skills\SkillForm;
+use App\Livewire\Skills\SkillList;
+use App\Livewire\Skills\SkillTrash;
 
 Route::view('/', 'welcome');
 
@@ -44,6 +50,13 @@ Route::prefix('categories')->group(function () {
     Route::get('/trash', CategoryTrash::class)->name('categories.trash');
 });
 
+Route::prefix('skills')->group(function () {
+    Route::get('/', SkillList::class)->name('skills.index');
+    Route::get('/create', SkillForm::class)->name('skills.create');
+    Route::get('/edit/{skill}', SkillForm::class)->name('skills.edit');
+    Route::get('/trash', SkillTrash::class)->name('skills.trash');
+});
+
 
 Route::prefix('users')->group(function () {
     Route::get('/', UserList::class)->name('users.index');
@@ -62,6 +75,13 @@ Route::prefix('jobs')->middleware(['auth'])->name('jobs.')->group(function () {
     Route::get('/trash', JobTrash::class)->name('trash');
 });
 
+
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::get('/roles', RoleIndex::class)->name('admin.roles');
+    Route::get('/roles/permissions', RolePermission::class)->name('admin.roles.permissions');
+    Route::get('/permissions', PermissionIndex::class)->name('admin.permissions');
+    Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
+});
 
 
 

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DarkModeButton } from './dark-mode-button';
+import { ContactUs } from './contact-us';
 
-describe('DarkModeButton', () => {
-  let component: DarkModeButton;
-  let fixture: ComponentFixture<DarkModeButton>;
+describe('ContactUs', () => {
+  let component: ContactUs;
+  let fixture: ComponentFixture<ContactUs>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DarkModeButton]
+      imports: [ContactUs]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DarkModeButton);
+    fixture = TestBed.createComponent(ContactUs);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

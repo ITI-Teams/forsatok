@@ -5,6 +5,7 @@ namespace App\Domains\Jobs\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Skill extends Model
 {
@@ -21,4 +22,16 @@ class Skill extends Model
     {
         return $this->belongsToMany(JobPost::class, 'job_skill');
     }
+
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($skill) {
+            $skill->slug = Str::slug($skill->name);
+        });
+    }
+
 }

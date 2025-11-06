@@ -36,38 +36,45 @@ class UserForm extends Component
 
     public function save(CreateUserAction $create, UpdateUserAction $update)
     {
+        $data = [
+            'name' => $this->name,
+            'email' => $this->email,
+            'type' => $this->type,
+        ];
+
         if ($this->userId) {
-            $request = new UpdateUserRequest();
-            $request->merge([
-                'name' => $this->name,
-                'email' => $this->email,
-                'type' => $this->type,
-                'user_id' => $this->userId,
-            ]);
+            $data['user_id'] = $this->userId;
+
             if ($this->password) {
                 $data['password'] = $this->password;
                 $data['password_confirmation'] = $this->password_confirmation;
             }
-            $validated = Validator::make($request->all(), $request->rules())->validate();
+
+            $rules = (new UpdateUserRequest())->rules();
+            $messages = (new UpdateUserRequest())->messages() ?? [];
+            $attributes = (new UpdateUserRequest())->attributes() ?? [];
+
+            $validated = Validator::make($data, $rules, $messages, $attributes)->validate();
         } else {
-            $request = new StoreUserRequest();
-            $request->merge([
-                'name' => $this->name,
-                'email' => $this->email,
-                'password' => $this->password,
-                'type' => $this->type,
-            ]);
-            $validated = Validator::make($request->all(), $request->rules())->validate();
+            $data['password'] = $this->password;
+            $data['password_confirmation'] = $this->password_confirmation;
+
+            $rules = (new StoreUserRequest())->rules();
+            $messages = (new StoreUserRequest())->messages() ?? [];
+            $attributes = (new StoreUserRequest())->attributes() ?? [];
+
+            $validated = Validator::make($data, $rules, $messages, $attributes)->validate();
         }
 
         if ($this->userId) {
             $user = User::findOrFail($this->userId);
             $update->execute($user, $validated);
-            session()->flash('message', '✅ User updated successfully!');
+            session()->flash('message', 'User updated successfully!');
         } else {
             $create->execute($validated);
-            session()->flash('message', '✅ User created successfully!');
+            session()->flash('message', 'User created successfully!');
         }
+
         return $this->redirectRoute('users.index', navigate: true);
     }
 

@@ -13,17 +13,20 @@ import { Layout } from './layout/layout/layout';
 import { Home } from './features/home/home';
 import { NotFound } from './features/not-found/not-found';
 import { Employers } from './features/employers/employers';
+import { ContactUs } from './features/contact-us/contact-us';
+import { CandidateProfile } from './features/candidate-profile/candidate-profile';
 
 // ============ Routes ============
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-
   // Public pages In Layout Component
   {
     path: '',
     component: Layout,
     children: [
       { path: 'home', component: Home },
+      { path:'contact-us' , component :ContactUs},
+      { path:'candidate-profile', component :CandidateProfile},
       // { path: 'blog', component: Blog },
       // { path: 'contact', component: Contact },
       { path: 'employers', component: Employers },
