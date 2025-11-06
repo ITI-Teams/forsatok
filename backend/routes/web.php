@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\User\UserForm;
 use App\Livewire\User\UserList;
 use App\Livewire\User\UserTrash;
+use App\Livewire\Skills\SkillForm;
+use App\Livewire\Skills\SkillList;
+use App\Livewire\Skills\SkillTrash;
 
 Route::view('/', 'welcome');
 
@@ -43,6 +46,13 @@ Route::prefix('categories')->group(function () {
     Route::get('/create', CategoryForm::class)->name('categories.create');
     Route::get('/edit/{category}', CategoryForm::class)->name('categories.edit');
     Route::get('/trash', CategoryTrash::class)->name('categories.trash');
+});
+
+Route::prefix('skills')->group(function () {
+    Route::get('/', SkillList::class)->name('skills.index');
+    Route::get('/create', SkillForm::class)->name('skills.create');
+    Route::get('/edit/{skill}', SkillForm::class)->name('skills.edit');
+    Route::get('/trash', SkillTrash::class)->name('skills.trash');
 });
 
 
