@@ -25,19 +25,19 @@ class SkillTrash extends Component
     public function restore($id, RestoreSkillAction $restore)
     {
         $restore->execute($id);
-        session()->flash('message', '✅ Skill restored successfully!');
+        session()->flash('message', 'Skill restored successfully!');
         $this->loadTrashed();
     }
 
     public function forceDelete($id, DeleteSkillAction $forceDelete)
     {
         $forceDelete->execute($id);
-        session()->flash('message', '❌ Skill permanently deleted!');
+        session()->flash('message', 'Skill permanently deleted!');
         $this->loadTrashed();
     }
 
     public function render()
     {
-        return view('livewire.skills.skill-trash')->layout('layouts.app');
+        return view('livewire.skill.skill-trash')->layout('layouts.app');
     }
 }

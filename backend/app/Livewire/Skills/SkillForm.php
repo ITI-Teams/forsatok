@@ -14,7 +14,7 @@ use App\Domains\Jobs\Models\Category;
 class SkillForm extends Component
 {
     public $skillId, $name, $category_id;
-    public $categories; // For dropdown
+    public $categories;
 
     protected $rules = [
         'name'        => 'required|string|max:255',
@@ -23,7 +23,7 @@ class SkillForm extends Component
 
     public function mount($skill = null)
     {
-        $this->categories = Category::all(); // List of categories
+        $this->categories = Category::all();
 
         if ($skill) {
             $model = Skill::findOrFail($skill);
@@ -55,10 +55,10 @@ class SkillForm extends Component
         if ($this->skillId) {
             $skill = Skill::findOrFail($this->skillId);
             $update->execute($skill, $validated);
-            session()->flash('message', '✅ Skill updated successfully!');
+            session()->flash('message', 'Skill updated successfully!');
         } else {
             $create->execute($validated);
-            session()->flash('message', '✅ Skill created successfully!');
+            session()->flash('message', 'Skill created successfully!');
         }
 
         return $this->redirectRoute('skills.index', navigate: true);
@@ -71,7 +71,7 @@ class SkillForm extends Component
 
     public function render()
     {
-        return view('livewire.skills.skill-form')->layout('layouts.app');
+        return view('livewire.skill.skill-form')->layout('layouts.app');
 
     }
 }
