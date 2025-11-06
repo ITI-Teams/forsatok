@@ -14,11 +14,13 @@ import { Home } from './features/home/home';
 import { NotFound } from './features/not-found/not-found';
 import { Employers } from './features/employers/employers';
 import { ContactUs } from './features/contact-us/contact-us';
+import { CandidateProfile } from './features/candidate-profile/candidate-profile';
 
 // ============ Routes ============
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  {path :'contact-us' ,component :ContactUs},
+  { path:'contact-us' , component :ContactUs},
+  { path:'candidate-profile', component :CandidateProfile},
   // Public pages In Layout Component
   {
     path: '',
