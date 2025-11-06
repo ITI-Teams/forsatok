@@ -44,8 +44,15 @@
                                 <td>{{ ucfirst($user->type) }}</td>
                                 <td>{{ $user->created_at->format('Y-m-d') }}</td>
                                 <td class="text-center">
+
+                                    <button class="btn btn-sm btn-info me-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning me-2">
+
                                     <a wire:navigate href="{{ route('users.edit', $user->id) }}"
                                        class="btn btn-sm btn-warning me-2 ">
+
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                     <button class="btn btn-sm btn-danger" wire:click="delete({{ $user->id }})">
