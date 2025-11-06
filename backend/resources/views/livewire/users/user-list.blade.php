@@ -47,7 +47,7 @@
                                     <button class="btn btn-sm btn-info me-2">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-warning me-2 ">
+                                    <button class="btn btn-sm btn-warning me-2">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger" wire:click="delete({{ $user->id }})">
