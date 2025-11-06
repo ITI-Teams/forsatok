@@ -16,17 +16,16 @@
         <li><a wire:navigate href="{{ route('form') }}"
                 class="nav-link {{ request()->routeIs('form') ? 'active' : '' }}"><i
                     class="fa-solid fa-user-gear"></i><span>Forms</span></a></li>
-   
         <li>
             <a wire:navigate href="{{ route('jobs.index') }}"
                 class="nav-link {{ request()->routeIs('jobs.index') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-gear"></i><span>Job Lists</span>
             </a>
         </li>
-         <li>
+        <li>
             <a wire:navigate href="{{ route('jobs.create') }}"
-               class="nav-link {{ request()->routeIs('jobs.create') ? 'active' : '' }}">
-               <i class="fa-solid fa-user-gear"></i><span>Jobs Form</span>
+                class="nav-link {{ request()->routeIs('jobs.create') ? 'active' : '' }}">
+                <i class="fa-solid fa-user-gear"></i><span>Jobs Form</span>
             </a>
         </li>
     </ul>
