@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Jobs;
+namespace App\Domains\Jobs\Requests\Job;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;

@@ -1,4 +1,4 @@
-<x-app-layout>
+
      <div class="job-container">
         <div class="row">
             <!-- Left Column - Overview -->
@@ -161,4 +161,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+
