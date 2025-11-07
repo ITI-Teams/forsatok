@@ -20,12 +20,12 @@ class JobPostResource extends JsonResource
             'experience_level' => $this->experience_level,
             'deadline' => $this->deadline,
             'status' => $this->status,
-            'employer' => [
+            'employer' => $this->employer ? [
                 'id' => $this->employer->id,
                 'name' => $this->employer->name,
                 'company' => $this->employer->company_name,
                 'email' => $this->employer->email,
-            ],
+            ] : null,
             'category' => $this->category ? [
                 'id' => $this->category->id,
                 'name' => $this->category->name,

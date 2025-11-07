@@ -26,8 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/applications/available-jobs', [ApplicationController::class, 'availableJobs']);
     Route::get('/applications/{id}', [ApplicationController::class, 'show']);
     Route::post('/applications', [ApplicationController::class, 'store']);
-    Route::put('/applications/{id}', [ApplicationController::class, 'update']);
-    Route::delete('/applications/{id}', [ApplicationController::class, 'destroy']);
     // Save Job Routs
     Route::prefix('jobs')->group(function () {
         Route::get('/saved', [SaveJobController::class, 'index']);

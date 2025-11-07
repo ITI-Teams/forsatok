@@ -141,7 +141,7 @@ class ApplicationController extends Controller
 
         $availableJobs = JobPost::with(['employer', 'category'])
             ->whereNotIn('id', $appliedJobIds)
-            ->where('status', 'active')
+            ->where('is_active', 1)
             ->where('deadline', '>=', now())
             ->latest()
             ->get();
