@@ -12,9 +12,9 @@ class JobApplication extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['job_id', 'candidate_id', 'status', 'cv_path', 'cover_letter'];
+    protected $fillable = ['job_post_id', 'candidate_id', 'status', 'resume_path', 'cover_letter'];
 
-    public function job()
+    public function jobPost()
     {
         return $this->belongsTo(JobPost::class);
     }

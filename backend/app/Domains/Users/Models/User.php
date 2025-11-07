@@ -5,6 +5,7 @@ namespace App\Domains\Users\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Domains\Applications\Models\JobApplication;
 use App\Domains\Employers\Models\CompanyReview;
+use App\Domains\Jobs\Models\JobPost;
 use App\Domains\Jobs\Models\SavedJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -63,6 +64,10 @@ class User extends Authenticatable
 
     public function companyReviews()
     {
-        return $this->hasMany(CompanyReview::class, 'employer_id');
+        return $this->hasMany(CompanyReview::class, 'user_id');
+    }
+    public function jobPosts()
+    {
+        return $this->hasMany(JobPost::class, 'user_id');
     }
 }

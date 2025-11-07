@@ -25,7 +25,7 @@ class JobPost extends Model
 
     public function employer()
     {
-        return $this->belongsTo(User::class, 'employer_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function skills()

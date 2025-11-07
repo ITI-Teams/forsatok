@@ -24,9 +24,9 @@
             </a>
         </li>
         <li>
-            <a wire:navigate href="{{ route('jobs.create') }}"
-                class="nav-link {{ request()->routeIs('jobs.create') ? 'active' : '' }}">
-                <i class="fa-solid fa-user-gear"></i><span>Jobs Form</span>
+            <a wire:navigate href="{{ route('job.app.index') }}"
+               class="nav-link {{ request()->routeIs('job.app.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-user-gear"></i><span>Jobs Applications</span>
             </a>
         </li>
 
