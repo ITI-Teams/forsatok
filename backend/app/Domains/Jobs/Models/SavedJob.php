@@ -13,11 +13,11 @@ class SavedJob extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'candidate_id');
     }
 
     public function job()
     {
-        return $this->belongsTo(JobPost::class);
+        return $this->belongsTo(JobPost::class, 'job_post_id');
     }
 }
