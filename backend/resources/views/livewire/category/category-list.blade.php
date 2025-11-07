@@ -1,68 +1,71 @@
-<div class="container">
+<div class="container" data-bs-theme="auto">
 
     <!-- Header -->
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="h4 fw-bold text-dark">Categories</h1>
+        <h1 class="h4 fw-bold text-body">Categories</h1>
         <a href="{{ route('categories.trash') }}" wire:navigate
            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
             <i class="fa-solid fa-trash"></i> View Trash
         </a>
     </div>
 
-    <!-- Search + Trash Button -->
+    <!-- Search + Create Button -->
     <div class="d-flex justify-content-between mb-3">
         <input type="text" wire:model.live="search"
                class="form-control w-50"
-               placeholder="🔍 Search by category name..">
+               placeholder="🔍 Search by category name...">
 
         <a href="{{ route('categories.create') }}" 
-            class="btn btn-primary d-flex align-items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Create New Category
+           class="btn btn-primary d-flex align-items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Create New Category
         </a>
     </div>
 
     <!-- Success Message -->
     @if (session()->has('message'))
-        <div class="alert alert-success border-0 rounded-3 shadow-sm">
-            <i class="fa-solid fa-circle-check me-2"></i> {{ session('message') }}
+        <div class="alert alert-success border-0 rounded-3 shadow-sm d-flex align-items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i> {{ session('message') }}
         </div>
     @endif
 
     <!-- Table Card -->
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-light py-3">
+
+        <div class="card-header bg-body-tertiary py-3">
             <h6 class="mb-0 text-secondary fw-semibold">All Categories</h6>
         </div>
 
         <div class="card-body p-0">
             <table class="table table-hover mb-0 align-middle">
-                <thead style="background: #f1f3f5;">
-                <tr>
-                    <th class="px-4 py-3">Name</th>
-                    <th class="px-4 py-3 text-center">Actions</th>
-                </tr>
+                <thead class="bg-body-tertiary">
+                    <tr>
+                        <th class="px-4 py-3">Name</th>
+                        <th class="px-4 py-3 text-center">Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @forelse($categories as $category)
-                    <tr>
-                        <td class="px-4 py-3">{{ $category->name }}</td>
-                        <td class="px-4 py-3 text-center">
-                            <a wire:navigate href="{{ route('categories.edit', $category->id) }}"
-                               class="btn btn-sm btn-primary rounded-3 px-3">
-                                <i class="fa-solid fa-pen-to-square"></i> Edit
-                            </a>
+                    @forelse($categories as $category)
+                        <tr>
+                            <td class="px-4 py-3">{{ $category->name }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <a wire:navigate href="{{ route('categories.edit', $category->id) }}"
+                                   class="btn btn-sm btn-primary rounded-3 px-3">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
 
-                            <button wire:click="delete({{ $category->id }})"
-                                    class="btn btn-sm btn-danger rounded-3 px-3 ms-2">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </button>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="2" class="text-center py-4 text-muted">No categories found.</td>
-                    </tr>
-                @endforelse
+                                <button onclick="confirmDelete({{ $category->id }})"
+                                        class="btn btn-sm btn-danger rounded-3 px-3 ms-2">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="2" class="text-center py-4 text-secondary">
+                                No categories found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
