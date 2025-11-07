@@ -14,8 +14,10 @@
         <a routerLink="/home" [ngClass]="{'!text-[#ff4136]': isActive('/home')}"
           class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Home</a>
 
+
+
         <!-- Mega Menu -->
-        <div class="relative">
+        <!-- <div class="relative">
           <button (click)="toggleMegaMenu('find-jobs')"
             class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136] flex items-center gap-1">
             Find Jobs
@@ -49,10 +51,10 @@
           </div>
           }
 
-        </div>
+        </div> -->
 
-        <a routerLink="/employers" [ngClass]="{'!text-[#ff4136]': isActive('/employers')}"
-          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Employers</a>
+        <a routerLink="/jobs" [ngClass]="{'!text-[#ff4136]': isActive('/employers')}"
+          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Jobs</a>
         <a routerLink="/candidates" [ngClass]="{'!text-[#ff4136]': isActive('/candidates')}"
           class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Candidates</a>
         <a routerLink="/blog" [ngClass]="{'!text-[#ff4136]': isActive('/blog')}"

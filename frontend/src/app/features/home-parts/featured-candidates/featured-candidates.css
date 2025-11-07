@@ -1,0 +1,16 @@
+swiper-container::part(pagination) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+swiper-container::part(bullet) {
+  background-color: #d1d5db;
+  opacity: 1;
+}
+
+swiper-container::part(bullet-active) {
+  background-color: #0851f0;
+}
