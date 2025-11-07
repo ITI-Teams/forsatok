@@ -1,8 +1,8 @@
-<div class="container">
+<div class="container" data-bs-theme="auto">
 
     <!-- Header -->
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="h4 fw-bold text-dark">🗑️ Trash - Deleted Categories</h1>
+        <h1 class="h4 fw-bold text-body">🗑️ Trash - Deleted Categories</h1>
 
         <a href="{{ route('categories.index') }}" wire:navigate
            class="btn btn-outline-secondary d-flex align-items-center gap-2">
@@ -20,13 +20,14 @@
 
     <!-- Table Card -->
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-light py-3">
+
+        <div class="card-header bg-body-tertiary py-3">
             <h6 class="mb-0 text-secondary fw-semibold">Trashed Categories</h6>
         </div>
 
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="bg-light text-secondary text-uppercase text-sm">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-body-tertiary text-secondary text-uppercase text-sm">
                     <tr>
                         <th class="px-4 py-3">Name</th>
                         <th class="px-4 py-3">Deleted At</th>
@@ -52,7 +53,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center py-4 text-muted">
+                            <td colspan="3" class="text-center py-4 text-secondary">
                                 No deleted categories found.
                             </td>
                         </tr>
