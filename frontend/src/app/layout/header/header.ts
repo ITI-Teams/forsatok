@@ -1,7 +1,9 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ThemeService } from '../../shared/services/theme-service';
+import { AuthService } from '../../core/services/auth.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -10,16 +12,33 @@ import { ThemeService } from '../../shared/services/theme-service';
   templateUrl: './header.html',
   styleUrls: ['./header.css']
 })
-export class Header {
+export class Header implements OnInit{
   mobileMenuOpen = false;
   megaMenuOpen = false;
   openMegaId: string | null = null;
   openDropdown: string | null = null;
-
   isLoggedIn = false;
   hasNotifications = false;
 
-  constructor(private themeService: ThemeService, private router: Router) { }
+  constructor(
+    private themeService: ThemeService,
+    private router: Router,
+    private auth: AuthService
+  ) {}
+
+  ngOnInit() {
+    this.isLoggedIn = this.auth.hasToken();
+
+    this.auth.isLoggedIn$().subscribe(status => {
+      this.isLoggedIn = status;
+    });
+  }
+
+  logout() {
+    this.auth.logout();
+    this.isLoggedIn = false;
+    this.router.navigate(['/login']);
+  }
 
   isActive(route: string): boolean {
     return this.router.url === route || this.router.url === route + '/' || this.router.url.startsWith(route + '/');
@@ -34,17 +53,11 @@ export class Header {
     }
   }
 
-  closeMobileMenu() {
-    this.mobileMenuOpen = false;
-  }
+  closeMobileMenu() { this.mobileMenuOpen = false; }
 
-  toggleDropdown(id: string) {
-    this.openDropdown = this.openDropdown === id ? null : id;
-  }
+  toggleDropdown(id: string) { this.openDropdown = this.openDropdown === id ? null : id; }
 
-  toggleMegaMenu(id: string) {
-    this.openMegaId = this.openMegaId === id ? null : id;
-  }
+  toggleMegaMenu(id: string) { this.openMegaId = this.openMegaId === id ? null : id; }
 
   closeAll() {
     this.mobileMenuOpen = false;
@@ -53,31 +66,14 @@ export class Header {
     this.openDropdown = null;
   }
 
-  toggleDarkMode() {
-    this.themeService.toggleTheme();
-  }
+  toggleDarkMode() { this.themeService.toggleTheme(); }
 
-  get isDark() {
-    return this.themeService.isDarkMode();
-  }
+  get isDark() { return this.themeService.isDarkMode(); }
 
-  get logoSrc() {
-    return this.isDark ? '/images/logo2.png' : '/images/logo1.png';
-  }
+  get logoSrc() { return this.isDark ? '/images/logo2.png' : '/images/logo1.png'; }
 
-  logout() {
-    console.log('User logged out');
-    this.isLoggedIn = false;
-    this.openDropdown = null;
-  }
+  @HostListener('document:keydown.escape') onEsc() { this.closeAll(); }
 
-  // close menus on ESC
-  @HostListener('document:keydown.escape')
-  onEsc() {
-    this.closeAll();
-  }
-
-  // close menus on click outside
   @HostListener('document:click', ['$event'])
   onDocClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
@@ -85,12 +81,8 @@ export class Header {
     this.closeAll();
   }
 
-  // close mobile menu if window resized
-  @HostListener('window:resize')
-  onResize() {
-    if (window.innerWidth >= 1024) {
-      this.closeMobileMenu();
-    }
+  @HostListener('window:resize') onResize() {
+    if (window.innerWidth >= 1024) this.closeMobileMenu();
   }
 
   // helper for icons
