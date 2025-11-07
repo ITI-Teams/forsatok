@@ -55,4 +55,20 @@ class SaveJobController extends Controller
             'data' => $savedJobs,
         ]);
     }
+
+    public function destroy($id): JsonResponse
+    {
+        $user = auth()->user();
+
+        // Find the saved job belonging to this user
+        $savedJob = SavedJob::where('candidate_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $savedJob->delete();
+
+        return response()->json([
+            'message' => 'Job removed from saved list successfully.'
+        ]);
+    }
 }
