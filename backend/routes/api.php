@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Applications\Controllers\Api\ApplicationController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
 use Illuminate\Http\Request;
@@ -15,16 +16,24 @@ Route::prefix('auth')->group(function () {
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
     Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
     Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
-
-    // Protected (requires token)
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('candidate/logout', [CandidateAuthController::class, 'logout']);
+});
+// Protected (requires token)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('candidate/logout', [CandidateAuthController::class, 'logout']);
+    // routes for applications
+    Route::get('/applications', [ApplicationController::class, 'index']);
+    Route::get('/applications/stats', [ApplicationController::class, 'stats']);
+    Route::get('/applications/available-jobs', [ApplicationController::class, 'availableJobs']);
+    Route::get('/applications/{id}', [ApplicationController::class, 'show']);
+    Route::post('/applications', [ApplicationController::class, 'store']);
+    Route::put('/applications/{id}', [ApplicationController::class, 'update']);
+    Route::delete('/applications/{id}', [ApplicationController::class, 'destroy']);
+    // Save Job Routs
+    Route::prefix('jobs')->group(function () {
+        Route::get('/saved', [SaveJobController::class, 'index']);
+        Route::post('/save', [SaveJobController::class, 'store']);
+        Route::delete('/unsave/{id}', [SaveJobController::class, 'destroy']);
     });
 });
 
-// Save Job Routs
-Route::middleware('auth:sanctum')->prefix('jobs')->group(function () {
-    Route::get('/saved', [SaveJobController::class, 'index']);
-    Route::post('/save', [SaveJobController::class, 'store']);
-    Route::delete('/unsave/{id}', [SaveJobController::class, 'destroy']);
-});
+

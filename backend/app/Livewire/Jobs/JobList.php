@@ -9,7 +9,7 @@ use Livewire\Component;
 class JobList extends Component
 {
     public $jobs;
-     public $selectedJobId = null;
+    public $selectedJobId = null;
     public $confirmingDelete = false;
 
     public function mount()
@@ -23,7 +23,7 @@ class JobList extends Component
     }
 
 
- public function confirmDelete($id)
+    public function confirmDelete($id)
     {
         $this->selectedJobId = $id;
         $this->confirmingDelete = true;

@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class JobTrash extends Component
 {
-  public $trashedJobs;
+    public $trashedJobs;
 
     public function mount()
     {
@@ -19,7 +19,7 @@ class JobTrash extends Component
     {
         $this->trashedJobs = JobPost::onlyTrashed()->latest()->get();
     }
-      public function restore($id, RestoreJobAction $restore)
+    public function restore($id, RestoreJobAction $restore)
     {
         $restore->execute($id);
         session()->flash('message', 'Job restored successfully!');
@@ -35,6 +35,6 @@ class JobTrash extends Component
 
     public function render()
     {
-       return view('livewire.jobs.job-trash')->layout('layouts.app');
+        return view('livewire.jobs.job-trash')->layout('layouts.app');
     }
 }
