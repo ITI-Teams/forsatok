@@ -15,10 +15,10 @@ import { Home } from './features/home/home';
 import { NotFound } from './features/not-found/not-found';
 import { ContactUs } from './features/contact-us/contact-us';
 import { CandidateProfile } from './features/candidate-profile/candidate-profile';
+import { Company } from './features/company/company';
 import { Candidates } from './features/candidates/candidates';
 import {Jobs} from './features/jobs/jobs';
 import { Profile } from './features/profile/profile';
-
 
 // ============ Routes ============
 export const routes: Routes = [
@@ -30,11 +30,14 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: Home },
       { path:'jobs', component :Jobs},
+
       { path: 'candidates', component: Candidates },
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
       { path:'profile', component :Profile},
       // { path: 'blog', component: Blog },
+
+      {path:'company',component:Company},
       // {
       // path: 'jobs',
       // component: Jobs

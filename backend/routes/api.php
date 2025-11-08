@@ -3,6 +3,7 @@
 use App\Domains\Applications\Controllers\Api\ApplicationController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
+use App\Http\Controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/save', [SaveJobController::class, 'store']);
         Route::delete('/unsave/{id}', [SaveJobController::class, 'destroy']);
     });
+
+// cadidate api routes
+Route::get('/api/candidate-info', [CandidateInfoController::class, 'show']);
+Route::post('/api/candidate-info', [CandidateInfoController::class, 'update']);
 });
 
 
