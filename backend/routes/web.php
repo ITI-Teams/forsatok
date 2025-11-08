@@ -1,5 +1,6 @@
 <?php
 use App\Domains\Jobs\Actions\Job\ShowJobAction;
+use App\Http\Controllers\Api\CandidateInfoController;
 use App\Livewire\Admin\Permissions\PermissionIndex;
 use App\Livewire\Admin\Roles\RoleIndex;
 use App\Livewire\Admin\Roles\RolePermission;
@@ -21,6 +22,7 @@ use App\Livewire\User\UserTrash;
 use App\Livewire\Skills\SkillForm;
 use App\Livewire\Skills\SkillList;
 use App\Livewire\Skills\SkillTrash;
+
 
 Route::view('/', 'welcome');
 
@@ -84,7 +86,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 });
 
 
-
+// cadidate api routes
+Route::get('/api/candidate-info', [CandidateInfoController::class, 'show']);
+Route::post('/api/candidate-info', [CandidateInfoController::class, 'update']);
 
 // Employer Info
 Route::prefix('employer')->middleware(['auth'])->group(function () {
