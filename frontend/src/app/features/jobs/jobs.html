@@ -26,7 +26,7 @@
         <input
           type="text"
           [(ngModel)]="searchTerm"
-          (input)="applyFilters()"
+          (input)="onSearchInput()"
           placeholder="Search job title or company..."
           class="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -71,15 +71,36 @@
     </div>
   </section>
 
+  <!-- Mobile Filter Button -->
+  <div class="w-full sticky top-[80px] z-50 flex justify-end mb-4 lg:hidden">
+    <button (click)="toggleFilters()"
+      class="w-full flex items-center gap-2 bg-blue-600 text-white px-4 py-2 shadow-md hover:bg-blue-700 transition-all">
+      <i class="fas fa-filter"></i> Filters
+    </button>
+  </div>
+
+  <!-- Mobile Filter Overlay Backdrop -->
+  <div *ngIf="isFilterOpen" (click)="toggleFilters()"
+    class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"></div>
 
   <!-- Main Content -->
   <div class="container mx-auto px-4 py-12">
-    <div class="flex flex-col lg:flex-row gap-8">
+    <div class="flex flex-col lg:flex-row gap-8 relative">
       <!-- Sidebar Filters -->
-      <aside
-        class="lg:w-1/4 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md h-[80vh] overflow-y-auto sticky top-8 transition-all duration-300 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-700 dark:scrollbar-track-gray-900"
+      <aside 
+        [ngClass]="{
+          'fixed inset-0 z-50 mobile-filter-overlay': isFilterOpen
+        }"
+        [class.hidden]="!isFilterOpen"
+        class="lg:block lg:w-1/4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md lg:overflow-visible overflow-y-auto transition-all duration-300 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-700 dark:scrollbar-track-gray-900 lg:h-auto lg:self-start"
       >
-        <h2 class="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200">Filter By</h2>
+        <div class="flex justify-between items-center mb-6 lg:mb-4">
+          <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">Filter By</h2>
+          <button (click)="toggleFilters()"
+            class="lg:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
 
         <!-- Employment Type -->
         <div class="mb-8">
@@ -180,7 +201,7 @@
             type="button"
             label="Apply Filter"
             class="w-full p-3"
-            (click)="applyFilters()"
+            (click)="applyFiltersAndClose()"
           ></button>
           <button
             pButton
@@ -221,12 +242,19 @@
                   <span class="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 rounded-full text-sm">${{ job.salary }}</span>
                 </div>
               </div>
-              <div class="mt-4 md:mt-0">
+              <div class="mt-4 md:mt-0 flex flex-col gap-2">
+                <button
+                  pButton
+                  type="button"
+                  label="View Job"
+                  (click)="viewJob(job.id)"
+                  class="p-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white rounded-lg shadow transition-all duration-300"
+                ></button>
                 <button
                   pButton
                   type="button"
                   label="Apply Now"
-                  class="p-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white rounded-lg shadow transition-all duration-300"
+                  class="p-3 p-button-outlined border rounded-lg transition-all duration-300"
                 ></button>
               </div>
             </div>

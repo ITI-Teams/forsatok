@@ -30,14 +30,13 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: Home },
       { path:'jobs', component :Jobs},
-
+      // {path: job/:id, component: JobDetails},
       { path: 'candidates', component: Candidates },
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
       { path:'profile', component :Profile},
-      // { path: 'blog', component: Blog },
-
       {path:'company',component:Company},
+      // { path: 'blog', component: Blog },
       // {
       // path: 'jobs',
       // component: Jobs
