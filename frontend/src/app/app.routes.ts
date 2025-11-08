@@ -15,10 +15,10 @@ import { Home } from './features/home/home';
 import { NotFound } from './features/not-found/not-found';
 import { ContactUs } from './features/contact-us/contact-us';
 import { CandidateProfile } from './features/candidate-profile/candidate-profile';
+import { Company } from './features/company/company';
 import { Candidates } from './features/candidates/candidates';
 import {Jobs} from './features/jobs/jobs';
 import { Profile } from './features/profile/profile';
-
 
 // ============ Routes ============
 export const routes: Routes = [
@@ -35,6 +35,7 @@ export const routes: Routes = [
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
       { path:'profile', component :Profile},
+      {path:'company',component:Company},
       // { path: 'blog', component: Blog },
       // {
       // path: 'jobs',

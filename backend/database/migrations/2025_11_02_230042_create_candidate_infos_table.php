@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('phone')->nullable();
-            $table->string('resume')->nullable(); // path to uploaded file
+            $table->string('resume')->nullable(); 
             $table->string('education')->nullable();
             $table->string('experience')->nullable();
             $table->text('bio')->nullable();
