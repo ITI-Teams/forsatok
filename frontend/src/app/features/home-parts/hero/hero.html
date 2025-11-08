@@ -1,7 +1,7 @@
 <section
   class="relative w-full h-[1100px] pt-[80px] overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
   <!-- Video Background -->
-  <video #heroVideo autoplay loop playsinline preload="auto" class="absolute top-0 left-0 w-full h-full object-cover">
+  <video #heroVideo autoplay muted loop playsinline preload="auto" class="absolute top-0 left-0 w-full h-full object-cover">
     <source src="/videos/office.mp4" type="video/mp4">
   </video>
 
@@ -27,15 +27,15 @@
           <div
             class="flex items-center flex-1 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 pb-3 md:pb-0 md:pr-4">
             <i class="fas fa-search text-gray-400 dark:text-gray-500 mr-3"></i>
-            <input type="text" placeholder="Job title, keywords, or company"
+            <input type="text" placeholder="Job title, keywords, or company" [(ngModel)]="searchTerm"
               class="w-full bg-transparent outline-none text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 transition-colors">
           </div>
           <div class="flex items-center flex-1 pb-3 md:pb-0">
             <i class="fas fa-map-marker-alt text-gray-400 dark:text-gray-500 mr-3"></i>
-            <input type="text" placeholder="City or postcode"
+            <input type="text" placeholder="City or postcode" [(ngModel)]="selectedLocation"
               class="w-full bg-transparent outline-none text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 transition-colors">
           </div>
-          <button
+          <button (click)="goToJobs()"
             class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
             Find Jobs
           </button>
@@ -60,7 +60,7 @@
           class="text-blue-400 hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer">Engineer,</span>
       </div>
 
-      <div class="flex justify-between items-center flex-col xl:flex-row gap-8">
+      <div class="flex justify-between items-center flex-col lg:flex-row gap-8">
         <!-- Candidates -->
         <div class="flex items-center gap-3">
           <div class="flex -space-x-5">
@@ -91,7 +91,7 @@
         <!-- Floating Icons -->
         <ng-container *ngFor="let icon of companyIcons; let i = index">
           <div
-            class="absolute w-16 h-16 bg-white dark:bg-gray-800 rounded-full shadow-xl flex items-center justify-center animate-bounce transition-colors"
+            class="absolute w-16 h-16 bg-white dark:bg-gray-800 rounded-full shadow-xl flex items-center justify-center animate-float transition-colors"
             [ngStyle]="icon.position">
             <i [class]="icon.faClass + ' text-xl ' + icon.colorClass"></i>
           </div>

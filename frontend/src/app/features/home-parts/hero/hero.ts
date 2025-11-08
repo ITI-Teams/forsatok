@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 interface Candidate {
   initials: string;
@@ -7,21 +9,24 @@ interface Candidate {
 
 interface CompanyIcon {
   faClass: string;
-  colorClass: string; // بدل color العادي
+  colorClass: string;
   position: any;
 }
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './hero.html',
   styleUrls: ['./hero.css'],
 })
 export class Hero implements AfterViewInit {
+  searchTerm: string = '';
+  selectedLocation: string = '';
+
   @ViewChild('heroVideo', { static: false }) heroVideo!: ElementRef<HTMLVideoElement>;
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private renderer: Renderer2, private router: Router) { }
 
   candidates: Candidate[] = Array.from({ length: 7 }, (_, i) => ({
     initials: `C${i + 1}`,
@@ -40,22 +45,32 @@ export class Hero implements AfterViewInit {
     const video = this.heroVideo?.nativeElement;
     if (!video) return;
 
-    // video.addEventListener('error', () => {
-    //   console.warn('Video failed to load:', video.error);
-    //   const container = video.closest('.relative');
-    //   if (container) {
-    //     this.renderer.addClass(container, 'bg-gray-100');
-    //     this.renderer.addClass(container, 'dark:bg-gray-900');
-    //   }
-    // });
+    video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    video.loop = true;
 
     const playPromise = video.play();
     if (playPromise !== undefined) {
-      playPromise.catch((error) => {
-        console.warn('Video autoplay prevented:', error);
+      playPromise.catch(() => {
+        console.warn('Autoplay blocked, trying again muted');
         video.muted = true;
-        video.play().catch(() => console.warn('Video play failed even after muting'));
+        video.play().catch(() => console.warn('Video still cannot play'));
       });
     }
+  }
+
+  goToJobs() {
+    const queryParams: any = {};
+
+    if (this.searchTerm?.trim()) {
+      queryParams.search = this.searchTerm.trim().toLowerCase();
+    }
+
+    if (this.selectedLocation?.trim()) {
+      queryParams.location = this.selectedLocation.trim().toLowerCase();
+    }
+
+    this.router.navigate(['/jobs'], { queryParams });
   }
 }

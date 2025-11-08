@@ -12,10 +12,11 @@ import { ResetPass } from './features/auth/reset-pass/reset-pass';
 import { Layout } from './layout/layout/layout';
 import { Home } from './features/home/home';
 import { NotFound } from './features/not-found/not-found';
-import { Employers } from './features/employers/employers';
 import { ContactUs } from './features/contact-us/contact-us';
 import { CandidateProfile } from './features/candidate-profile/candidate-profile';
 import { Company } from './features/company/company';
+import { Candidates } from './features/candidates/candidates';
+import {Jobs} from './features/jobs/jobs';
 
 // ============ Routes ============
 export const routes: Routes = [
@@ -26,13 +27,19 @@ export const routes: Routes = [
     component: Layout,
     children: [
       { path: 'home', component: Home },
+      { path:'jobs', component :Jobs},
       { path:'contact-us' , component :ContactUs},
-      { path:'candidate-profile', component :CandidateProfile},
+      { path:'profile', component :CandidateProfile},
       // { path: 'blog', component: Blog },
+
       // { path: 'contact', component: Contact },
       { path: 'employers', component: Employers },
       {path:'company',component:Company},
       // { path: 'candidates', component: Candidates },
+
+      { path: 'contact', component: ContactUs },
+      { path: 'candidates', component: Candidates },
+
       // {
       // path: 'jobs',
       // component: Jobs

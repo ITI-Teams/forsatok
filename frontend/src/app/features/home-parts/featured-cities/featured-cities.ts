@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-featured-cities',
-  imports: [],
+  standalone: true,
+  imports: [RouterLink],
   templateUrl: './featured-cities.html',
-  styleUrl: './featured-cities.css',
+  styleUrls: ['./featured-cities.css'],
 })
 export class FeaturedCities {
 

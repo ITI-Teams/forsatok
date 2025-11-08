@@ -9,15 +9,15 @@ class SavedJob extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'job_id'];
+    protected $fillable = ['candidate_id', 'job_post_id'];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'candidate_id');
     }
 
     public function job()
     {
-        return $this->belongsTo(JobPost::class);
+        return $this->belongsTo(JobPost::class, 'job_post_id');
     }
 }

@@ -1,10 +1,15 @@
 <?php
+
 use App\Domains\Jobs\Actions\Job\ShowJobAction;
 use App\Http\Controllers\Api\CandidateInfoController;
 use App\Livewire\Admin\Permissions\PermissionIndex;
 use App\Livewire\Admin\Roles\RoleIndex;
 use App\Livewire\Admin\Roles\RolePermission;
 use App\Livewire\Admin\Users\UserRolePermission;
+use App\Livewire\Applications\ApplicationForm;
+use App\Livewire\Applications\ApplicationList;
+use App\Livewire\Applications\ApplicationShow;
+use App\Livewire\Applications\ApplicationTrash;
 use App\Livewire\Category\CategoryForm;
 use App\Livewire\Category\CategoryList;
 use App\Livewire\Category\CategoryTrash;
@@ -76,7 +81,15 @@ Route::prefix('jobs')->middleware(['auth'])->name('jobs.')->group(function () {
     Route::get('/jobs/{id}', JobShow::class)->name('show');
     Route::get('/trash', JobTrash::class)->name('trash');
 });
+// job Applications routes
+Route::prefix('job/application')->middleware(['auth'])->name('job.app.')->group(function () {
+    Route::get('/', ApplicationList::class)->name('index');
+    Route::get('/create', ApplicationForm::class)->name('create');
+    Route::get('/{application}/edit', ApplicationForm::class)->name('edit');
+    Route::get('/trash', ApplicationTrash::class)->name('trash');
+    Route::get('/{id}', ApplicationShow::class)->name('show');
 
+});
 
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/roles', RoleIndex::class)->name('admin.roles');
@@ -86,9 +99,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 });
 
 
-// cadidate api routes
-Route::get('/api/candidate-info', [CandidateInfoController::class, 'show']);
-Route::post('/api/candidate-info', [CandidateInfoController::class, 'update']);
+
 
 // Employer Info
 Route::prefix('employer')->middleware(['auth'])->group(function () {

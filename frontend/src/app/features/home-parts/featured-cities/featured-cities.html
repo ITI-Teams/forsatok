@@ -1,1 +1,81 @@
-<p>featured-cities works!</p>
+<section>
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+    <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Featured Cities</h2>
+    <p class="text-gray-500 dark:text-gray-400 mb-10">Lorem ipsum dolor sit amet elit, sed do eiusmod tempor</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-auto">
+
+      <!-- First Card (takes 2 rows) -->
+      <div [routerLink]="['/jobs']" [queryParams]="{ location: 'new-york' }" class="relative overflow-hidden rounded-2xl shadow-sm bg-gray-100 dark:bg-gray-800 row-span-2">
+        <div class="relative group w-full h-full">
+          <img src="/images/NewYork.png" alt="New York City"
+            class="w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-2" />
+          <div
+            class="absolute inset-0 bg-black/20 dark:bg-black/30 group-hover:bg-black/40 dark:group-hover:bg-black/60 transition-colors duration-300 ease-in-out">
+          </div>
+          <div class="absolute bottom-4 left-4 z-10">
+            <h4 class="text-2xl font-semibold text-white mb-1">New York</h4>
+            <p class="text-gray-200 text-sm">12 Jobs</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other 4 Cards -->
+      <div [routerLink]="['/jobs']" [queryParams]="{ location: 'los-angelos' }" class="relative overflow-hidden rounded-2xl shadow-sm bg-gray-100 dark:bg-gray-800">
+        <div class="relative group w-full h-64">
+          <img src="/images/LosAngelos.png" alt="City"
+            class="w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-2" />
+          <div
+            class="absolute inset-0 bg-black/20 dark:bg-black/30 group-hover:bg-black/40 dark:group-hover:bg-black/60 transition-colors duration-300 ease-in-out">
+          </div>
+          <div class="absolute bottom-4 left-4 z-10">
+            <h4 class="text-xl font-semibold text-white mb-1">Los Angeles</h4>
+            <p class="text-gray-200 text-sm">8 Jobs</p>
+          </div>
+        </div>
+      </div>
+
+      <div [routerLink]="['/jobs']" [queryParams]="{ location: 'paris' }"class="relative overflow-hidden rounded-2xl shadow-sm bg-gray-100 dark:bg-gray-800">
+        <div class="relative group w-full h-64">
+          <img src="/images/Paris.png" alt="City"
+            class="w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-2" />
+          <div
+            class="absolute inset-0 bg-black/20 dark:bg-black/30 group-hover:bg-black/40 dark:group-hover:bg-black/60 transition-colors duration-300 ease-in-out">
+          </div>
+          <div class="absolute bottom-4 left-4 z-10">
+            <h4 class="text-xl font-semibold text-white mb-1">Paris</h4>
+            <p class="text-gray-200 text-sm">6 Jobs</p>
+          </div>
+        </div>
+      </div>
+
+      <div [routerLink]="['/jobs']" [queryParams]="{ location: 'london' }" class="relative overflow-hidden rounded-2xl shadow-sm bg-gray-100 dark:bg-gray-800">
+        <div class="relative group w-full h-64">
+          <img src="/images/London.png" alt="City"
+            class="w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-2" />
+          <div
+            class="absolute inset-0 bg-black/20 dark:bg-black/30 group-hover:bg-black/40 dark:group-hover:bg-black/60 transition-colors duration-300 ease-in-out">
+          </div>
+          <div class="absolute bottom-4 left-4 z-10">
+            <h4 class="text-xl font-semibold text-white mb-1">London</h4>
+            <p class="text-gray-200 text-sm">9 Jobs</p>
+          </div>
+        </div>
+      </div>
+
+      <div [routerLink]="['/jobs']" [queryParams]="{ location: 'miami' }" class="relative overflow-hidden rounded-2xl shadow-sm bg-gray-100 dark:bg-gray-800">
+        <div class="relative group w-full h-64">
+          <img src="/images/Miami.png" alt="City"
+            class="w-full h-full object-cover transform transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-2" />
+          <div
+            class="absolute inset-0 bg-black/20 dark:bg-black/30 group-hover:bg-black/40 dark:group-hover:bg-black/60 transition-colors duration-300 ease-in-out">
+          </div>
+          <div class="absolute bottom-4 left-4 z-10">
+            <h4 class="text-xl font-semibold text-white mb-1">Miami</h4>
+            <p class="text-gray-200 text-sm">7 Jobs</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

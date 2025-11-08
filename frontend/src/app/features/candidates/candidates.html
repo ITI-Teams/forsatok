@@ -1,0 +1,274 @@
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- ===== Candidate Card ===== -->
+    <div class="bg-white rounded-2xl shadow px-6 py-6 mt-20 flex flex-col lg:flex-row items-center gap-6">
+        <div class="flex items-center gap-6 w-full lg:w-auto">
+            <img [src]="candidate.image" alt="Candidate Photo"
+                class="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover" />
+            <div class="text-left">
+                <h1 class="text-2xl font-bold text-gray-800">{{ candidate.name }}</h1>
+                <p class="text-blue-600 font-medium">{{ candidate.title }}</p>
+                <div class="mt-2 text-gray-500 text-sm space-y-1">
+                    <div class="flex items-center gap-2"><i class="fa fa-map-marker-alt"></i> {{ candidate.location }}
+                    </div>
+                    <div class="flex items-center gap-2"><i class="fa fa-envelope"></i> {{ candidate.email }}</div>
+                    <div class="flex items-center gap-2"><i class="fa fa-phone"></i> {{ candidate.phone }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ml-auto flex gap-3">
+            <button
+                class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white px-5 py-2 rounded-lg">Shortlist</button>
+            <button class="border border-blue-600 text-blue-600 px-5 py-2 rounded-lg hover:bg-blue-50">
+                <i class="fa fa-download mr-2"></i> Download CV
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== Tabs bar ===== -->
+    <div class="mt-6 bg-white rounded-t-2xl border border-t-0 border-gray-200 shadow">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <ul class="flex flex-wrap gap-2 lg:gap-4 text-sm" role="tablist">
+                <li *ngFor="let t of tabs">
+                    <button (click)="setActive(t.id)" [class]="
+              'px-4 py-3 rounded-t-lg focus:outline-none ' +
+              (activeTab === t.id
+                ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
+                : 'text-gray-500 hover:text-gray-700 bg-gray-50')" type="button" role="tab"
+                        aria-selected="{{ activeTab === t.id }}">
+                        {{ t.label }}
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ===== Content area with left main and right sidebar ===== -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-6" id="tab-content">
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Description -->
+                <div *ngIf="activeTab === 'description'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">About Me</h2>
+                    <p class="text-gray-600 whitespace-pre-line">{{ description.text }}</p>
+                </div>
+
+                <!-- Education -->
+                <div *ngIf="activeTab === 'education'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Education</h2>
+                    <div class="relative border-l border-gray-300 ml-4">
+                        <div *ngFor="let e of education; let last = last" class="mb-8 ml-6 relative">
+                            <p class="text-blue-600 font-semibold">
+                                {{ e.university }}
+                                <span class="text-gray-500 text-sm ml-2">{{ e.years }}</span>
+                            </p>
+                            <h3 class="text-gray-800 font-medium text-lg">
+                                {{ e.degree }}
+                            </h3>
+                            <p class="text-gray-500 text-sm leading-relaxed mt-1">
+                                {{ e.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience -->
+                <div *ngIf="activeTab === 'experience'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Experience</h2>
+                    <div class="relative border-l border-gray-300 ml-4">
+                        <div *ngFor="let exp of experience" class="mb-8 ml-6 relative">
+                            <p class="text-blue-600 font-semibold">
+                                {{ exp.company }}
+                                <span class="text-gray-500 text-sm ml-2">{{ exp.years }}</span>
+                            </p>
+                            <h3 class="text-gray-800 font-medium text-lg">
+                                {{ exp.position }}
+                            </h3>
+                            <p class="text-gray-500 text-sm leading-relaxed mt-1">
+                                {{ exp.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio -->
+                <div *ngIf="activeTab === 'portfolio'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Portfolio</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div *ngFor="let p of portfolio" (click)="openImage(p.image)"
+                            class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer">
+                            <img [src]="p.image" alt="{{ p.name }}"
+                                class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300" />
+                            <div class="p-4">
+                                <p class="font-semibold">{{ p.name }}</p>
+                                <p class="text-sm text-gray-500">{{ p.desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="selectedImage"
+                        class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+                        (click)="closeImage()">
+                        <div class="relative max-w-3xl w-full p-4">
+                            <img [src]="selectedImage" alt="Portfolio Preview"
+                                class="w-full h-auto rounded-lg shadow-lg" />
+                            <button (click)="closeImage()"
+                                class="absolute top-2 right-2 text-white bg-gray-800 rounded-full px-3 py-1 hover:bg-gray-700">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Skills -->
+                <div *ngIf="activeTab === 'skills'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Skills</h2>
+                    <div class="space-y-4">
+                        <div *ngFor="let s of skills">
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium text-gray-700">{{ s.name }}</span>
+                                <span class="text-sm text-gray-500">{{ s.level }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="h-2 rounded-full bg-blue-600" [style.width.%]="s.level"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Awards -->
+                <div *ngIf="activeTab === 'awards'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Awards</h2>
+                    <div class="relative border-l border-gray-300 ml-4">
+                        <div *ngFor="let a of awards" class="mb-8 ml-6 relative">
+                            <p class="text-blue-600 font-semibold">
+                                {{ a.title }}
+                                <span class="text-gray-500 text-sm ml-2">{{ a.year }}</span>
+                            </p>
+                            <h3 class="text-gray-800 font-medium text-lg">
+                                {{ a.organization }}
+                            </h3>
+                            <p class="text-gray-500 text-sm leading-relaxed mt-1">
+                                {{ a.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: sidebar -->
+            <aside class="bg-white rounded-lg p-6 shadow space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Profile Overview</h3>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li><span class="font-medium">Offered Salary:</span> {{ candidate.salary }}</li>
+                        <li><span class="font-medium">Experience:</span> {{ candidate.experience }}</li>
+                        <li><span class="font-medium">Languages:</span> {{ candidate.languages.join(', ') }}</li>
+                        <li><span class="font-medium">Age / Gender:</span> 29 / Male</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Contact</h3>
+                    <form (ngSubmit)="submitContact()" class="space-y-3">
+                        <input name="name" [(ngModel)]="contactModel.name" placeholder="Your name"
+                            class="w-full border rounded px-3 py-2 text-sm" required />
+                        <input name="email" [(ngModel)]="contactModel.email" placeholder="Email"
+                            class="w-full border rounded px-3 py-2 text-sm" required />
+                        <textarea name="message" [(ngModel)]="contactModel.message" rows="4" placeholder="Message"
+                            class="w-full border rounded px-3 py-2 text-sm" required></textarea>
+                        <button type="submit"
+                            class="p-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white rounded-lg shadow transition-all duration-300 w-full">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Social</h3>
+                    <div class="flex gap-3">
+                        <a href="#" class="text-[#0A66C2]">
+                            <i class="fab fa-linkedin fa-lg"></i>
+                        </a>
+                        <a href="#" class="text-[#181717]">
+                            <i class="fab fa-github fa-lg"></i>
+                        </a>
+                        <a href="#" class="text-black-600">
+                            <i class="fab fa-x fa-lg"></i>
+                        </a>
+                        <a href="#" class="text-[#1877F2]">
+                            <i class="fab fa-facebook fa-lg"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </aside>
+        </div>
+    </div>
+    <!-- REVIEWS SECTION -->
+    <div class="mx-auto mt-10 max-w-4xl">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Reviews</h2>
+
+        <!-- Review Form -->
+        <form (ngSubmit)="submitReview()" #reviewForm="ngForm" class="bg-white rounded-lg shadow-sm p-6 space-y-4 mb-8">
+            <!-- Name -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input type="text" name="name" [(ngModel)]="newReview.name" required
+                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-purple-500" />
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" name="email" [(ngModel)]="newReview.email" required
+                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-purple-500" />
+            </div>
+
+            <!-- Rating -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                <div class="flex items-center gap-1">
+                    <i *ngFor="let star of [1, 2, 3, 4, 5]" (click)="newReview.rating = star"
+                        class="fa fa-star cursor-pointer text-lg"
+                        [ngClass]="{'text-yellow-400': star <= newReview.rating, 'text-gray-300': star > newReview.rating}">
+                    </i>
+                </div>
+            </div>
+
+            <!-- Review Text -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Review</label>
+                <textarea name="text" [(ngModel)]="newReview.text" rows="4" required
+                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-purple-500"></textarea>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" [disabled]="!reviewForm.valid"
+                class="p-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white rounded-lg shadow transition-all duration-300">
+                Submit Review
+            </button>
+        </form>
+
+        <!-- Reviews List -->
+        <div class="space-y-4">
+            <div *ngFor="let r of reviews" class="p-4 bg-white rounded-lg shadow-sm border border-gray-100 flex gap-4">
+                <img [src]="r.image" alt="{{ r.name }}"
+                    class="w-12 h-12 rounded-full object-cover border border-gray-200" />
+                <div class="flex-1">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ r.name }}</p>
+                            <p class="text-sm text-gray-500">{{ r.email }}</p>
+                            <p class="mt-1 text-gray-700">{{ r.text }}</p>
+                        </div>
+                        <div class="flex items-center gap-1 text-yellow-400">
+                            <i *ngFor="let i of [].constructor(r.rating)" class="fa fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

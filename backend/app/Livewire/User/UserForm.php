@@ -4,8 +4,8 @@ namespace App\Livewire\User;
 
 use App\Domains\Users\Actions\CreateUserAction;
 use App\Domains\Users\Actions\UpdateUserAction;
-use App\Domains\Users\Requests\StoreUserRequest;
-use App\Domains\Users\Requests\UpdateUserRequest;
+use App\Domains\Users\Requests\StoreApplicationRequest;
+use App\Domains\Users\Requests\UpdateApplicationRequest;
 use App\Domains\Users\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
@@ -50,18 +50,18 @@ class UserForm extends Component
                 $data['password_confirmation'] = $this->password_confirmation;
             }
 
-            $rules = (new UpdateUserRequest())->rules();
-            $messages = (new UpdateUserRequest())->messages() ?? [];
-            $attributes = (new UpdateUserRequest())->attributes() ?? [];
+            $rules = (new UpdateApplicationRequest())->rules();
+            $messages = (new UpdateApplicationRequest())->messages() ?? [];
+            $attributes = (new UpdateApplicationRequest())->attributes() ?? [];
 
             $validated = Validator::make($data, $rules, $messages, $attributes)->validate();
         } else {
             $data['password'] = $this->password;
             $data['password_confirmation'] = $this->password_confirmation;
 
-            $rules = (new StoreUserRequest())->rules();
-            $messages = (new StoreUserRequest())->messages() ?? [];
-            $attributes = (new StoreUserRequest())->attributes() ?? [];
+            $rules = (new StoreApplicationRequest())->rules();
+            $messages = (new StoreApplicationRequest())->messages() ?? [];
+            $attributes = (new StoreApplicationRequest())->attributes() ?? [];
 
             $validated = Validator::make($data, $rules, $messages, $attributes)->validate();
         }
