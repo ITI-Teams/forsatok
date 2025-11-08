@@ -1,9 +1,8 @@
 <?php
-
 use App\Domains\Applications\Controllers\Api\ApplicationController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
-use App\Http\Controllers\Api\CandidateInfoController;
+use App\Domains\Candidates\Controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +16,12 @@ Route::prefix('auth')->group(function () {
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
     Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
     Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
+
+// cadidate api routes
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/candidate/info', [CandidateInfoController::class, 'show']);
+    Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
+});
 });
 // Protected (requires token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -34,9 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/unsave/{id}', [SaveJobController::class, 'destroy']);
     });
 
-// cadidate api routes
-Route::get('/api/candidate-info', [CandidateInfoController::class, 'show']);
-Route::post('/api/candidate-info', [CandidateInfoController::class, 'update']);
+
 });
 
 
