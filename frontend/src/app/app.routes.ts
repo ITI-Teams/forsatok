@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+
 // Import Auth Pages
 import { Register } from './features/auth/register/register';
 import { Login } from './features/auth/login/login';
@@ -17,6 +18,7 @@ import { CandidateProfile } from './features/candidate-profile/candidate-profile
 import { Company } from './features/company/company';
 import { Candidates } from './features/candidates/candidates';
 import {Jobs} from './features/jobs/jobs';
+import { Profile } from './features/profile/profile';
 
 // ============ Routes ============
 export const routes: Routes = [
@@ -28,18 +30,14 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: Home },
       { path:'jobs', component :Jobs},
-      { path:'contact-us' , component :ContactUs},
-      { path:'profile', component :CandidateProfile},
+
+      { path: 'candidates', component: Candidates },
+      { path: 'candidate/:id', component: CandidateProfile },
+      { path: 'contact', component: ContactUs },
+      { path:'profile', component :Profile},
       // { path: 'blog', component: Blog },
 
-      // { path: 'contact', component: Contact },
-      { path: 'employers', component: Employers },
       {path:'company',component:Company},
-      // { path: 'candidates', component: Candidates },
-
-      { path: 'contact', component: ContactUs },
-      { path: 'candidates', component: Candidates },
-
       // {
       // path: 'jobs',
       // component: Jobs
