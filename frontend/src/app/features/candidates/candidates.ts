@@ -1,209 +1,517 @@
+// candidates-search.component.ts
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CheckboxModule } from 'primeng/checkbox';
+import { SliderModule } from 'primeng/slider';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+
+interface Candidate {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  location?: string;
+  education?: string;
+  experience?: string;
+  bio?: string;
+  skills: string[];
+}
 
 @Component({
   selector: 'app-candidates',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CheckboxModule,
+    SliderModule,
+    ButtonModule,
+    CardModule
+  ],
   templateUrl: './candidates.html',
-  styleUrls: ['./candidates.css'],
+  styleUrls: ['./candidates.css']
 })
-export class Candidates {
-  activeTab = 'description';
+export class Candidates implements OnInit {
+  candidates: Candidate[] = [];
+  filteredCandidates: Candidate[] = [];
+  selectedLocation: string = '';
+  selectedEducation: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  isFilterOpen: boolean = false;
+  private isInitialLoad: boolean = true;
 
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
-  candidate = {
-    name: 'Ali Tufan',
-    title: 'Senior UI/UX Designer',
-    location: 'Cairo, Egypt',
-    email: 'ali.tufan@example.com',
-    phone: '+20 123 456 7890',
-    image: 'https://i.pravatar.cc/300?img=3',
-    salary: '$45k - $60k',
-    experience: '5 Years',
-    languages: ['English', 'Arabic', 'Spanish'],
-  };
+  toggleFilters() {
+    this.isFilterOpen = !this.isFilterOpen;
+  }
 
-  tabs = [
-    { id: 'description', label: 'Description' },
-    { id: 'education', label: 'Education' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'portfolio', label: 'Portfolio' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'awards', label: 'Awards' },
-  ];
+  applyFiltersAndClose() {
+    this.applyFilters();
+    this.isFilterOpen = false;
+  }
 
-
-  description = {
-    text: `I’m top rated, highly client-oriented and self-organized UX/UI designer with 3+ years of comprehensive experience working across UX/UI, Web and Graphic Design. Have huge working experience in international teams in collaboration with art director and front-end devs. Have successful experience in startups as well as award-winning redesigns of existing projects.
-      I take personal responsibility and pay attention to any detail of my work and can greatly help you with:
-      Creating UX/UI for highloaded interface systems: CRM, SaaS, B2B, ERP systems, enterprise solutions and analytical systems with administration panels, dashboards, infographics and compex data
-      Information architecting and creating UX/UI from scratch or low-fidelity wireframes to final visual UI design for web, mobile (iOS, Android) and desktop
-      Product design for large international projects: monitoring and management web applications in health care, insurance, agroculture, banking and cryptocurrency area; SaaS web applications for marketing and analytics
-      The better I do – the better I feel. My aim is to help you to convert the idea into successful product with the most effective, clean and aesthetic design. I’m passionately interested in challenging tasks and researching for intricate results.`,
-  };
-
-  education = [
-    {
-      university: 'Walters University',
-      years: '2002 - 2004',
-      degree: 'Masters In Fine Arts',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a ipsum tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus.',
-    },
-    {
-      university: 'Tombers Collage',
-      years: '2012 - 2015',
-      degree: 'Bachelors In Fine Arts',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a ipsum tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus.',
-    },
-    {
-      university: 'Imperial Institute of Art Direction',
-      years: '2015 - 2017',
-      degree: 'Diploma In Fine Arts',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a ipsum tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus.',
-    },
-  ];
-
-  experience = [
-    {
-      company: 'Creative Agency',
-      years: '2018 - 2020',
-      position: 'Senior Graphic Designer',
-      description:
-        'Worked on a wide range of branding and digital design projects. Collaborated closely with developers and clients to deliver creative solutions.',
-    },
-    {
-      company: 'Art Studio',
-      years: '2020 - 2022',
-      position: 'Lead Visual Designer',
-      description:
-        'Led a team of designers and managed creative direction for various campaigns and visual identities.',
-    },
-    {
-      company: 'DesignPro Inc.',
-      years: '2022 - Present',
-      position: 'Creative Director',
-      description:
-        'Overseeing art direction, UX/UI improvements, and visual branding strategies across multiple client projects.',
-    },
-  ];
-
-  portfolio = [
-    {
-      name: 'Landing Page Design',
-      desc: 'Creative landing page concept for a startup.',
-      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
-    },
-    {
-      name: 'Dashboard UI',
-      desc: 'Modern dashboard design with dark mode support.',
-      image: 'https://images.unsplash.com/photo-1509395176047-4a66953fd231',
-    },
-    {
-      name: 'Mobile App Concept',
-      desc: 'A UI concept for a finance tracking app.',
-      image: 'https://images.unsplash.com/photo-1508931133309-29d92d362f7b',
-    },
-  ];
-
+  // Filter options
   skills = [
-    { name: 'Figma', level: 90 },
-    { name: 'Adobe XD', level: 80 },
-    { name: 'HTML/CSS', level: 85 },
-    { name: 'Angular', level: 75 },
+    { name: 'JavaScript', count: 150, selected: false },
+    { name: 'Python', count: 120, selected: false },
+    { name: 'React', count: 90, selected: false },
+    { name: 'Angular', count: 85, selected: false },
+    { name: 'Vue.js', count: 70, selected: false },
+    { name: 'Node.js', count: 95, selected: false },
+    { name: 'PHP', count: 80, selected: false },
+    { name: 'Laravel', count: 75, selected: false },
+    { name: 'Java', count: 100, selected: false },
+    { name: 'C++', count: 60, selected: false },
+    { name: 'UI/UX Design', count: 110, selected: false },
+    { name: 'Graphic Design', count: 85, selected: false },
+    { name: 'Marketing', count: 95, selected: false },
+    { name: 'Sales', count: 80, selected: false },
+    { name: 'Project Management', count: 70, selected: false }
   ];
 
-  awards = [
-    {
-      title: 'Best Creative Designer',
-      year: '2019',
-      organization: 'Design Awards International',
-      description:
-        'Recognized for outstanding innovation and visual creativity in digital branding projects.',
-    },
-    {
-      title: 'UI/UX Excellence Award',
-      year: '2021',
-      organization: 'Tech Design Expo',
-      description:
-        'Awarded for exceptional user experience design and impactful product interfaces.',
-    },
-    {
-      title: 'Top Designer of the Year',
-      year: '2023',
-      organization: 'Creative Minds Conference',
-      description:
-        'Honored for leading-edge design strategy and contributions to creative community initiatives.',
-    },
+  educationLevels = [
+    { name: 'High School', value: 'high-school' },
+    { name: 'Bachelor\'s Degree', value: 'bachelor' },
+    { name: 'Master\'s Degree', value: 'master' },
+    { name: 'PhD', value: 'phd' },
+    { name: 'Diploma', value: 'diploma' },
+    { name: 'Certificate', value: 'certificate' }
   ];
 
-  reviews = [
-    {
-      name: 'John Doe',
-      email: 'john@example.com',
-      text: 'Great experience working with this designer!',
-      rating: 5,
-      image: 'https://randomuser.me/api/portraits/men/32.jpg',
-    },
-    {
-      name: 'Sarah Smith',
-      email: 'sarah@example.com',
-      text: 'Very professional and creative approach.',
-      rating: 4,
-      image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
+  locations = [
+    { name: 'New York', value: 'new-york' },
+    { name: 'San Francisco', value: 'san-francisco' },
+    { name: 'London', value: 'london' },
+    { name: 'Berlin', value: 'berlin' },
+    { name: 'Tokyo', value: 'tokyo' },
+    { name: 'Remote', value: 'remote' },
+    { name: 'Cairo', value: 'cairo' },
+    { name: 'Dubai', value: 'dubai' }
   ];
 
+  popularSkills = [
+    { name: 'JavaScript', value: 'JavaScript' },
+    { name: 'Python', value: 'Python' },
+    { name: 'React', value: 'React' },
+    { name: 'UI/UX Design', value: 'UI/UX Design' },
+    { name: 'Marketing', value: 'Marketing' }
+  ];
 
-  newReview = {
-    name: '',
-    email: '',
-    text: '',
-    rating: 0,
-    image: '',
-  };
+  experienceRange: number[] = [0, 20];
+  searchTerm: string = '';
 
-  submitReview() {
-    if (!this.newReview.name || !this.newReview.email || !this.newReview.text || this.newReview.rating === 0 || !this.newReview.image) {
-      alert('Please fill all fields and select a rating.');
-      return;
+  ngOnInit() {
+    // Mock data - replace with actual API call
+    this.candidates = [
+      {
+        id: 1,
+        name: 'Ahmed Mohamed',
+        email: 'ahmed.mohamed@example.com',
+        phone: '+20 123 456 7890',
+        location: 'Cairo',
+        education: 'Bachelor\'s Degree',
+        experience: '5',
+        bio: 'Experienced full-stack developer with 5+ years in web development. Specialized in JavaScript, React, and Node.js.',
+        skills: ['JavaScript', 'React', 'Node.js', 'MongoDB']
+      },
+      {
+        id: 2,
+        name: 'Sara Ali',
+        email: 'sara.ali@example.com',
+        location: 'Dubai',
+        education: 'Master\'s Degree',
+        experience: '3',
+        bio: 'Creative UI/UX designer passionate about creating beautiful and functional user interfaces.',
+        skills: ['UI/UX Design', 'Figma', 'Adobe XD', 'Graphic Design']
+      },
+      {
+        id: 3,
+        name: 'Mohamed Hassan',
+        email: 'mohamed.hassan@example.com',
+        phone: '+20 987 654 3210',
+        location: 'Cairo',
+        education: 'Bachelor\'s Degree',
+        experience: '7',
+        bio: 'Senior software engineer with expertise in Python, Django, and cloud technologies.',
+        skills: ['Python', 'Django', 'AWS', 'Docker']
+      },
+      {
+        id: 4,
+        name: 'Fatima Ibrahim',
+        email: 'fatima.ibrahim@example.com',
+        location: 'Remote',
+        education: 'Master\'s Degree',
+        experience: '4',
+        bio: 'Digital marketing specialist with proven track record in social media and content marketing.',
+        skills: ['Marketing', 'Social Media', 'Content Writing', 'SEO']
+      },
+      {
+        id: 5,
+        name: 'Omar Khaled',
+        email: 'omar.khaled@example.com',
+        phone: '+20 555 123 4567',
+        location: 'Cairo',
+        education: 'Bachelor\'s Degree',
+        experience: '2',
+        bio: 'Frontend developer specializing in Angular and modern JavaScript frameworks.',
+        skills: ['Angular', 'TypeScript', 'JavaScript', 'HTML/CSS']
+      },
+      {
+        id: 6,
+        name: 'Layla Mahmoud',
+        email: 'layla.mahmoud@example.com',
+        location: 'Dubai',
+        education: 'PhD',
+        experience: '10',
+        bio: 'Senior data scientist with expertise in machine learning and big data analytics.',
+        skills: ['Python', 'Machine Learning', 'Data Science', 'TensorFlow']
+      },
+      {
+        id: 7,
+        name: 'Youssef Nour',
+        email: 'youssef.nour@example.com',
+        location: 'Cairo',
+        education: 'Bachelor\'s Degree',
+        experience: '6',
+        bio: 'Full-stack developer with strong background in PHP and Laravel framework.',
+        skills: ['PHP', 'Laravel', 'MySQL', 'Vue.js']
+      },
+      {
+        id: 8,
+        name: 'Nour Ahmed',
+        email: 'nour.ahmed@example.com',
+        location: 'Remote',
+        education: 'Master\'s Degree',
+        experience: '4',
+        bio: 'Product manager with experience in agile methodologies and product development.',
+        skills: ['Product Management', 'Agile', 'Project Management', 'Analytics']
+      },
+      {
+        id: 9,
+        name: 'Karim Mostafa',
+        email: 'karim.mostafa@example.com',
+        phone: '+20 111 222 3333',
+        location: 'Cairo',
+        education: 'Bachelor\'s Degree',
+        experience: '3',
+        bio: 'Backend developer specializing in Java and Spring framework with microservices experience.',
+        skills: ['Java', 'Spring', 'Microservices', 'PostgreSQL']
+      },
+      {
+        id: 10,
+        name: 'Mariam Saleh',
+        email: 'mariam.saleh@example.com',
+        location: 'Dubai',
+        education: 'Bachelor\'s Degree',
+        experience: '5',
+        bio: 'Sales professional with expertise in B2B sales and customer relationship management.',
+        skills: ['Sales', 'CRM', 'Negotiation', 'Communication']
+      },
+      {
+        id: 11,
+        name: 'Hassan Tarek',
+        email: 'hassan.tarek@example.com',
+        location: 'Cairo',
+        education: 'Master\'s Degree',
+        experience: '8',
+        bio: 'DevOps engineer with expertise in CI/CD, Kubernetes, and cloud infrastructure.',
+        skills: ['DevOps', 'Kubernetes', 'Docker', 'AWS', 'CI/CD']
+      },
+      {
+        id: 12,
+        name: 'Dina Samir',
+        email: 'dina.samir@example.com',
+        location: 'Remote',
+        education: 'Bachelor\'s Degree',
+        experience: '2',
+        bio: 'Junior frontend developer with passion for creating responsive and accessible web applications.',
+        skills: ['React', 'JavaScript', 'CSS', 'HTML']
+      }
+    ];
+
+    this.filteredCandidates = [...this.candidates];
+
+    // Read filters from URL query params
+    this.route.queryParams.subscribe(params => {
+      if (this.isInitialLoad) {
+        if (params['search']) {
+          this.searchTerm = params['search'];
+        }
+        if (params['location']) {
+          this.selectedLocation = params['location'];
+        }
+        if (params['education']) {
+          this.selectedEducation = params['education'];
+        }
+        if (params['skills']) {
+          const skillNames = params['skills'].split(',');
+          this.skills.forEach(skill => {
+            skill.selected = skillNames.includes(skill.name.toLowerCase().replace(/\s+/g, '-'));
+          });
+        }
+        if (params['experienceMin'] && params['experienceMax']) {
+          this.experienceRange = [parseInt(params['experienceMin']), parseInt(params['experienceMax'])];
+        }
+        // Apply filters after reading from URL (without updating URL)
+        this.applyFiltersWithoutURLUpdate();
+        this.isInitialLoad = false;
+      }
+    });
+  }
+
+  applyFiltersWithoutURLUpdate() {
+    this.filteredCandidates = this.candidates.filter(candidate => {
+      // Filter by skills
+      const skillsSelected = this.skills.some(skill => skill.selected);
+      if (skillsSelected) {
+        const candidateHasSelectedSkill = this.skills.some(skill =>
+          skill.selected && candidate.skills.some(cs =>
+            cs.toLowerCase().includes(skill.name.toLowerCase())
+          )
+        );
+        if (!candidateHasSelectedSkill) {
+          return false;
+        }
+      }
+
+      // Filter by education
+      if (this.selectedEducation && candidate.education) {
+        const educationValue = candidate.education.toLowerCase().replace(/\s+/g, '-');
+        if (!educationValue.includes(this.selectedEducation.toLowerCase())) {
+          return false;
+        }
+      }
+
+      // Filter by experience range
+      const candidateExp = parseInt(candidate.experience || '0');
+      if (candidateExp < this.experienceRange[0] || candidateExp > this.experienceRange[1]) {
+        return false;
+      }
+
+      // Filter by search term (name, email, or skills)
+      if (this.searchTerm) {
+        const searchLower = this.searchTerm.toLowerCase();
+        const matchesName = candidate.name.toLowerCase().includes(searchLower);
+        const matchesEmail = candidate.email.toLowerCase().includes(searchLower);
+        const matchesSkills = candidate.skills.some(skill =>
+          skill.toLowerCase().includes(searchLower)
+        );
+        const matchesBio = candidate.bio?.toLowerCase().includes(searchLower);
+
+        if (!matchesName && !matchesEmail && !matchesSkills && !matchesBio) {
+          return false;
+        }
+      }
+
+      // Filter by location (if selected)
+      if (this.selectedLocation && candidate.location) {
+        const locationValue = candidate.location.toLowerCase().replace(/\s+/g, '-');
+        if (locationValue !== this.selectedLocation.toLowerCase()) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    // Reset to first page when filters change
+    this.currentPage = 1;
+  }
+
+  updateURL() {
+    const queryParams: any = {};
+    
+    if (this.searchTerm?.trim()) {
+      queryParams.search = this.searchTerm.trim();
+    } else {
+      queryParams.search = null;
     }
-
-    this.reviews.push({ ...this.newReview });
-    alert('✅ Thank you for your review!');
-    this.newReview = { name: '', email: '', text: '', rating: 0, image: '' };
+    
+    if (this.selectedLocation?.trim()) {
+      queryParams.location = this.selectedLocation.trim();
+    } else {
+      queryParams.location = null;
+    }
+    
+    if (this.selectedEducation?.trim()) {
+      queryParams.education = this.selectedEducation.trim();
+    } else {
+      queryParams.education = null;
+    }
+    
+    const selectedSkills = this.skills
+      .filter(skill => skill.selected)
+      .map(skill => skill.name.toLowerCase().replace(/\s+/g, '-'));
+    if (selectedSkills.length > 0) {
+      queryParams.skills = selectedSkills.join(',');
+    } else {
+      queryParams.skills = null;
+    }
+    
+    if (this.experienceRange[0] !== 0 || this.experienceRange[1] !== 20) {
+      queryParams.experienceMin = this.experienceRange[0].toString();
+      queryParams.experienceMax = this.experienceRange[1].toString();
+    } else {
+      queryParams.experienceMin = null;
+      queryParams.experienceMax = null;
+    }
+    
+    // Remove null values
+    Object.keys(queryParams).forEach(key => {
+      if (queryParams[key] === null) {
+        delete queryParams[key];
+      }
+    });
+    
+    // Update URL without reloading
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: queryParams,
+      replaceUrl: true
+    });
   }
 
-  selectedImage: string | null = null;
+  applyFilters() {
+    this.filteredCandidates = this.candidates.filter(candidate => {
+      // Filter by skills
+      const skillsSelected = this.skills.some(skill => skill.selected);
+      if (skillsSelected) {
+        const candidateHasSelectedSkill = this.skills.some(skill =>
+          skill.selected && candidate.skills.some(cs =>
+            cs.toLowerCase().includes(skill.name.toLowerCase())
+          )
+        );
+        if (!candidateHasSelectedSkill) {
+          return false;
+        }
+      }
 
-  openImage(image: string) {
-    this.selectedImage = image;
+      // Filter by education
+      if (this.selectedEducation && candidate.education) {
+        const educationValue = candidate.education.toLowerCase().replace(/\s+/g, '-');
+        if (!educationValue.includes(this.selectedEducation.toLowerCase())) {
+          return false;
+        }
+      }
+
+      // Filter by experience range
+      const candidateExp = parseInt(candidate.experience || '0');
+      if (candidateExp < this.experienceRange[0] || candidateExp > this.experienceRange[1]) {
+        return false;
+      }
+
+      // Filter by search term (name, email, or skills)
+      if (this.searchTerm) {
+        const searchLower = this.searchTerm.toLowerCase();
+        const matchesName = candidate.name.toLowerCase().includes(searchLower);
+        const matchesEmail = candidate.email.toLowerCase().includes(searchLower);
+        const matchesSkills = candidate.skills.some(skill =>
+          skill.toLowerCase().includes(searchLower)
+        );
+        const matchesBio = candidate.bio?.toLowerCase().includes(searchLower);
+
+        if (!matchesName && !matchesEmail && !matchesSkills && !matchesBio) {
+          return false;
+        }
+      }
+
+      // Filter by location (if selected)
+      if (this.selectedLocation && candidate.location) {
+        const locationValue = candidate.location.toLowerCase().replace(/\s+/g, '-');
+        if (locationValue !== this.selectedLocation.toLowerCase()) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    // Reset to first page when filters change
+    this.currentPage = 1;
+    
+    // Update URL when filters change (only if not initial load)
+    if (!this.isInitialLoad) {
+      this.updateURL();
+    }
   }
 
-  closeImage() {
-    this.selectedImage = null;
+  get paginatedCandidates() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredCandidates.slice(startIndex, endIndex);
   }
 
-
-  // Contact form model (template-driven)
-  contactModel = { name: '', email: '', message: '' };
-
-  // methods
-  setActive(tabId: string) {
-    this.activeTab = tabId;
-    // scroll to top of content if needed
-    const el = document.querySelector('#tab-content');
-    if (el) (el as HTMLElement).scrollTop = 0;
+  get totalPages() {
+    return Math.ceil(this.filteredCandidates.length / this.itemsPerPage);
   }
 
-  submitContact() {
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
 
-    console.log('Contact submit:', this.contactModel);
-    alert('Message sent (demo).');
-    this.contactModel = { name: '', email: '', message: '' };
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  resetFilters() {
+    this.skills.forEach(skill => skill.selected = false);
+    this.experienceRange = [0, 20];
+    this.searchTerm = '';
+    this.selectedLocation = '';
+    this.selectedEducation = '';
+    // Clear URL params
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true
+    });
+    this.applyFilters();
+  }
+
+  selectQuickSkill(skillValue: string) {
+    const skill = this.skills.find(s =>
+      s.name.toLowerCase().includes(skillValue.toLowerCase()) ||
+      skillValue.toLowerCase().includes(s.name.toLowerCase())
+    );
+    if (skill) {
+      skill.selected = true;
+    }
+    this.applyFilters();
+
+    setTimeout(() => {
+      document.querySelector('.candidates-listings')?.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
+
+  onSearchInput() {
+    // Debounce search input to avoid too many URL updates
+    clearTimeout((this as any).searchTimeout);
+    (this as any).searchTimeout = setTimeout(() => {
+      this.applyFilters();
+    }, 500);
+  }
+
+  contactCandidate(email: string) {
+    if (email) {
+      window.location.href = `mailto:${email}`;
+    }
+  }
+
+  viewProfile(candidateId: number) {
+    this.router.navigate(['/candidate', candidateId]);
   }
 }
