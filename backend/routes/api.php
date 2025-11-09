@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Applications\Controllers\Api\ApplicationController;
+use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
@@ -43,3 +44,5 @@ Route::post('/api/candidate-info', [CandidateInfoController::class, 'update']);
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
+// Home Route
+Route::get('/home', [HomeController::class, 'index']);

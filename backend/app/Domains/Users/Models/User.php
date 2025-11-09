@@ -4,6 +4,7 @@ namespace App\Domains\Users\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Domains\Applications\Models\JobApplication;
+use App\Domains\Candidates\Models\CandidateInfo;
 use App\Domains\Employers\Models\CompanyReview;
 use App\Domains\Jobs\Models\JobPost;
 use App\Domains\Jobs\Models\SavedJob;
@@ -69,5 +70,9 @@ class User extends Authenticatable
     public function jobPosts()
     {
         return $this->hasMany(JobPost::class, 'employer_id');
+    }
+    public function candidateInfo()
+    {
+        return $this->hasOne(CandidateInfo::class, 'user_id');
     }
 }
