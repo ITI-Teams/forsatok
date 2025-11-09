@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Applications\Controllers\Api\ApplicationController;
+use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
 use App\Http\Controllers\Api\CandidateInfoController;
@@ -47,4 +48,9 @@ Route::prefix('company-reviews')->group(function () {
     Route::put('/{id}', [CompanyReviewsController::class, 'update']);
     Route::delete('/{id}', [CompanyReviewsController::class, 'destroy']);
 });
+
+// Jobs Routs
+Route::get('/jobs', [JobController::class, 'index']);
+Route::get('/jobs/{id}', [JobController::class, 'show']);
+
 
