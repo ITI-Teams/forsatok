@@ -1,11 +1,14 @@
 <?php
 
 use App\Domains\Applications\Controllers\Api\ApplicationController;
+use App\Domains\Home\Controllers\Api\HomeController;
+use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
 use App\Http\Controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,4 +42,19 @@ Route::get('/api/candidate-info', [CandidateInfoController::class, 'show']);
 Route::post('/api/candidate-info', [CandidateInfoController::class, 'update']);
 });
 
+ //  company reviews
+Route::prefix('company-reviews')->group(function () {
+    Route::get('/company/{companyId}', [CompanyReviewsController::class, 'showCompanyReviews']);
+    Route::post('/', [CompanyReviewsController::class, 'store']);
+    Route::put('/{id}', [CompanyReviewsController::class, 'update']);
+    Route::delete('/{id}', [CompanyReviewsController::class, 'destroy']);
+});
+
+// Jobs Routs
+Route::get('/jobs', [JobController::class, 'index']);
+Route::get('/jobs/{id}', [JobController::class, 'show']);
+
+
+// Home Route
+Route::get('/home', [HomeController::class, 'index']);
 

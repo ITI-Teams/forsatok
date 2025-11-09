@@ -42,7 +42,7 @@
                                 <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
                             </div>
                         @enderror
-                    </div> 
+                    </div>
 
                     <!-- Category -->
                     <div class="mb-3">

@@ -35,6 +35,8 @@ use App\Livewire\Location\CityList;
 use App\Livewire\Location\CityTrash;
 use App\Livewire\Location\LocationIndex;
 
+use App\Livewire\CompanyReviews\ListCompanyReviews;
+use App\Livewire\CompanyReviews\TrashCompanyReview;
 
 Route::view('/', 'welcome');
 
@@ -85,6 +87,10 @@ Route::prefix('cities')->group(function () {
     Route::get('/trash', CityTrash::class)->name('cities.trash');
 });
 
+Route::prefix('company-reviews')->group(function () {
+    Route::get('/', ListCompanyReviews::class)->name('company-reviews.index');
+    Route::get('/trash', TrashCompanyReview::class)->name('company-reviews.trash');
+});
 
 Route::prefix('users')->group(function () {
     Route::get('/', UserList::class)->name('users.index');
