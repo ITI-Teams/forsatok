@@ -60,7 +60,7 @@
                                     ['label' => 'Company Name', 'value' => $company_name ?? 'N/A', 'icon' => 'fa-solid fa-building'],
                                     ['label' => 'Email', 'value' => $email ?? 'N/A', 'icon' => 'bi bi-envelope'],
                                     ['label' => 'Industry', 'value' => $industry ?? 'N/A', 'icon' => 'bi bi-briefcase'],
-                                    ['label' => 'Location', 'value' => $location ?? 'N/A', 'icon' => 'bi bi-geo-alt'],
+                                    ['label' => 'Location', 'value' => $location_display ?? 'N/A', 'icon' => 'bi bi-geo-alt'],
                                     ['label' => 'Website', 'value' => $website ?? 'N/A', 'icon' => 'bi bi-globe', 'is_link' => true],
                                     ['label' => 'About Company', 'value' => $about ?? 'No description provided.', 'icon' => 'fa-solid fa-info', 'is_textarea' => true],
                                 ];

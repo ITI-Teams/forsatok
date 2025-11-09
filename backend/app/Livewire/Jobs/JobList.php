@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Jobs;
 
-use App\Domains\Jobs\Actions\Job\SoftDeleteJobAction;
+use App\Domains\Jobs\Actions\job\SoftDeleteJobAction;
 use App\Domains\Jobs\Models\JobPost;
 use Livewire\Component;
 
@@ -19,7 +19,7 @@ class JobList extends Component
 
     public function loadJobs()
     {
-        $this->jobs = JobPost::with(['category', 'employer'])->latest()->get();
+        $this->jobs = JobPost::with(['category', 'employer', 'location.country', 'location.city'])->latest()->get();
     }
 
 

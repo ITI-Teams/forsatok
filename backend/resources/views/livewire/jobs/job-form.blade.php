@@ -75,13 +75,41 @@
                             @error('experience') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
 
-                        {{-- Location --}}
+                        {{-- Country --}}
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">
-                                <i class="fa-solid fa-map-marker-alt me-2 text-primary"></i>Location
+                                <i class="fa-solid fa-globe me-2 text-primary"></i>Country
                             </label>
-                            <input type="text" wire:model.defer="location" class="form-control" placeholder="e.g. New York, Remote">
-                            @error('location') <span class="text-danger small">{{ $message }}</span> @enderror
+                            <select wire:model.live="country_id" class="form-select">
+                                <option value="">Select Country</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('country_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                        </div>
+
+                        {{-- City --}}
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-city me-2 text-primary"></i>City
+                            </label>
+                            <select wire:model.defer="city_id" class="form-select" @if(!$country_id) disabled @endif>
+                                <option value="">Select City</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('city_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                        </div>
+
+                        {{-- Address --}}
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-map-marker-alt me-2 text-primary"></i>Address
+                            </label>
+                            <input type="text" wire:model.defer="address" class="form-control" placeholder="Street, Building, Office">
+                            @error('address') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- Salary Range --}}
@@ -89,7 +117,7 @@
                             <label class="form-label fw-semibold">
                                 <i class="fa-solid fa-dollar-sign me-2 text-primary"></i>Salary (Min)
                             </label>
-                            <input type="number" wire:model.defer="salary_min" class="form-control" placeholder="Minimum salary">
+                            <input type="number" wire:model.defer="salary_min" class="form-control" placeholder="Minimum salary" step="0.01" max="99999999.99">
                             @error('salary_min') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
 
@@ -97,7 +125,7 @@
                             <label class="form-label fw-semibold">
                                 <i class="fa-solid fa-dollar-sign me-2 text-primary"></i>Salary (Max)
                             </label>
-                            <input type="number" wire:model.defer="salary_max" class="form-control" placeholder="Maximum salary">
+                            <input type="number" wire:model.defer="salary_max" class="form-control" placeholder="Maximum salary" step="0.01" max="99999999.99">
                             @error('salary_max') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
 

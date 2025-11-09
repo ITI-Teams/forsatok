@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Domains\Candidates\Models\CandidateInfo;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,10 +15,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            CountrySeeder::class,
+            CitySeeder::class,
             CategorySeeder::class,
             UserSeeder::class,
             JobPostSeeder::class,
-            CandidateInfo::class,
+            CandidateInfoSeeder::class,
+            LocationableSeeder::class,
         ]);
     }
 }
