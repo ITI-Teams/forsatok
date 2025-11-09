@@ -54,7 +54,14 @@
                 <i class="fa-solid fa-lightbulb"></i> <span>Skills</span>
             </a>
         </li>
-
+        {{-- Company Reviews --}}
+        <li>
+            <a wire:navigate href="{{ route('company-reviews.index') }}"
+            class="nav-link {{ request()->routeIs('company-reviews.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-building-shield"></i>
+                <span>Company Reviews</span>
+            </a>
+        </li>
         {{-- Users --}}
         <li>
             <a wire:navigate href="{{ route('users.index') }}"

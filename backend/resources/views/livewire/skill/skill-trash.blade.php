@@ -11,7 +11,7 @@
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-body text-body">
         <div class="card-header bg-body-tertiary border-bottom">
             <h6 class="mb-0 text-secondary fw-semibold">Deleted Skills</h6>
-        </div> 
+        </div>
 
         <div class="card-body p-0">
             <table class="table table-hover mb-0 align-middle">

@@ -27,7 +27,8 @@ use App\Livewire\User\UserTrash;
 use App\Livewire\Skills\SkillForm;
 use App\Livewire\Skills\SkillList;
 use App\Livewire\Skills\SkillTrash;
-
+use App\Livewire\CompanyReviews\ListCompanyReviews;
+use App\Livewire\CompanyReviews\TrashCompanyReview;
 
 Route::view('/', 'welcome');
 
@@ -64,6 +65,10 @@ Route::prefix('skills')->group(function () {
     Route::get('/trash', SkillTrash::class)->name('skills.trash');
 });
 
+Route::prefix('company-reviews')->group(function () {
+    Route::get('/', ListCompanyReviews::class)->name('company-reviews.index');
+    Route::get('/trash', TrashCompanyReview::class)->name('company-reviews.trash');
+});
 
 Route::prefix('users')->group(function () {
     Route::get('/', UserList::class)->name('users.index');

@@ -16,7 +16,7 @@
         <a wire:navigate href="{{ route('skills.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
             <i class="fa-solid fa-plus"></i> Add New Skill
         </a>
-    </div> 
+    </div>
 
     <!-- Success Message -->
     @if (session()->has('message'))
