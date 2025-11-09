@@ -6,8 +6,8 @@ use App\Domains\Candidates\Models\CandidateInfo;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Domains\Applications\Requests\Api\UpdateCandidateInfoRequest;
-use App\Domains\Applications\Resources\CandidateInfoResource;
+use App\Domains\Candidates\Requests\Api\UpdateCandidateInfoRequest;
+use App\Domains\Candidates\Resources\CandidateInfoResource;
 
 class CandidateInfoController extends Controller
 {

@@ -16,6 +16,7 @@ import { NotFound } from './features/not-found/not-found';
 import { ContactUs } from './features/contact-us/contact-us';
 import { CandidateProfile } from './features/candidate-profile/candidate-profile';
 import { Company } from './features/company/company';
+import { CompaniesList } from './features/companies-list/companies-list';
 import { Candidates } from './features/candidates/candidates';
 import {Jobs} from './features/jobs/jobs';
 import { Profile } from './features/profile/profile';
@@ -36,6 +37,7 @@ export const routes: Routes = [
       { path: 'contact', component: ContactUs },
       { path:'profile', component :Profile},
       {path:'company',component:Company},
+      {path:'companylist',component:CompaniesList},
       // { path: 'blog', component: Blog },
       // {
       // path: 'jobs',
