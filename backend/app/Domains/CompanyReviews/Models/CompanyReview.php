@@ -23,7 +23,7 @@ class CompanyReview extends Model
 
     public function company()
     {
-        return $this->belongsTo(EmployerInfo::class, 'company_id');
+        return $this->belongsTo(User::class, 'company_id');
     }
 
     public function candidate()
