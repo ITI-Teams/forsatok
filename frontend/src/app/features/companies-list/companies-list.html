@@ -1,149 +1,135 @@
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+  <!-- Hero -->
+  <section class="relative flex flex-col items-center justify-center text-center py-20 px-6 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white">
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
+      Explore Top <span class="text-yellow-300">Companies</span>
+    </h1>
+    <p class="text-lg md:text-xl mb-8 opacity-90">Find employers that match your passion.</p>
+
+    <!-- Search bar -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col md:flex-row items-stretch md:items-center gap-3 p-4 transition-all duration-300 hover:scale-[1.02]">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+        placeholder="Search company name..."
+        class="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      <select [(ngModel)]="selectedLocation" (change)="applyFilters()" class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">All Locations</option>
+        <option *ngFor="let location of locations" [value]="location.value">{{location.name}}</option>
+      </select>
+
+      <select [(ngModel)]="selectedIndustry" (change)="applyFilters()" class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">All Industries</option>
+        <option *ngFor="let industry of industries" [value]="industry.value">{{industry.name}}</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Mobile filter button -->
+  <div class="w-full sticky top-[80px] z-50 flex justify-end mb-4 lg:hidden">
+    <button (click)="toggleFilters()" class="w-full flex items-center gap-2 bg-blue-600 text-white px-4 py-2 shadow-md hover:bg-blue-700 transition-all">
+      <i class="fas fa-filter"></i> Filters
+    </button>
+  </div>
+
+  <!-- Background overlay -->
+  <div *ngIf="isFilterOpen" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" (click)="toggleFilters()"></div>
+
+  <!-- Sidebar + list -->
   <div class="container mx-auto px-4 py-12">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <h2 class="text-lg md:text-xl text-gray-700 dark:text-gray-300">
-        Showing <span class="font-semibold text-blue-600 dark:text-blue-400">1 – 3</span> of 8 companies
-      </h2>
-
-      <div class="flex items-center gap-3">
-        <span class="text-gray-600 dark:text-gray-400">Sort by:</span>
-        <select
-          class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option>Newest</option>
-          <option>Oldest</option>
-          <option>Most Jobs</option>
-          <option>Alphabetical</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Companies List -->
-    <div class="space-y-6">
-      <!-- Company 1 -->
-      <div
-        class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Sidebar -->
+      <aside
+        [ngClass]="{
+          'fixed inset-0 z-50 mobile-filter-overlay animate-slideDown': isFilterOpen,
+          hidden: !isFilterOpen
+        }"
+        class="lg:block lg:w-1/4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md overflow-y-auto transition-all duration-300"
       >
-        <!-- Left: Logo & Info -->
-        <div class="flex items-center gap-6 w-full md:w-auto">
+        <div class="flex justify-between items-center mb-6 lg:mb-4">
+          <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">Filter By</h2>
+          <button (click)="toggleFilters()" class="lg:hidden text-gray-600 dark:text-gray-300">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+
+        <!-- Location -->
+        <div class="mb-6">
+          <h3 class="font-semibold text-lg mb-3">Location</h3>
+          <select [(ngModel)]="selectedLocation" (change)="applyFilters()" class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50">
+            <option value="">All Locations</option>
+            <option *ngFor="let location of locations" [value]="location.value">{{location.name}}</option>
+          </select>
+        </div>
+
+        <!-- Industry -->
+        <div class="mb-6">
+          <h3 class="font-semibold text-lg mb-3">Industry</h3>
+          <select [(ngModel)]="selectedIndustry" (change)="applyFilters()" class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50">
+            <option value="">All Industries</option>
+            <option *ngFor="let industry of industries" [value]="industry.value">{{industry.name}}</option>
+          </select>
+        </div>
+
+        <div class="flex gap-2">
+          <button pButton type="button" label="Apply Filter" class="w-full p-3" (click)="applyFiltersAndClose()"></button>
+          <button pButton type="button" label="Reset" class="p-3 w-24" styleClass="p-button-outlined" (click)="resetFilters()"></button>
+        </div>
+      </aside>
+
+      <!-- Companies list -->
+      <section class="lg:w-3/4">
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            <span class="text-blue-600 dark:text-blue-400">{{ filteredCompanies.length }}</span> Companies Found
+          </h2>
+        </div>
+
+        <div class="space-y-6">
           <div
-            class="w-28 h-28 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"
+            *ngFor="let company of paginatedCompanies"
+            (click)="viewCompany(company.id)"
+            class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
           >
-            <img
-              src="https://logo.clearbit.com/shiseido.com"
-              alt="Shiseido Co"
-              class="w-20 h-20 object-contain"
-            />
-          </div>
+            <div class="flex items-center gap-6 w-full md:w-auto">
+              <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 border border-gray-300 rounded-xl flex items-center justify-center">
+                <img [src]="company.logo" alt="{{company.name}}" class="w-16 h-16 object-contain" />
+              </div>
 
-          <div>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              Shiseido Co
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-500 fill-yellow-500" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1
-                      1 0 00.95.69h4.915c.969 0 1.371 1.24.588
-                      1.81l-3.976 2.888a1 1 0 00-.364
-                      1.118l1.518 4.674c.3.921-.755 1.688-1.54
-                      1.118l-3.976-2.888a1 1 0
-                      00-1.176 0l-3.976 2.888c-.784.57-1.838-.197-1.539-1.118l1.518-4.674a1
-                      1 0 00-.364-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.915a1
-                      1 0 00.95-.69l1.518-4.674z"/>
-              </svg>
-            </h3>
-            <p class="text-green-600 dark:text-green-400 font-medium mb-1">Accounting / Finance</p>
-            <p class="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-              <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i> Flushing, NY, USA
-            </p>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">{{company.name}}</h3>
+                <p class="text-gray-500 dark:text-gray-400 mb-2 capitalize">{{company.industry}} — {{company.location}}</p>
+                <p class="text-gray-600 dark:text-gray-400">{{company.description}}</p>
+              </div>
+            </div>
+
+            <div class="mt-4 md:mt-0">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded-full text-sm">{{company.jobsCount}} jobs</span>
+            </div>
           </div>
         </div>
 
-        <!-- Right: Job Count -->
-        <div class="mt-6 md:mt-0 text-center md:text-right">
-          <p class="text-4xl font-extrabold text-blue-600 dark:text-blue-400">2</p>
-          <p class="text-gray-500 dark:text-gray-400 font-medium">Open Jobs</p>
-        </div>
-      </div>
-
-      <!-- Company 2 -->
-      <div
-        class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-      >
-        <div class="flex items-center gap-6 w-full md:w-auto">
-          <div
-            class="w-28 h-28 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"
-          >
-            <img
-              src="https://via.placeholder.com/120x120/e11d48/ffffff?text=Mencap"
-              alt="Mencap Co"
-              class="w-20 h-20 object-contain"
-            />
-          </div>
-
-          <div>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              Mencap Co
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-500 fill-yellow-500" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M11.049 2.927c.3-.921 1.603-.921 1.902
-                      0l1.518 4.674a1 1 0 00.95.69h4.915c.969
-                      0 1.371 1.24.588 1.81l-3.976
-                      2.888a1 1 0 00-.364 1.118l1.518
-                      4.674c.3.921-.755 1.688-1.54
-                      1.118l-3.976-2.888a1 1 0
-                      00-1.176 0l-3.976 2.888c-.784.57-1.838-.197-1.539-1.118l1.518-4.674a1
-                      1 0 00-.364-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.915a1
-                      1 0 00.95-.69l1.518-4.674z"/>
-              </svg>
-            </h3>
-            <p class="text-green-600 dark:text-green-400 font-medium mb-1">Automotive Jobs</p>
-            <p class="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-              <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i> Flushing, NY, USA
-            </p>
-          </div>
+        <div *ngIf="filteredCompanies.length === 0" class="text-center py-12">
+          <p class="text-xl text-gray-500 dark:text-gray-400">No companies found matching your filters.</p>
         </div>
 
-        <div class="mt-6 md:mt-0 text-center md:text-right">
-          <p class="text-4xl font-extrabold text-blue-600 dark:text-blue-400">2</p>
-          <p class="text-gray-500 dark:text-gray-400 font-medium">Open Jobs</p>
+        <div class="flex justify-center items-center mt-8 gap-2">
+          <button (click)="previousPage()" [disabled]="currentPage === 1"
+            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50">
+            Previous
+          </button>
+
+          <span class="text-gray-700 dark:text-gray-300 font-medium">Page {{ currentPage }} of {{ totalPages }}</span>
+
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50">
+            Next
+          </button>
         </div>
-      </div>
-
-      <!-- Company 3 -->
-      <div
-        class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-      >
-        <div class="flex items-center gap-6 w-full md:w-auto">
-          <div
-            class="w-28 h-28 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"
-          >
-            <img
-              src="https://logo.clearbit.com/herbal.com"
-              alt="Herbal Ltd"
-              class="w-20 h-20 object-contain"
-            />
-          </div>
-
-          <div>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Herbal Ltd</h3>
-            <p class="text-green-600 dark:text-green-400 font-medium mb-1">Accounting / Finance</p>
-            <p class="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-              <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i> Bothell, WA, USA
-            </p>
-          </div>
-        </div>
-
-        <div class="mt-6 md:mt-0 text-center md:text-right">
-          <p class="text-4xl font-extrabold text-blue-600 dark:text-blue-400">3</p>
-          <p class="text-gray-500 dark:text-gray-400 font-medium">Open Jobs</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="mt-12 text-center text-gray-500 dark:text-gray-400">
-      <p>Top companies are hiring now. Discover your opportunity!</p>
+      </section>
     </div>
   </div>
 </div>

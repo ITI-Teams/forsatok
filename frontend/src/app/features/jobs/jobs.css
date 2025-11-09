@@ -29,7 +29,7 @@
     max-width: 100vw !important;
     display: block !important;
   }
-  
+
   /* Hide filter sidebar by default on mobile when closed */
   aside.hidden {
     display: none !important;
