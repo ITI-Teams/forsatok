@@ -8,6 +8,6 @@ class GetCurrentEmployerInfoAction
 {
     public function execute(int $userId): ?EmployerInfo
     {
-        return EmployerInfo::with('reviews')->where('user_id', $userId)->first();
+        return EmployerInfo::with(['reviews', 'location'])->where('user_id', $userId)->first();
     }
 }

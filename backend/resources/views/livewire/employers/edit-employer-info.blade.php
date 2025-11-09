@@ -61,15 +61,47 @@
                                     @enderror
                                 </div>
 
-                                {{-- Location --}}
+                                {{-- Country --}}
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">
-                                        <i class="fa-solid fa-location-dot text-primary me-2"></i>Location
+                                        <i class="fa-solid fa-globe text-primary me-2"></i>Country
                                     </label>
-                                    <input type="text" wire:model="location"
-                                        class="form-control form-control-lg @error('location') is-invalid @enderror"
-                                        placeholder="City, Country">
-                                    @error('location')
+                                    <select wire:model.live="country_id" class="form-select form-control-lg pb-3 @error('country_id') is-invalid @enderror">
+                                        <option value="">Select Country</option>
+                                        @foreach($countries as $country)
+                                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('country_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- City --}}
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fa-solid fa-city text-primary me-2"></i>City
+                                    </label>
+                                    <select wire:model="city_id" class="form-select form-control-lg pb-3 @error('city_id') is-invalid @enderror" @if(!$country_id) disabled @endif>
+                                        <option value="">Select City</option>
+                                        @foreach($cities as $city)
+                                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('city_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- Address --}}
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fa-solid fa-map-marker-alt text-primary me-2"></i>Address
+                                    </label>
+                                    <input type="text" wire:model="address"
+                                        class="form-control form-control-lg @error('address') is-invalid @enderror"
+                                        placeholder="Street, Building, Office">
+                                    @error('address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>

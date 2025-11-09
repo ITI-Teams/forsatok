@@ -1,6 +1,6 @@
 <?php
 
-use App\Domains\Jobs\Actions\Job\ShowJobAction;
+use App\Domains\Jobs\Actions\job\ShowJobAction;
 use App\Http\Controllers\Api\CandidateInfoController;
 use App\Livewire\Admin\Permissions\PermissionIndex;
 use App\Livewire\Admin\Roles\RoleIndex;
@@ -27,6 +27,13 @@ use App\Livewire\User\UserTrash;
 use App\Livewire\Skills\SkillForm;
 use App\Livewire\Skills\SkillList;
 use App\Livewire\Skills\SkillTrash;
+use App\Livewire\Location\CountryForm;
+use App\Livewire\Location\CountryList;
+use App\Livewire\Location\CountryTrash;
+use App\Livewire\Location\CityForm;
+use App\Livewire\Location\CityList;
+use App\Livewire\Location\CityTrash;
+use App\Livewire\Location\LocationIndex;
 
 
 Route::view('/', 'welcome');
@@ -62,6 +69,20 @@ Route::prefix('skills')->group(function () {
     Route::get('/create', SkillForm::class)->name('skills.create');
     Route::get('/edit/{skill}', SkillForm::class)->name('skills.edit');
     Route::get('/trash', SkillTrash::class)->name('skills.trash');
+});
+
+Route::prefix('countries')->group(function () {
+    Route::get('/', CountryList::class)->name('countries.index');
+    Route::get('/create', CountryForm::class)->name('countries.create');
+    Route::get('/edit/{country}', CountryForm::class)->name('countries.edit');
+    Route::get('/trash', CountryTrash::class)->name('countries.trash');
+});
+
+Route::prefix('cities')->group(function () {
+    Route::get('/', CityList::class)->name('cities.index');
+    Route::get('/create', CityForm::class)->name('cities.create');
+    Route::get('/edit/{city}', CityForm::class)->name('cities.edit');
+    Route::get('/trash', CityTrash::class)->name('cities.trash');
 });
 
 

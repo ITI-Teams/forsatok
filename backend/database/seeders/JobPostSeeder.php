@@ -19,7 +19,7 @@ class JobPostSeeder extends Seeder
         $employers = User::where('type', 'employer')->orderBy('id')->get();
         $categories = Category::orderBy('id')->get();
 
-      
+
 
         // Use simple array indexing - category_id 1, 2, 3, etc. and employer_id from employers collection
         $jobs = [
@@ -30,7 +30,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 2000,
                 'salary_max' => 5000,
                 'type' => 'full-time',
-                'location' => 'Remote',
                 'deadline' => now()->addDays(30),
                 'is_active' => true,
                 'category_id' => $categories[0]->id, // Software Development
@@ -43,7 +42,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 1500,
                 'salary_max' => 4000,
                 'type' => 'remote',
-                'location' => 'Cairo, Egypt',
                 'deadline' => now()->addDays(20),
                 'is_active' => true,
                 'category_id' => $categories[1]->id, // Web Development
@@ -56,7 +54,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 2500,
                 'salary_max' => 6000,
                 'type' => 'full-time',
-                'location' => 'Alexandria, Egypt',
                 'deadline' => now()->addDays(25),
                 'is_active' => true,
                 'category_id' => $categories[4]->id, // DevOps
@@ -69,7 +66,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 1200,
                 'salary_max' => 3500,
                 'type' => 'full-time',
-                'location' => 'Remote',
                 'deadline' => now()->addDays(15),
                 'is_active' => true,
                 'category_id' => $categories[5]->id, // UI/UX Design
@@ -82,7 +78,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 3000,
                 'salary_max' => 7000,
                 'type' => 'full-time',
-                'location' => 'Cairo, Egypt',
                 'deadline' => now()->addDays(40),
                 'is_active' => true,
                 'category_id' => $categories[3]->id, // Data Science
@@ -95,7 +90,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 1000,
                 'salary_max' => 3000,
                 'type' => 'part-time',
-                'location' => 'Remote',
                 'deadline' => now()->addDays(18),
                 'is_active' => true,
                 'category_id' => $categories[7]->id, // Digital Marketing
@@ -108,7 +102,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 2200,
                 'salary_max' => 5500,
                 'type' => 'full-time',
-                'location' => 'Cairo, Egypt',
                 'deadline' => now()->addDays(35),
                 'is_active' => true,
                 'category_id' => $categories[1]->id, // Web Development
@@ -121,7 +114,6 @@ class JobPostSeeder extends Seeder
                 'salary_min' => 1800,
                 'salary_max' => 4500,
                 'type' => 'full-time',
-                'location' => 'Remote',
                 'deadline' => now()->addDays(28),
                 'is_active' => true,
                 'category_id' => $categories[2]->id, // Mobile Development
