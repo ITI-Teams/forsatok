@@ -6,6 +6,7 @@ use App\Domains\Users\Controllers\api\CandidateAuthController;
 use App\Http\Controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,4 +40,11 @@ Route::get('/api/candidate-info', [CandidateInfoController::class, 'show']);
 Route::post('/api/candidate-info', [CandidateInfoController::class, 'update']);
 });
 
+ //  company reviews
+Route::prefix('company-reviews')->group(function () {
+    Route::get('/company/{companyId}', [CompanyReviewsController::class, 'showCompanyReviews']);
+    Route::post('/', [CompanyReviewsController::class, 'store']);
+    Route::put('/{id}', [CompanyReviewsController::class, 'update']);
+    Route::delete('/{id}', [CompanyReviewsController::class, 'destroy']);
+});
 
