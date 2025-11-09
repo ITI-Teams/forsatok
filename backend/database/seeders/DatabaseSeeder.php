@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Domains\Candidates\Models\CandidateInfo;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,7 +18,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             UserSeeder::class,
             JobPostSeeder::class,
-            CandidateInfo::class,
+            CandidateInfoSeeder::class,
         ]);
     }
 }
