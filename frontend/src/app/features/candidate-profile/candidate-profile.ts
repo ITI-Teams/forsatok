@@ -29,9 +29,7 @@ export class CandidateProfile{
     { id: 'description', label: 'Description' },
     { id: 'education', label: 'Education' },
     { id: 'experience', label: 'Experience' },
-    { id: 'portfolio', label: 'Portfolio' },
     { id: 'skills', label: 'Skills' },
-    { id: 'awards', label: 'Awards' },
   ];
 
 
@@ -92,102 +90,12 @@ export class CandidateProfile{
     },
   ];
 
-  portfolio = [
-    {
-      name: 'Landing Page Design',
-      desc: 'Creative landing page concept for a startup.',
-      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
-    },
-    {
-      name: 'Dashboard UI',
-      desc: 'Modern dashboard design with dark mode support.',
-      image: 'https://images.unsplash.com/photo-1509395176047-4a66953fd231',
-    },
-    {
-      name: 'Mobile App Concept',
-      desc: 'A UI concept for a finance tracking app.',
-      image: 'https://images.unsplash.com/photo-1508931133309-29d92d362f7b',
-    },
-  ];
-
   skills = [
     { name: 'Figma', level: 90 },
     { name: 'Adobe XD', level: 80 },
     { name: 'HTML/CSS', level: 85 },
     { name: 'Angular', level: 75 },
   ];
-
-  awards = [
-    {
-      title: 'Best Creative Designer',
-      year: '2019',
-      organization: 'Design Awards International',
-      description:
-        'Recognized for outstanding innovation and visual creativity in digital branding projects.',
-    },
-    {
-      title: 'UI/UX Excellence Award',
-      year: '2021',
-      organization: 'Tech Design Expo',
-      description:
-        'Awarded for exceptional user experience design and impactful product interfaces.',
-    },
-    {
-      title: 'Top Designer of the Year',
-      year: '2023',
-      organization: 'Creative Minds Conference',
-      description:
-        'Honored for leading-edge design strategy and contributions to creative community initiatives.',
-    },
-  ];
-
-  reviews = [
-    {
-      name: 'John Doe',
-      email: 'john@example.com',
-      text: 'Great experience working with this designer!',
-      rating: 5,
-      image: 'https://randomuser.me/api/portraits/men/32.jpg',
-    },
-    {
-      name: 'Sarah Smith',
-      email: 'sarah@example.com',
-      text: 'Very professional and creative approach.',
-      rating: 4,
-      image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
-  ];
-
-
-  newReview = {
-    name: '',
-    email: '',
-    text: '',
-    rating: 0,
-    image: '',
-  };
-
-  submitReview() {
-    if (!this.newReview.name || !this.newReview.email || !this.newReview.text || this.newReview.rating === 0 || !this.newReview.image) {
-      alert('Please fill all fields and select a rating.');
-      return;
-    }
-
-    this.reviews.push({ ...this.newReview });
-    alert('✅ Thank you for your review!');
-    this.newReview = { name: '', email: '', text: '', rating: 0, image: '' };
-  }
-
-  selectedImage: string | null = null;
-
-  openImage(image: string) {
-    this.selectedImage = image;
-  }
-
-  closeImage() {
-    this.selectedImage = null;
-  }
-
 
   // Contact form model (template-driven)
   contactModel = { name: '', email: '', message: '' };
