@@ -124,7 +124,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
 });
 // Contact Messages
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/contact-messages', ListContactMessages::class)
          ->name('admin.contact-messages');
 });
