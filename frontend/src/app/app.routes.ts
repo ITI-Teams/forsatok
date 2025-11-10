@@ -38,16 +38,13 @@ export const routes: Routes = [
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
       { path:'profile', component :Profile},
-      {path:'company',component:Company},
-
-      {path:'companylist',component:CompaniesList},
-
+      { path:'company/:id',component:Company},
+      { path:'company',component:CompaniesList},
       { path: 'apply/:id', component: JobApplication,canActivate: [authGuard] },
       { path: 'apply', component: JobApplication, canActivate: [authGuard]},
 
     ]
   },
-
   // Auth Pages
   { path: 'register', component: Register,canActivate: [guestGuard] },
   { path: 'login', component: Login,canActivate: [guestGuard] },
