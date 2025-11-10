@@ -6,4 +6,7 @@
 @source "../node_modules/flowbite-angular";
 @custom-variant dark (&:where(.my-app-dark, .my-app-dark *));
 @import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
-@import "swiper/css/bundle";
+/* @import "swiper/css/bundle"; */
+@import 'swiper/swiper-bundle.css';
+
+

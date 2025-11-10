@@ -3,7 +3,6 @@
 namespace App\Domains\Jobs\Models;
 
 use App\Domains\Applications\Models\JobApplication;
-use App\Domains\Location\Models\Locationable;
 use App\Domains\Users\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,8 +14,8 @@ class JobPost extends Model
 
     protected $fillable = [
         'title', 'description', 'category_id', 'employer_id',
-        'salary_min', 'salary_max', 'type', 'status',
-        'experience', 'deadline', 'is_active'
+        'location', 'salary_min', 'salary_max', 'type', 'status',
+        'experince', 'deadline', 'is_active'
     ];
 
     public function category()
@@ -42,10 +41,5 @@ class JobPost extends Model
     public function savedByCandidates()
     {
         return $this->hasMany(SavedJob::class);
-    }
-
-    public function location()
-    {
-        return $this->morphOne(Locationable::class, 'locationable');
     }
 }
