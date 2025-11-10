@@ -112,6 +112,43 @@
             </div>
         </li>
 
+        {{-- Location Dropdown --}}
+        <li class="nav-item">
+            <a class="nav-link d-flex justify-content-between align-items-center"
+               data-bs-toggle="collapse"
+               href="#locationMenu"
+               role="button"
+               aria-expanded="{{ request()->routeIs('countries.*') || request()->routeIs('cities.*') ? 'true' : 'false' }}"
+               aria-controls="locationMenu">
+                <div>
+                    <i class="fa-solid fa-location-dot me-2"></i>
+                    <span>Location</span>
+                </div>
+                <i class="fa-solid fa-angle-down small"></i>
+            </a>
+
+            <div class="collapse {{ request()->routeIs('countries.*') || request()->routeIs('cities.*') ? 'show' : '' }}" id="locationMenu">
+                <ul class="nav flex-column ms-3 border-start ps-2">
+                    <li>
+                        <a wire:navigate
+                           href="{{ route('countries.index') }}"
+                           class="nav-link {{ request()->routeIs('countries.*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Countries</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a wire:navigate
+                           href="{{ route('cities.index') }}"
+                           class="nav-link {{ request()->routeIs('cities.*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-city"></i>
+                            <span>Cities</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
         {{-- Employer Profile --}}
         <li>
             <a wire:navigate href="{{ route('employer.profile') }}"

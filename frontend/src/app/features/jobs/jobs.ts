@@ -177,4 +177,7 @@ export class Jobs implements OnInit {
   viewJob(id: number) {
     this.router.navigate(['/job', id]);
   }
+  applyForJob(jobId: number) {
+    this.router.navigate(['/apply', jobId]);
+  }
 }
