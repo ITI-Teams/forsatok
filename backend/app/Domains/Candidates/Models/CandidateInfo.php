@@ -4,6 +4,7 @@ namespace App\Domains\Candidates\Models;
 
 use App\Domains\Applications\Models\JobApplication;
 use App\Domains\Jobs\Models\Skill;
+use App\Domains\Location\Models\Locationable;
 use App\Domains\Users\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,5 +29,10 @@ class CandidateInfo extends Model
     public function applications()
     {
         return $this->hasMany(JobApplication::class, 'candidate_id');
+    }
+
+    public function location()
+    {
+        return $this->morphOne(Locationable::class, 'locationable');
     }
 }

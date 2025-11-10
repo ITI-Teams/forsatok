@@ -1,22 +1,12 @@
-<nav class="sidebar d-flex flex-column overflow-hidden" id="sidebar">
+<nav class="sidebar d-flex flex-column overflow-y-auto overflow-x-hidden" id="sidebar">
     <div class="text-center py-3 fs-5 fw-bold text-primary border-bottom">F</div>
 
     <ul class="nav flex-column mt-2">
+        {{-- Dashboard --}}
         <li><a wire:navigate href="{{ route('dashboard') }}"
                 class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><i
                     class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a></li>
-        <li><a wire:navigate href="{{ route('admin') }}"
-                class="nav-link {{ request()->routeIs('admin') ? 'active' : '' }}"><i
-                    class="fa-solid fa-user-gear"></i><span>Admins</span></a></li>
-        <li><a wire:navigate href="{{ route('employer.profile') }}"
-                class="nav-link {{ request()->routeIs('employer.profile') ? 'active' : '' }}"><i
-                    class="bi bi-person-badge"></i><span>Employer Profile</span></a></li>
-        <li><a wire:navigate href="{{ route('list') }}"
-                class="nav-link {{ request()->routeIs('list') ? 'active' : '' }}"><i
-                    class="fa-solid fa-user-gear"></i><span>Lists</span></a></li>
-        <li><a wire:navigate href="{{ route('form') }}"
-                class="nav-link {{ request()->routeIs('form') ? 'active' : '' }}"><i
-                    class="fa-solid fa-user-gear"></i><span>Forms</span></a></li>
+        {{-- Jobs --}}
         <li>
             <a wire:navigate href="{{ route('jobs.index') }}"
                 class="nav-link {{ request()->routeIs('jobs.index') ? 'active' : '' }}">
@@ -27,15 +17,6 @@
             <a wire:navigate href="{{ route('job.app.index') }}"
                class="nav-link {{ request()->routeIs('job.app.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-gear"></i><span>Jobs Applications</span>
-            </a>
-        </li>
-
-        {{-- Dashboard --}}
-        <li>
-            <a wire:navigate href="{{ route('dashboard') }}"
-               class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <i class="fa-solid fa-gauge-high"></i>
-                <span>Dashboard</span>
             </a>
         </li>
         {{-- Categories --}}
@@ -54,7 +35,14 @@
                 <i class="fa-solid fa-lightbulb"></i> <span>Skills</span>
             </a>
         </li>
-
+        {{-- Company Reviews --}}
+        <li>
+            <a wire:navigate href="{{ route('company-reviews.index') }}"
+            class="nav-link {{ request()->routeIs('company-reviews.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-building-shield"></i>
+                <span>Company Reviews</span>
+            </a>
+        </li>
         {{-- Users --}}
         <li>
             <a wire:navigate href="{{ route('users.index') }}"
@@ -116,30 +104,49 @@
             </div>
         </li>
 
+        {{-- Location Dropdown --}}
+        <li class="nav-item">
+            <a class="nav-link d-flex justify-content-between align-items-center"
+               data-bs-toggle="collapse"
+               href="#locationMenu"
+               role="button"
+               aria-expanded="{{ request()->routeIs('countries.*') || request()->routeIs('cities.*') ? 'true' : 'false' }}"
+               aria-controls="locationMenu">
+                <div>
+                    <i class="fa-solid fa-location-dot me-2"></i>
+                    <span>Location</span>
+                </div>
+                <i class="fa-solid fa-angle-down small"></i>
+            </a>
+
+            <div class="collapse {{ request()->routeIs('countries.*') || request()->routeIs('cities.*') ? 'show' : '' }}" id="locationMenu">
+                <ul class="nav flex-column ms-3 border-start ps-2">
+                    <li>
+                        <a wire:navigate
+                           href="{{ route('countries.index') }}"
+                           class="nav-link {{ request()->routeIs('countries.*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Countries</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a wire:navigate
+                           href="{{ route('cities.index') }}"
+                           class="nav-link {{ request()->routeIs('cities.*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-city"></i>
+                            <span>Cities</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
         {{-- Employer Profile --}}
         <li>
             <a wire:navigate href="{{ route('employer.profile') }}"
                class="nav-link {{ request()->routeIs('employer.profile') ? 'active' : '' }}">
                 <i class="bi bi-person-badge"></i>
                 <span>Employer Profile</span>
-            </a>
-        </li>
-
-        {{-- Lists --}}
-        <li>
-            <a wire:navigate href="{{ route('list') }}"
-               class="nav-link {{ request()->routeIs('list') ? 'active' : '' }}">
-                <i class="fa-solid fa-list"></i>
-                <span>Lists</span>
-            </a>
-        </li>
-
-        {{-- Forms --}}
-        <li>
-            <a wire:navigate href="{{ route('form') }}"
-               class="nav-link {{ request()->routeIs('form') ? 'active' : '' }}">
-                <i class="fa-solid fa-file-lines"></i>
-                <span>Forms</span>
             </a>
         </li>
     </ul>

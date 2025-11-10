@@ -16,7 +16,6 @@ class UpdateEmployerInfoRequest extends FormRequest
         return [
             'company_name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\p{N}\s\-\.&]+$/u'],
             'industry' => ['nullable', 'string', 'max:100'],
-            'location' => ['nullable', 'string', 'max:120'],
             'about' => ['nullable', 'string', 'max:1000'],
             'website' => ['nullable', 'url', 'max:255'],
         ];
@@ -31,9 +30,6 @@ class UpdateEmployerInfoRequest extends FormRequest
 
             'industry.string' => 'Industry must be a text value.',
             'industry.max' => 'Industry must be at most 100 characters.',
-
-            'location.string' => 'Location must be a text value.',
-            'location.max' => 'Location must be at most 120 characters.',
 
             'about.string' => 'About must be a text value.',
             'about.max' => 'About must be at most 1000 characters.',

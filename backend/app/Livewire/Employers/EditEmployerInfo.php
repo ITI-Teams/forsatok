@@ -6,6 +6,9 @@ use App\Domains\Employers\Actions\GetCurrentEmployerInfoAction;
 use App\Domains\Employers\Actions\UpdateEmployerInfoAction;
 use App\Domains\Employers\Models\EmployerInfo;
 use App\Domains\Employers\Requests\UpdateEmployerInfoRequest;
+use App\Domains\Location\Models\Country;
+use App\Domains\Location\Models\City;
+use App\Domains\Location\Models\Locationable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -14,9 +17,16 @@ use Livewire\Component;
 
 class EditEmployerInfo extends Component
 {
-    public $company_name, $industry, $location, $about, $website, $email, $phone;
+    public $company_name, $industry, $about, $website, $email, $phone;
     public $current_password, $password, $password_confirmation;
     public $showPasswordSection = false;
+    
+    // Location fields
+    public $country_id;
+    public $city_id;
+    public $address;
+    public $countries;
+    public $cities = [];
 
     private function domainRules(): array
     {
@@ -51,16 +61,49 @@ class EditEmployerInfo extends Component
 
     public function mount(GetCurrentEmployerInfoAction $getInfo): void
     {
+        $this->countries = Country::orderBy('name')->get();
+        
         $info = $getInfo->execute(Auth::id());
         $user = Auth::user();
 
-        $this->company_name = $info->company_name ?? null;
-        $this->industry = $info->industry ?? null;
-        $this->location = $info->location ?? null;
-        $this->about = $info->about ?? null;
-        $this->website = $info->website ?? null;
+        if ($info) {
+            $this->company_name = $info->company_name ?? null;
+            $this->industry = $info->industry ?? null;
+            $this->about = $info->about ?? null;
+            $this->website = $info->website ?? null;
+            
+            // Load location data
+            $locationable = $info->location;
+            if ($locationable) {
+                $this->country_id = $locationable->country_id;
+                $this->city_id = $locationable->city_id;
+                $this->address = $locationable->address;
+                
+                if ($this->country_id) {
+                    $this->loadCities();
+                }
+            }
+        }
+        
         $this->phone = null; // Phone not stored in employer_infos table
         $this->email = $user->email ?? '';
+    }
+    
+    public function updatedCountryId()
+    {
+        $this->city_id = null;
+        $this->loadCities();
+    }
+    
+    public function loadCities()
+    {
+        if ($this->country_id) {
+            $this->cities = City::where('country_id', $this->country_id)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->cities = [];
+        }
     }
 
     public function updateProfile(UpdateEmployerInfoAction $action)
@@ -77,7 +120,10 @@ class EditEmployerInfo extends Component
         if (! $info->exists) {
             $info->user_id = Auth::id();
         }
-        $action->execute($info, $validated);
+        $info = $action->execute($info, $validated);
+        
+        // Refresh to ensure we have the ID
+        $info->refresh();
 
         // Update user email if changed
         $user = Auth::user();
@@ -86,10 +132,43 @@ class EditEmployerInfo extends Component
             $user->email_verified_at = null;
             $user->save();
         }
+        
+        // Save location
+        $this->saveLocation($info);
 
         session()->flash('message', 'Profile updated successfully!');
 
         return $this->redirectRoute('employer.profile', navigate: true);
+    }
+    
+    protected function saveLocation(EmployerInfo $employerInfo)
+    {
+        // Ensure the employer info has an ID
+        if (!$employerInfo->id) {
+            return;
+        }
+        
+        // Convert empty strings to null
+        $countryId = !empty($this->country_id) ? $this->country_id : null;
+        $cityId = !empty($this->city_id) ? $this->city_id : null;
+        $address = !empty(trim($this->address ?? '')) ? trim($this->address) : null;
+        
+        if ($countryId || $cityId || $address) {
+            Locationable::updateOrCreate(
+                [
+                    'locationable_id' => $employerInfo->id,
+                    'locationable_type' => EmployerInfo::class,
+                ],
+                [
+                    'country_id' => $countryId,
+                    'city_id' => $cityId,
+                    'address' => $address,
+                ]
+            );
+        } else {
+            // Delete location if all fields are empty
+            $employerInfo->location()->delete();
+        }
     }
 
     public function updatePassword()

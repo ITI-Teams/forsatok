@@ -11,6 +11,7 @@ use App\Domains\Candidates\Resources\CandidateInfoResource;
 
 class CandidateInfoController extends Controller
 {
+
     public function show(){
         $user = Auth::user();
 

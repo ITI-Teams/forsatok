@@ -3,6 +3,7 @@
 namespace App\Domains\Employers\Models;
 
 use App\Domains\Jobs\Models\JobPost;
+use App\Domains\Location\Models\Locationable;
 use App\Domains\Users\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ class EmployerInfo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'company_name', 'website', 'industry', 'about', 'location', 'logo_path'
+        'user_id', 'company_name', 'website', 'industry', 'about', 'logo_path'
     ];
 
     public function user()
@@ -43,5 +44,10 @@ class EmployerInfo extends Model
     public function getTotalReviewsAttribute()
     {
         return $this->reviews()->count();
+    }
+
+    public function location()
+    {
+        return $this->morphOne(Locationable::class, 'locationable');
     }
 }
