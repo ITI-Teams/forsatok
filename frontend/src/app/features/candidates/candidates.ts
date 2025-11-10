@@ -40,7 +40,7 @@ export class Candidates implements OnInit {
   selectedLocation: string = '';
   selectedEducation: string = '';
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 5;
   isFilterOpen: boolean = false;
   private isInitialLoad: boolean = true;
 
@@ -328,25 +328,25 @@ export class Candidates implements OnInit {
 
   updateURL() {
     const queryParams: any = {};
-    
+
     if (this.searchTerm?.trim()) {
       queryParams.search = this.searchTerm.trim();
     } else {
       queryParams.search = null;
     }
-    
+
     if (this.selectedLocation?.trim()) {
       queryParams.location = this.selectedLocation.trim();
     } else {
       queryParams.location = null;
     }
-    
+
     if (this.selectedEducation?.trim()) {
       queryParams.education = this.selectedEducation.trim();
     } else {
       queryParams.education = null;
     }
-    
+
     const selectedSkills = this.skills
       .filter(skill => skill.selected)
       .map(skill => skill.name.toLowerCase().replace(/\s+/g, '-'));
@@ -355,7 +355,7 @@ export class Candidates implements OnInit {
     } else {
       queryParams.skills = null;
     }
-    
+
     if (this.experienceRange[0] !== 0 || this.experienceRange[1] !== 20) {
       queryParams.experienceMin = this.experienceRange[0].toString();
       queryParams.experienceMax = this.experienceRange[1].toString();
@@ -363,14 +363,14 @@ export class Candidates implements OnInit {
       queryParams.experienceMin = null;
       queryParams.experienceMax = null;
     }
-    
+
     // Remove null values
     Object.keys(queryParams).forEach(key => {
       if (queryParams[key] === null) {
         delete queryParams[key];
       }
     });
-    
+
     // Update URL without reloading
     this.router.navigate([], {
       relativeTo: this.route,
@@ -436,7 +436,7 @@ export class Candidates implements OnInit {
 
     // Reset to first page when filters change
     this.currentPage = 1;
-    
+
     // Update URL when filters change (only if not initial load)
     if (!this.isInitialLoad) {
       this.updateURL();
