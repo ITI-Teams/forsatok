@@ -16,7 +16,7 @@ class JobPost extends Model
     protected $fillable = [
         'title', 'description', 'category_id', 'employer_id',
         'salary_min', 'salary_max', 'type', 'status',
-        'experince', 'deadline', 'is_active'
+        'experience', 'deadline', 'is_active'
     ];
 
     public function category()
