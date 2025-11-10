@@ -16,8 +16,10 @@ import { NotFound } from './features/not-found/not-found';
 import { ContactUs } from './features/contact-us/contact-us';
 import { CandidateProfile } from './features/candidate-profile/candidate-profile';
 import { Company } from './features/company/company';
+import { CompaniesList } from './features/companies-list/companies-list';
 import { Candidates } from './features/candidates/candidates';
 import {Jobs} from './features/jobs/jobs';
+import { JobDetails } from './features/job-details/job-details';
 import { Profile } from './features/profile/profile';
 import {JobApplication} from './features/job-application/job-application';
 
@@ -31,14 +33,18 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: Home },
       { path:'jobs', component :Jobs},
-      // {path: job/:id, component: JobDetails},
+      { path: 'job/:id', component: JobDetails },
       { path: 'candidates', component: Candidates },
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
       { path:'profile', component :Profile},
       {path:'company',component:Company},
+
+      {path:'companylist',component:CompaniesList},
+
       { path: 'apply/:id', component: JobApplication,canActivate: [authGuard] },
       { path: 'apply', component: JobApplication, canActivate: [authGuard]},
+
     ]
   },
 

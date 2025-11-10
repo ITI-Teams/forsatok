@@ -12,24 +12,7 @@
                     <h3 class="fw-bold mb-1">{{ $job->title }}</h3>
                     <p class="text-muted mb-0">
                         <i class="fa-solid fa-briefcase me-1"></i> {{ ucfirst($job->type) }} |
-                        <i class="fa-solid fa-location-dot me-1"></i> 
-                        @if($job->location)
-                            @php
-                                $locationParts = [];
-                                if ($job->location->city) {
-                                    $locationParts[] = $job->location->city->name;
-                                }
-                                if ($job->location->country) {
-                                    $locationParts[] = $job->location->country->name;
-                                }
-                                if ($job->location->address) {
-                                    $locationParts[] = $job->location->address;
-                                }
-                                echo !empty($locationParts) ? implode(' - ', $locationParts) : 'Remote';
-                            @endphp
-                        @else
-                            Remote
-                        @endif
+                        <i class="fa-solid fa-location-dot me-1"></i> {{ $job->location ?? 'Remote' }}
                     </p>
                 </div>
 

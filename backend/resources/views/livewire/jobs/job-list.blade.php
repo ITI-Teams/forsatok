@@ -61,25 +61,7 @@
                                 <td>{{ $job->category->name ?? 'N/A' }}</td>
                                 <td>{{ $job->employer->name ?? 'N/A' }}</td>
                                 <td>{{ ucfirst($job->type) }}</td>
-                                <td>
-                                    @if($job->location && is_object($job->location))
-                                        @php
-                                            $locationParts = [];
-                                            if ($job->location->city) {
-                                                $locationParts[] = $job->location->city->name;
-                                            }
-                                            if ($job->location->country) {
-                                                $locationParts[] = $job->location->country->name;
-                                            }
-                                            if ($job->location->address) {
-                                                $locationParts[] = $job->location->address;
-                                            }
-                                            echo !empty($locationParts) ? implode(' - ', $locationParts) : 'N/A';
-                                        @endphp
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
+                                <td>{{ $job->location ?? 'N/A' }}</td>
                                 <td>
                                     @if ($job->salary_min && $job->salary_max)
                                         ${{ number_format($job->salary_min) }} - ${{ number_format($job->salary_max) }}
