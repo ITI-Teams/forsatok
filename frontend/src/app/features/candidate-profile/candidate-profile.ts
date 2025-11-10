@@ -97,6 +97,7 @@ export class CandidateProfile{
     { name: 'Angular', level: 75 },
   ];
 
+
   // Contact form model (template-driven)
   contactModel = { name: '', email: '', message: '' };
 
