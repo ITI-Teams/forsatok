@@ -1,0 +1,186 @@
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- ===== Job Card ===== -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow px-6 py-6 mt-20 flex flex-col lg:flex-row items-center gap-6 transition-colors">
+        <div class="flex items-center gap-6 w-full lg:w-auto">
+            <img [src]="job.company_logo" alt="Company Logo"
+                class="w-28 h-28 md:w-36 md:h-36 rounded-lg object-cover border border-gray-200 dark:border-gray-700" />
+            <div class="text-left">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ job.title }}</h1>
+                <p class="text-blue-600 font-medium">{{ job.company }}</p>
+
+                <div class="mt-2 text-gray-500 dark:text-gray-400 text-sm space-y-1">
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-map-marker-alt"></i> {{ job.location }}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-briefcase"></i> {{ job.type | titlecase }}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-money-bill-wave"></i> {{ job.salary_min }} - {{ job.salary_max }} EGP
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-calendar"></i> Deadline: {{ job.deadline | date }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ml-auto flex gap-3">
+            <button
+                class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white px-5 py-2 rounded-lg">
+                Apply Now
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 transition-colors">
+        <!-- Left Column -->
+        <div class="md:col-span-2 space-y-8">
+            <!-- Job Description -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    Job Description
+                </h2>
+                <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    {{ job.description }}
+                </p>
+            </div>
+
+            <!-- Responsibilities -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    Responsibilities
+                </h2>
+                <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
+                    <li *ngFor="let item of job.responsibilities">{{ item }}</li>
+                </ul>
+            </div>
+
+            <!-- Qualifications -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    Qualifications
+                </h2>
+                <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
+                    <li *ngFor="let q of job.qualifications">{{ q }}</li>
+                </ul>
+            </div>
+
+            <!-- Company Info -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    Company Information
+                </h2>
+                <div class="flex items-start gap-4">
+                    <img [src]="job.company_logo" alt="{{ job.company }}"
+                        class="w-20 h-20 object-cover rounded-lg border" />
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                            {{ job.company }}
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">
+                            {{ job.company_description }}
+                        </p>
+                        <a [href]="job.company_website" target="_blank"
+                            class="inline-block mt-3 text-blue-600 hover:text-blue-700 font-medium">
+                            Visit Website →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    Job Overview
+                </h2>
+                <ul class="text-gray-600 dark:text-gray-300 space-y-2 text-sm">
+                    <li><strong>Posted:</strong> {{ job.posted_date }}</li>
+                    <li><strong>Expiration date:</strong> {{ job.deadline }}</li>
+                    <li><strong>Location:</strong> {{ job.location }}</li>
+                    <li><strong>Experience:</strong> {{ job.experience }}</li>
+                    <li>
+                        <strong>Salary:</strong> {{ job.salary_min }} - {{ job.salary_max }}
+                        EGP
+                    </li>
+                    <li><strong>Job Type:</strong> {{ job.type }}</li>
+                </ul>
+            </div>
+
+            <!-- Job Location -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    Job Location
+                </h2>
+                <iframe [src]="safeMapUrl" width="100%" height="250" class="rounded-lg border-0"
+                    loading="lazy"></iframe>
+            </div>
+
+            <!-- Apply With -->
+            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium shadow">
+                Apply Now
+            </button>
+
+            <div
+                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    Or Apply With
+                </h2>
+
+                <!-- Grid 2x2 -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button
+                        class="text-white items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 px-4 py-3 rounded-lg bg-[#1877F2] transition w-full">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </button>
+
+                    <button
+                        class="text-white flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 px-4 py-3 rounded-lg bg-[#DB4437] transition w-full">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+
+                    <button
+                        class="text-white flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 px-4 py-3 rounded-lg bg-[#0077B5] transition w-full">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </button>
+
+                    <button
+                        class="text-white flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 px-4 py-3 rounded-lg bg-black transition w-full">
+                        <i class="fab fa-x"></i> X
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Similar Jobs Section -->
+    <div class="max-w-6xl mx-auto px-4 py-10">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
+            Similar Jobs
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div *ngFor="let j of similarJobs"
+                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-1">
+                    {{ j.title }}
+                </h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm">
+                    {{ j.company }} • {{ j.location }}
+                </p>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mt-2">
+                    {{ j.salary }}
+                </p>
+                <p class="text-blue-600 text-sm font-medium mt-2">{{ j.type }}</p>
+                <button class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm">
+                    View Details
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
