@@ -1,0 +1,199 @@
+<!-- job-application.component.html -->
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+  <p-toast></p-toast>
+
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        Apply for Position
+      </h1>
+      <p class="text-lg text-gray-600 dark:text-gray-300" *ngIf="jobIdFromRoute && getSelectedJobTitle()">
+        Applying for: <span class="font-semibold text-blue-600">{{ getSelectedJobTitle() }}</span>
+      </p>
+      <p class="text-lg text-gray-600 dark:text-gray-300" *ngIf="!jobIdFromRoute">
+        Submit your application for your dream job
+      </p>
+    </div>
+
+    <!-- Application Form -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+      <form (ngSubmit)="onSubmit()" class="p-6 space-y-8">
+
+        <!-- Job Selection -->
+        <div *ngIf="!jobIdFromRoute">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+            Job Selection
+          </h2>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Select Job Position *
+            </label>
+            <p-select
+              [(ngModel)]="application.job_post_id"
+              [options]="availableJobs"
+              optionLabel="title"
+              optionValue="id"
+              placeholder="Choose a job position"
+              styleClass="w-full"
+              name="job_post_id"
+              [showClear]="true"
+              [ngClass]="{'p-invalid': submitted && !application.job_post_id}"
+            >
+              <ng-template pTemplate="selecteditem">
+                <div *ngIf="application.job_post_id" class="flex items-center">
+                  <span>{{ getSelectedJobTitle() }}</span>
+                </div>
+              </ng-template>
+              <ng-template let-job pTemplate="item">
+                <div class="flex flex-col py-2">
+                  <span class="font-medium text-gray-900 dark:text-white">{{ job.title }}</span>
+                  <span class="text-sm text-gray-500 dark:text-gray-400">{{ job.company }} - {{ job.location }}</span>
+                  <span class="text-sm text-green-600 dark:text-green-400">{{ job.salary_range }}</span>
+                </div>
+              </ng-template>
+            </p-select>
+            <small *ngIf="submitted && !application.job_post_id" class="p-error block mt-1">
+              Please select a job position
+            </small>
+          </div>
+        </div>
+
+        <!-- Display Selected Job Info -->
+        <div *ngIf="jobIdFromRoute && application.job_post_id">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            Selected Job
+          </h2>
+          <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+            <h3 class="font-semibold text-blue-900 dark:text-blue-100">{{ getSelectedJobTitle() }}</h3>
+            <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">
+              You're applying for this specific position
+            </p>
+          </div>
+        </div>
+
+        <!-- Cover Letter Section -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+            Cover Letter
+          </h2>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Cover Letter *
+            </label>
+            <textarea
+              [(ngModel)]="application.cover_letter"
+              name="cover_letter"
+              pInputTextarea
+              rows="8"
+              class="w-full"
+              placeholder="Write your cover letter here. Explain why you're interested in this position and what makes you a good fit..."
+              [ngClass]="{'p-invalid': submitted && !application.cover_letter}"
+            ></textarea>
+            <small *ngIf="submitted && !application.cover_letter" class="p-error block mt-1">
+              Cover letter is required
+            </small>
+            <small class="text-gray-500 dark:text-gray-400 block mt-1">
+              {{ application.cover_letter.length }} characters (minimum 100 recommended)
+            </small>
+          </div>
+        </div>
+
+        <!-- Resume Upload -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+            Resume Upload
+          </h2>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Upload Resume *
+            </label>
+            <p-fileUpload
+              mode="basic"
+              chooseLabel="Choose Resume"
+              accept=".pdf,.doc,.docx"
+              maxFileSize="5000000"
+              (onSelect)="onFileSelect($event)"
+              (onClear)="application.resume_file = null"
+              [ngClass]="{'p-invalid': submitted && !application.resume_file}"
+            ></p-fileUpload>
+            <small class="text-gray-500 dark:text-gray-400 block mt-1">
+              Accepted formats: PDF, DOC, DOCX (Max 5MB)
+            </small>
+            <small *ngIf="submitted && !application.resume_file" class="p-error block mt-1">
+              Resume is required
+            </small>
+            <small *ngIf="application.resume_file" class="text-green-600 dark:text-green-400 block mt-1">
+              ✓ {{ application.resume_file.name }} ({{ getFileSize(application.resume_file.size) }})
+            </small>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-end pt-6 border-t border-gray-200 dark:border-gray-700">
+          <button
+            pButton
+            type="button"
+            label="Clear Form"
+            icon="pi pi-times"
+            class="p-button-outlined p-button-secondary"
+            (click)="onClear()"
+          ></button>
+
+          <button
+            pButton
+            type="submit"
+            label="Submit Application"
+            icon="pi pi-send"
+            [loading]="isLoading"
+            class="p-button-primary"
+          ></button>
+        </div>
+      </form>
+    </div>
+
+    <!-- باقي المحتوى يبقى كما هو -->
+    <!-- Additional Information -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Application Tips -->
+      <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
+          💡 Application Tips
+        </h3>
+        <ul class="text-sm text-blue-800 dark:text-blue-200 space-y-2">
+          <li>• Tailor your cover letter to the specific job</li>
+          <li>• Highlight relevant experience and skills</li>
+          <li>• Keep your resume updated and professional</li>
+          <li>• Proofread for spelling and grammar errors</li>
+        </ul>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-green-900 dark:text-green-100 mb-3">
+          📝 What Happens Next?
+        </h3>
+        <ul class="text-sm text-green-800 dark:text-green-200 space-y-2">
+          <li>• You'll receive a confirmation email</li>
+          <li>• Employer reviews your application</li>
+          <li>• Status updates in your application dashboard</li>
+          <li>• Possible interview invitation</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Help Text -->
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        By submitting this application, you agree to our
+        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Privacy Policy</a>
+        and
+        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Terms of Service</a>.
+        Need help? <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Contact support</a>.
+      </p>
+    </div>
+  </div>
+</div>

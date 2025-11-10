@@ -1,0 +1,75 @@
+/* job-application.component.css */
+:host ::ng-deep .p-inputtext {
+  background-color: white;
+  border-color: #d1d5db;
+}
+
+:host ::ng-deep .p-inputtext:enabled:hover {
+  border-color: #3b82f6;
+}
+
+:host ::ng-deep .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+}
+
+:host ::ng-deep .p-dropdown {
+  background-color: white;
+  border-color: #d1d5db;
+}
+
+:host ::ng-deep .p-dropdown:not(.p-disabled):hover {
+  border-color: #3b82f6;
+}
+
+:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+}
+
+:host ::ng-deep .p-fileupload .p-button {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+:host ::ng-deep .p-fileupload .p-button:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+:host ::ng-deep .p-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Dark Mode Styles */
+:host ::ng-deep .dark .p-inputtext {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+:host ::ng-deep .dark .p-dropdown {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+:host ::ng-deep .dark .p-dropdown .p-dropdown-label {
+  color: #f9fafb;
+}
+
+:host ::ng-deep .dark .p-inputtext::placeholder {
+  color: #9ca3af;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  :host ::ng-deep .p-dropdown {
+    width: 100%;
+  }
+
+  :host ::ng-deep .p-fileupload .p-button {
+    width: 100%;
+  }
+}

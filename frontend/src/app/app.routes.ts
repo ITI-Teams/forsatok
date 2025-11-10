@@ -19,6 +19,7 @@ import { Company } from './features/company/company';
 import { Candidates } from './features/candidates/candidates';
 import {Jobs} from './features/jobs/jobs';
 import { Profile } from './features/profile/profile';
+import {JobApplication} from './features/job-application/job-application';
 
 // ============ Routes ============
 export const routes: Routes = [
@@ -36,12 +37,8 @@ export const routes: Routes = [
       { path: 'contact', component: ContactUs },
       { path:'profile', component :Profile},
       {path:'company',component:Company},
-      // { path: 'blog', component: Blog },
-      // {
-      // path: 'jobs',
-      // component: Jobs
-      // children: []
-      // },
+      { path: 'apply/:id', component: JobApplication,canActivate: [authGuard] },
+      { path: 'apply', component: JobApplication, canActivate: [authGuard]},
     ]
   },
 
