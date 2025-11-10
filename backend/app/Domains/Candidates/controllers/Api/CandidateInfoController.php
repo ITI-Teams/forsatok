@@ -11,8 +11,9 @@ use App\Domains\Candidates\Resources\CandidateInfoResource;
 
 class CandidateInfoController extends Controller
 {
-
-    public function show(){
+    // show current candidate profile
+    public function showProfile()
+    {
         $user = Auth::user();
 
         if ($user->type !== 'candidate') {
@@ -40,7 +41,7 @@ class CandidateInfoController extends Controller
 
 
 
-
+    // update current candidate profile
     public function update(UpdateCandidateInfoRequest $request)
     {
         $user = Auth::user();
@@ -61,6 +62,50 @@ class CandidateInfoController extends Controller
             'success' => true,
             'data' => new CandidateInfoResource($candidateInfo),
             'message' => 'Candidate info updated successfully.'
+        ]);
+    }
+
+
+    // show all candidates
+    public function index(Request $request)
+    {
+        $candidates = CandidateInfo::with(['user', 'applications'])
+            ->latest()
+            ->paginate($request->input('per_page', 10));
+
+        return response()->json([
+            'success' => true,
+            'data' => CandidateInfoResource::collection($candidates),
+            'meta' => [
+                'current_page' => $candidates->currentPage(),
+                'last_page' => $candidates->lastPage(),
+                'per_page' => $candidates->perPage(),
+                'total' => $candidates->total(),
+                'from' => $candidates->firstItem(),
+                'to' => $candidates->lastItem(),
+            ],
+            'message' => 'Candidates retrieved successfully.'
+        ]);
+    }
+
+
+    // show single candidate info
+     public function show($id)
+    {
+        $candidate = CandidateInfo::with(['user', 'applications'])
+            ->find($id);
+
+        if (!$candidate) {
+            return response()->json([
+                'success' => false,
+                'message' => 'candidate not found.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $candidate,
+            'message' => 'Candidate retrieved successfully.'
         ]);
     }
 }

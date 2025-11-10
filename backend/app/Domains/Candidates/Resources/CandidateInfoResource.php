@@ -14,7 +14,7 @@ class CandidateInfoResource extends JsonResource
             'user_id' => $this->user_id,
             'phone' => $this->phone,
             'education' => $this->education,
-            'experience' => $this->experience,
+            'experince' => $this->experience,
             'bio' => $this->bio,
             'resume_url' => $this->resume ? Storage::url($this->resume) : null,
             'created_at' => $this->created_at,
@@ -24,7 +24,20 @@ class CandidateInfoResource extends JsonResource
                 'name' => $this->user->name ?? null,
                 'email' => $this->user->email ?? null,
             ],
+            'applications' => $this->whenLoaded('applications', function () {
+                return $this->applications->map(function ($application) {
+                    return [
+                        'id' => $application->id,
+                        'job_id' => $application->job_id,
+                        'status' => $application->status,
+                        'applied_at' => $application->created_at?->format('Y-m-d H:i:s'),
+                    ];
+                });
+            }),
+
+            'applications_count' => $this->whenLoaded('applications', function () {
+                return $this->applications->count();
+            }),
         ];
     }
 }
-

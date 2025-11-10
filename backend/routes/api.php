@@ -1,5 +1,6 @@
 <?php
 use App\Domains\Applications\Controllers\Api\ApplicationController;
+use App\Domains\Candidates\controllers\Api\CandidateListController;
 use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
@@ -22,8 +23,15 @@ Route::prefix('auth')->group(function () {
 
 // cadidate api routes
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/candidate/info', [CandidateInfoController::class, 'show']);
+    Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
     Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
+    Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
+    Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
+
+});
+// cadidate api routes
+Route::middleware(['auth:sanctum'])->group(function () {
+
 });
 });
 // Protected (requires token)
