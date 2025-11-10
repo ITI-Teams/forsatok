@@ -29,6 +29,7 @@ use App\Livewire\Skills\SkillList;
 use App\Livewire\Skills\SkillTrash;
 use App\Livewire\CompanyReviews\ListCompanyReviews;
 use App\Livewire\CompanyReviews\TrashCompanyReview;
+use App\Livewire\Contact\ListContactMessages;
 
 Route::view('/', 'welcome');
 
@@ -50,34 +51,32 @@ Route::get('/list', function () {
 Route::get('/form', function () {
     return view('form');
 })->name('form');
-
+// Categories routes
 Route::prefix('categories')->group(function () {
     Route::get('/', CategoryList::class)->name('categories.index');
     Route::get('/create', CategoryForm::class)->name('categories.create');
     Route::get('/edit/{category}', CategoryForm::class)->name('categories.edit');
     Route::get('/trash', CategoryTrash::class)->name('categories.trash');
 });
-
+// Skills routes
 Route::prefix('skills')->group(function () {
     Route::get('/', SkillList::class)->name('skills.index');
     Route::get('/create', SkillForm::class)->name('skills.create');
     Route::get('/edit/{skill}', SkillForm::class)->name('skills.edit');
     Route::get('/trash', SkillTrash::class)->name('skills.trash');
 });
-
+// Company Reviews routes
 Route::prefix('company-reviews')->group(function () {
     Route::get('/', ListCompanyReviews::class)->name('company-reviews.index');
     Route::get('/trash', TrashCompanyReview::class)->name('company-reviews.trash');
 });
-
+// Users routes
 Route::prefix('users')->group(function () {
     Route::get('/', UserList::class)->name('users.index');
     Route::get('/create', UserForm::class)->name('users.create');
     Route::get('/edit/{user}', UserForm::class)->name('users.edit');
     Route::get('/trash', UserTrash::class)->name('users.trash');
 });
-
-
 // job routes
 Route::prefix('jobs')->middleware(['auth'])->name('jobs.')->group(function () {
     Route::get('/', JobList::class)->name('index');
@@ -95,17 +94,18 @@ Route::prefix('job/application')->middleware(['auth'])->name('job.app.')->group(
     Route::get('/{id}', ApplicationShow::class)->name('show');
 
 });
-
+// Roles and Permissions
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/roles', RoleIndex::class)->name('admin.roles');
     Route::get('/roles/permissions', RolePermission::class)->name('admin.roles.permissions');
     Route::get('/permissions', PermissionIndex::class)->name('admin.permissions');
     Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
 });
-
-
-
-
+// Contact Messages
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/contact-messages', ListContactMessages::class)
+         ->name('admin.contact-messages');
+});
 // Employer Info
 Route::prefix('employer')->middleware(['auth'])->group(function () {
     Route::get('/', EmployerProfile::class)->name('employer.profile');
