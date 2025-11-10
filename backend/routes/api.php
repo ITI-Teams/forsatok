@@ -9,6 +9,7 @@ use App\Domains\Candidates\Controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
+use App\Domains\Contact\Controllers\Api\ContactMessageController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -65,7 +66,16 @@ Route::prefix('company-reviews')->group(function () {
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
+// Contact Message Routs
+Route::prefix('contact')->group(function () {
+    Route::post('/', [ContactMessageController::class, 'store']);
+    Route::get('/', [ContactMessageController::class, 'index'])
+         ->middleware('auth:sanctum');
+});
+
+
 
 // Home Route
 Route::get('/home', [HomeController::class, 'index']);
+
 

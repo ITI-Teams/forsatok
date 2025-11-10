@@ -43,6 +43,14 @@
                 <span>Company Reviews</span>
             </a>
         </li>
+        {{-- Contact Messages --}}
+        <li>
+            <a wire:navigate href="{{ route('admin.contact-messages') }}"
+            class="nav-link {{ request()->routeIs('admin.contact-messages') ? 'active' : '' }}">
+                <i class="fa-solid fa-envelope"></i>
+                <span>Contact Messages</span>
+            </a>
+        </li>
         {{-- Users --}}
         <li>
             <a wire:navigate href="{{ route('users.index') }}"
