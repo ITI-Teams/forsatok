@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Jobs;
 
-use App\Domains\Jobs\Actions\job\DeleteJobAction;
-use App\Domains\Jobs\Actions\job\RestoreJobAction;
+use App\Domains\Jobs\Actions\Job\DeleteJobAction;
+use App\Domains\Jobs\Actions\Job\RestoreJobAction;
 use App\Domains\Jobs\Models\JobPost;
 use Livewire\Component;
 

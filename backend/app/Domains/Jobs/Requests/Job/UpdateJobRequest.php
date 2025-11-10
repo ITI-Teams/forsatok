@@ -27,10 +27,10 @@ class UpdateJobRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'experience' => 'required|string|max:255',
+            'experince' => 'required|string|max:255',
             'description' => 'required|string',
-            'salary_min' => 'nullable|numeric|max:99999999.99',
-            'salary_max' => 'nullable|numeric|max:99999999.99',
+            'salary_min' => 'nullable|numeric',
+            'salary_max' => 'nullable|numeric',
             'type' => 'required|in:full-time,part-time,remote,internship',
             'location' => 'nullable|string|max:255',
             'deadline' => 'nullable|date',
