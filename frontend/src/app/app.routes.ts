@@ -18,6 +18,7 @@ import { CandidateProfile } from './features/candidate-profile/candidate-profile
 import { Company } from './features/company/company';
 import { Candidates } from './features/candidates/candidates';
 import {Jobs} from './features/jobs/jobs';
+import { JobDetails } from './features/job-details/job-details';
 import { Profile } from './features/profile/profile';
 
 // ============ Routes ============
@@ -30,7 +31,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: Home },
       { path:'jobs', component :Jobs},
-      // {path: job/:id, component: JobDetails},
+      { path: 'job/:id', component: JobDetails },
       { path: 'candidates', component: Candidates },
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
