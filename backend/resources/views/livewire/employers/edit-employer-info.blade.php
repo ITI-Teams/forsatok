@@ -146,7 +146,7 @@
 
                 {{-- Password Settings Card --}}
                 <div class="card shadow-lg border-0 rounded-4 w-100 bg-body text-body">
-                    <div class="card-header bg-secondary text-white rounded-top-4">
+                    <div class="card-header bg-body-secondary text-body rounded-top-4">
                         <h5 class="mb-0 fw-bold">
                             <i class="bi bi-shield-lock me-2"></i>Password Settings
                         </h5>
@@ -155,15 +155,17 @@
 
                         {{-- Change Password Toggle --}}
                         <div class="mb-4">
-                            <button type="button" wire:click="$set('showPasswordSection', true)"
-                                class="btn btn-outline-primary" @if($showPasswordSection) style="display: none;" @endif>
+                            <button type="button" wire:click="$set('showPasswordSection', true)" class="btn btn-outline-primary"
+                                @if($showPasswordSection) style="display: none;" @endif>
                                 <i class="bi bi-key me-2"></i>Change Password
                             </button>
 
                             @if($showPasswordSection)
-                                <form wire:submit.prevent="updatePassword" class="border rounded p-4 bg-light" novalidate>
+                                <form wire:submit.prevent="updatePassword" class="rounded p-4 bg-body text-body"
+                                    novalidate>
                                     <h6 class="mb-3 fw-semibold">Change Password</h6>
 
+                                    {{-- Current Password --}}
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">
                                             <i class="fa-solid fa-lock text-primary me-2"></i>Current Password
@@ -176,18 +178,19 @@
                                         @enderror
                                     </div>
 
+                                    {{-- New Password --}}
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">
                                             <i class="fa-solid fa-key text-primary me-2"></i>New Password
                                         </label>
                                         <input type="password" wire:model="password"
-                                            class="form-control @error('password') is-invalid @enderror"
-                                            placeholder="Enter new password">
+                                            class="form-control @error('password') is-invalid @enderror" placeholder="Enter new password">
                                         @error('password')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
+                                    {{-- Confirm Password --}}
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">
                                             <i class="fa-solid fa-key text-primary me-2"></i>Confirm New Password
@@ -196,6 +199,7 @@
                                             placeholder="Confirm new password">
                                     </div>
 
+                                    {{-- Buttons --}}
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="bi bi-check me-2"></i>Update Password
@@ -210,10 +214,9 @@
                         </div>
 
                         {{-- Reset Password Link --}}
-                        <div class="border-top pt-3 mt-3">
+                        <div class="border-top border-secondary pt-3 mt-3">
                             <h6 class="fw-semibold mb-2">Forgot Your Password?</h6>
-                            <p class="text-muted small mb-3">Click the button below to receive a password reset link via
-                                email.</p>
+                            <p class="text-muted small mb-3">Click the button below to receive a password reset link via email.</p>
                             <button type="button" wire:click="sendPasswordResetLink" class="btn btn-outline-info">
                                 <i class="bi bi-envelope me-2"></i>Send Password Reset Link
                             </button>
@@ -221,6 +224,8 @@
 
                     </div>
                 </div>
+
+
 
             </div>
         </div>

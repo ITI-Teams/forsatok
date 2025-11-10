@@ -104,7 +104,7 @@ Route::prefix('jobs')->middleware(['auth'])->name('jobs.')->group(function () {
     Route::get('/', JobList::class)->name('index');
     Route::get('/create', JobForm::class)->name('create');
     Route::get('/{job}/edit', JobForm::class)->name('edit');
-    Route::get('/jobs/{id}', JobShow::class)->name('show');
+    Route::get('/{id}', JobShow::class)->name('show');
     Route::get('/trash', JobTrash::class)->name('trash');
 });
 // job Applications routes
@@ -124,7 +124,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
 });
 // Contact Messages
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/contact-messages', ListContactMessages::class)
          ->name('admin.contact-messages');
 });
