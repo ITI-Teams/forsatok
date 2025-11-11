@@ -1,6 +1,5 @@
 <?php
 use App\Domains\Applications\Controllers\Api\ApplicationController;
-use App\Domains\Candidates\controllers\Api\CandidateListController;
 use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
@@ -10,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
 use App\Domains\Contact\Controllers\Api\ContactMessageController;
-use App\Domains\Users\Controllers\api\LinkedinController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,9 +20,6 @@ Route::prefix('auth')->group(function () {
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
     Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
     Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
-    // // linkedin api routes
-    // Route::get('/linkedin/redirect', [LinkedinController::class, 'redirect']);
-    // Route::get('/linkedin/callback', [LinkedinController::class, 'callback']);
     // cadidate api routes
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
