@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
 use App\Domains\Contact\Controllers\Api\ContactMessageController;
+use App\Domains\Users\Controllers\api\LinkedinController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,19 +22,16 @@ Route::prefix('auth')->group(function () {
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
     Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
     Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
-
-// cadidate api routes
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
-    Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
-    Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
-    Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
-
-});
-// cadidate api routes
-Route::middleware(['auth:sanctum'])->group(function () {
-
-});
+    // // linkedin api routes
+    // Route::get('/linkedin/redirect', [LinkedinController::class, 'redirect']);
+    // Route::get('/linkedin/callback', [LinkedinController::class, 'callback']);
+    // cadidate api routes
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
+        Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
+        Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
+        Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
+    });
 });
 // Protected (requires token)
 Route::middleware('auth:sanctum')->group(function () {

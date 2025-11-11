@@ -38,6 +38,7 @@ use App\Livewire\Location\LocationIndex;
 use App\Livewire\CompanyReviews\ListCompanyReviews;
 use App\Livewire\CompanyReviews\TrashCompanyReview;
 use App\Livewire\Contact\ListContactMessages;
+use App\Domains\Users\Controllers\api\LinkedinController;
 
 Route::view('/', 'welcome');
 
@@ -132,6 +133,10 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 Route::prefix('employer')->middleware(['auth'])->group(function () {
     Route::get('/', EmployerProfile::class)->name('employer.profile');
     Route::get('/edit', EditEmployerInfo::class)->name('employer.profile.edit');
+});
+Route::middleware(['web'])->group(function () {
+    Route::get('/api/auth/linkedin/redirect', [LinkedinController::class, 'redirect']);
+    Route::get('/api/auth/linkedin/callback', [LinkedinController::class, 'callback']);
 });
 require __DIR__.'/auth.php';
 

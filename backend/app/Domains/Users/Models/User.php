@@ -29,6 +29,9 @@ class User extends Authenticatable
         'email',
         'type',
         'password',
+        'linkedin_id',
+        'avatar',
+        'email_verified_at'
     ];
 
     /**
