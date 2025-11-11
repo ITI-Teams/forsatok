@@ -14,9 +14,8 @@ class HomeController extends Controller
     {
 
         $jobs = JobPost::select([
-                'id', 'title', 'experince', 'description',
-                'salary_min', 'salary_max', 'type',
-                'location', 'deadline', 'is_active'
+                'id', 'title', 'experience', 'description',
+                'salary_min', 'salary_max', 'type', 'deadline', 'is_active'
             ])
             ->where('is_active', true)
             ->latest()
