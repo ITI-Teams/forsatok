@@ -20,6 +20,8 @@ class CandidateInfo extends Model
         'education',
         'experience',
         'bio',
+        'gender',
+        'date_of_birth',
     ];
 
     public function user()

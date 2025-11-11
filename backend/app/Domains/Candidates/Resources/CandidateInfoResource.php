@@ -17,6 +17,8 @@ class CandidateInfoResource extends JsonResource
             'education' => $this->education,
             'experince' => $this->experience,
             'bio' => $this->bio,
+            'gender' => $this->gender,
+            'date_of_birth' => $this->date_of_birth,
             'resume_url' => $this->resume ? Storage::url($this->resume) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

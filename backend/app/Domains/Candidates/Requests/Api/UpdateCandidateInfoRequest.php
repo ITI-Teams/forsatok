@@ -24,6 +24,9 @@ class UpdateCandidateInfoRequest extends FormRequest
             'job_title' => 'nullable|string|max:255',
             'skills' => 'nullable|array',
             'skills.*' => 'integer|exists:skills,id',
+            'gender' => 'nullable|string|in:male,female,other',
+            'date_of_birth' => 'nullable|date',
+
         ];
     }
 }
