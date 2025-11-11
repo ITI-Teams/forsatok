@@ -7,6 +7,7 @@ use App\Domains\Users\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Domains\Location\Models\Locationable;
 
 class JobPost extends Model
 {
@@ -41,5 +42,9 @@ class JobPost extends Model
     public function savedByCandidates()
     {
         return $this->hasMany(SavedJob::class);
+    }
+    public function locationable()
+    {
+        return $this->morphOne(Locationable::class, 'locationable');
     }
 }
