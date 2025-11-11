@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -48,28 +49,24 @@ export class Login {
     this.auth.login(this.form).subscribe({
       next: (res: any) => {
         this.loading = false;
-        if (res.token) {
-          localStorage.setItem('token', res.token);
-          this.showToast('success', 'Welcome!', 'Login successful.');
-          this.router.navigate(['/home']);
-        } else {
-          this.showToast('error', 'Error', 'Token not received.');
-        }
+        this.showToast('success', 'Welcome!', 'Login successful.');
       },
       error: (err) => {
         this.loading = false;
+        const errorMessage = this.auth.getErrorMessage(err);
+        
         if (err.status === 401) {
-          this.showToast('error', 'Unauthorized', 'Invalid email or password.');
+          this.showToast('error', 'Unauthorized', errorMessage || 'Invalid email or password.');
         } else if (err.status === 0) {
           this.showToast('error', 'Network Error', 'Cannot reach the server.');
         } else {
-          this.showToast('error', 'Error', 'Something went wrong, please try again.');
+          this.showToast('error', 'Error', errorMessage || 'Something went wrong, please try again.');
         }
       },
     });
   }
 
   continueWithLinkedIn() {
-    this.showToast('info', 'Coming Soon', 'LinkedIn login will be available soon.');
+    this.auth.loginWithLinkedIn();
   }
 }

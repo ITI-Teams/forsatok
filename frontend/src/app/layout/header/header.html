@@ -82,30 +82,50 @@
           @if (isLoggedIn) {
           <button (click)="toggleDropdown('user')"
             class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
-            <img class="w-8 h-8 rounded-full" src="/images/jobhub-logo-black.png" alt="user photo">
+            <img class="w-8 h-8 rounded-full" [src]="getUserAvatar()" [alt]="getUserName()" 
+                onerror="this.src='/assets/images/default-avatar.png'">
           </button>
 
           @if (openDropdown === 'user') {
           <div
             class="absolute right-0 mt-3 z-50 w-44 bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-lg shadow-lg">
             <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-              <div>Bonnie Green</div>
-              <div class="font-medium truncate">name@flowbite.com</div>
+              <div>{{ getUserName() }}</div>
+              <div class="font-medium truncate">{{ getUserEmail() }}</div>
             </div>
             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-              <li><a routerLink="/profile"
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Profile</a>
+              <li>
+                <a routerLink="/profile"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Profile
+                </a>
+              </li>
+              <li>
+                <a routerLink="/settings"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Settings
+                </a>
               </li>
             </ul>
             <div class="py-2">
               <a (click)="logout()"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign
-                out</a>
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white cursor-pointer">
+                Sign out
+              </a>
             </div>
           </div>
           }
           } @else {
-          <a routerLink="/login" class="p-2 rounded border border-gray-200 dark:border-gray-700">Login</a>
+          <div class="flex items-center gap-2">
+            <a routerLink="/login" 
+              class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136] transition">
+              Login
+            </a>
+            <a routerLink="/register" 
+              class="px-4 py-2 text-sm font-medium bg-[#ff4136] text-white rounded-lg hover:bg-[#e53935] transition">
+              Register
+            </a>
+          </div>
           }
         </div>
 
@@ -126,57 +146,42 @@
       </div>
     </div>
   </div>
-
   <!-- Mobile Menu -->
   @if (mobileMenuOpen) {
   <div
     class="fixed inset-x-0 top-20 bottom-0 bg-white dark:bg-[#0b1220] z-40 overflow-auto transition-all duration-300">
     <ul class="p-6 space-y-2 text-gray-800 dark:text-gray-200">
       <li><a routerLink="/home" [ngClass]="{'!text-[#ff4136]': isActive('/home')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Home</a></li>
-      <li>
-        <button (click)="toggleMegaMenu('find-jobs')"
-          class="w-full text-left py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between">
-          <span>Find Jobs</span>
-          <svg class="w-4 h-4 transform transition-transform duration-200"
-            [class.rotate-180]="openMegaId === 'find-jobs'" viewBox="0 0 10 6">
-            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-        </button>
-
-        @if (openMegaId === 'find-jobs') {
-        <div class="pl-4 space-y-2">
-          <a routerLink="/jobs/list/v1" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs
-            List – v1</a>
-          <a routerLink="/jobs/list/v2" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs
-            List – v2</a>
-          <a routerLink="/jobs/list/v3" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs
-            List – v3</a>
-          <a routerLink="/jobs/list/v4" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs
-            List – v4</a>
-          <a routerLink="/jobs/list/v5" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs
-            List – v5</a>
-          <a routerLink="/jobs/list/v6" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs
-            List – v6</a>
-        </div>
-        }
-
-      </li>
-      <li><a routerLink="/employers" [ngClass]="{'!text-[#ff4136]': isActive('/employers')}"
-          class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Employers</a></li>
-      <li><a routerLink="/candidates" [ngClass]="{'!text-[#ff4136]': isActive('/candidates')}"
-          class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Candidates</a></li>
-      <li><a routerLink="/blog" [ngClass]="{'!text-[#ff4136]': isActive('/blog')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Blog</a></li>
-      <li><a routerLink="/contact" [ngClass]="{'!text-[#ff4136]': isActive('/contact')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Contact</a>
-      </li>
+      <li><a routerLink="/jobs" [ngClass]="{'!text-[#ff4136]': isActive('/jobs')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs</a></li>
+      <li><a routerLink="/candidates" [ngClass]="{'!text-[#ff4136]': isActive('/candidates')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Candidates</a></li>
+      <li><a routerLink="/company" [ngClass]="{'!text-[#ff4136]': isActive('/company')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Company</a></li>
+      <li><a routerLink="/contact" [ngClass]="{'!text-[#ff4136]': isActive('/contact')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Contact</a></li>
 
       @if (!isLoggedIn) {
-      <li class="mt-4"><a routerLink="/login" class="block w-full text-center py-3 rounded border">Login</a></li>
+      <li class="mt-4 space-y-2">
+        <a routerLink="/login" class="block w-full text-center py-3 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          Login
+        </a>
+        <a routerLink="/register" class="block w-full text-center py-3 rounded bg-[#ff4136] text-white hover:bg-[#e53935] transition">
+          Register
+        </a>
+      </li>
+      } @else {
+      <li class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center gap-3 px-2 py-3">
+          <img class="w-10 h-10 rounded-full" [src]="getUserAvatar()" [alt]="getUserName()"
+              onerror="this.src='/assets/images/default-avatar.png'">
+          <div>
+            <div class="font-medium text-gray-900 dark:text-white">{{ getUserName() }}</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">{{ getUserEmail() }}</div>
+          </div>
+        </div>
+        <div class="mt-2 space-y-1">
+          <a routerLink="/profile" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Profile</a>
+          <a (click)="logout()" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">Sign out</a>
+        </div>
+      </li>
       }
-
-      <li><a routerLink="/register" class="block w-full text-center py-3 rounded bg-[#ff4136] text-white">Job
-          Post</a></li>
-
     </ul>
   </div>
   }
