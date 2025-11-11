@@ -52,26 +52,18 @@ export class Register {
     this.authService.register(data).subscribe({
       next: (res: any) => {
         this.loading = false;
-        // ✅ حفظ التوكن لو موجود
-        if (res.token) {
-          localStorage.setItem('token', res.token);
-          this.showToast('success', 'Success', 'Account created successfully!');
-          this.router.navigate(['/home']);
-        } else {
-          this.showToast('info', 'Registered', 'Account created, please login.');
-          this.router.navigate(['/login']);
-        }
+        this.showToast('success', 'Success', 'Account created successfully!');
       },
       error: (err) => {
         this.loading = false;
-        const msg = err.error?.message || 'Registration failed, please try again';
-        this.showToast('error', 'Error', msg);
+        const errorMessage = this.authService.getErrorMessage(err);
+        this.showToast('error', 'Error', errorMessage || 'Registration failed, please try again.');
       },
     });
   }
 
 
   continueWithLinkedIn() {
-    this.showToast('info', 'Info', 'LinkedIn integration coming soon!');
+    this.authService.loginWithLinkedIn();
   }
 }

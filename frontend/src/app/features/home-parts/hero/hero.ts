@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 interface Candidate {
   initials: string;
@@ -16,7 +16,7 @@ interface CompanyIcon {
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterLink],
   templateUrl: './hero.html',
   styleUrls: ['./hero.css'],
 })
