@@ -12,6 +12,7 @@ class CandidateInfoResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'job_title' => $this->job_title,
             'phone' => $this->phone,
             'education' => $this->education,
             'experince' => $this->experience,
@@ -24,6 +25,16 @@ class CandidateInfoResource extends JsonResource
                 'name' => $this->user->name ?? null,
                 'email' => $this->user->email ?? null,
             ],
+            'skills' => $this->whenLoaded('skills', function () {
+                return $this->skills->map(function ($skill) {
+                    return [
+                        'id' => $skill->id,
+                        'name' => $skill->name,
+                        'slug' => $skill->slug,
+                        'category_id' => $skill->category_id,
+                    ];
+                });
+            }),
             'applications' => $this->whenLoaded('applications', function () {
                 return $this->applications->map(function ($application) {
                     return [
