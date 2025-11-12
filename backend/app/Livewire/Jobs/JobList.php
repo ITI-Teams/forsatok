@@ -19,7 +19,9 @@ class JobList extends Component
 
     public function loadJobs()
     {
-        $this->jobs = JobPost::with(['category', 'employer'])->latest()->get();
+        $this->jobs = JobPost::with(['category', 'employer', 'location.country', 'location.city'])
+        ->latest()
+        ->get();
     }
 
 
@@ -39,6 +41,8 @@ class JobList extends Component
         $delete->execute($job);
 
         session()->flash('message', 'Job moved to trash!');
+        $this->confirmingDelete = false;
+        $this->selectedJobId = null;
         $this->loadJobs();
 
     }

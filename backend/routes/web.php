@@ -104,8 +104,8 @@ Route::prefix('jobs')->middleware(['auth'])->name('jobs.')->group(function () {
     Route::get('/', JobList::class)->name('index');
     Route::get('/create', JobForm::class)->name('create');
     Route::get('/{job}/edit', JobForm::class)->name('edit');
-    Route::get('/{id}', JobShow::class)->name('show');
     Route::get('/trash', JobTrash::class)->name('trash');
+    Route::get('/{id}', JobShow::class)->name('show');
 });
 // job Applications routes
 Route::prefix('job/application')->middleware(['auth'])->name('job.app.')->group(function () {

@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('job_posts', function (Blueprint $table) {
-            // $table->dropColumn('location');
+            $table->text('responsibilities');
+            $table->text('qualification');
+            $table->text('benefits');
+            $table->enum('work_type',['part-time','full-time','freelance'])->default('full-time');
+            $table->enum('work_place',['hybrid','remote','on-site'])->default('on-site');
         });
     }
 
@@ -22,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('job_posts', function (Blueprint $table) {
-            // $table->string('location')->nullable();
+            //
         });
     }
 };

@@ -24,13 +24,19 @@ class StoreJobRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'experince' => 'required|string|max:255',
+            'experience' => 'required|string|max:255',
             'description' => 'required|string',
             'salary_min' => 'nullable|numeric',
             'salary_max' => 'nullable|numeric',
-            'type' => 'required|in:full-time,part-time,remote,internship',
-            'location' => 'nullable|string|max:255',
+            'work_type' => 'required|in:full-time,part-time,freelance',
+            'country_id' => 'required|exists:countries,id',
+            'city_id' => 'required|exists:cities,id',
+            'address' => 'nullable|string|max:255',
+            'responsibilities' => 'required|string',
+            'qualification' => 'required|string',
+            'benefits' => 'required|string',
             'deadline' => 'nullable|date',
+            'work_place' => 'required|in:hybrid,remote,on-site',
             'category_id' => 'nullable|exists:categories,id',
             'is_active' => 'boolean',
         ];

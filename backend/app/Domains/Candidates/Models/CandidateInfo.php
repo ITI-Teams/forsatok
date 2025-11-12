@@ -31,8 +31,10 @@ class CandidateInfo extends Model
         return $this->hasMany(JobApplication::class, 'candidate_id');
     }
 
-    public function location()
-    {
-        return $this->morphOne(Locationable::class, 'locationable');
-    }
+    // public function location()
+    // {
+    //     return $this->morphOne(Locationable::class, 'locationable');
+    // }
+
+
 }
