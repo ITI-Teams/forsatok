@@ -12,18 +12,36 @@ class JobPostResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'requirements' => $this->requirements,
+            'experience' => $this->experience,
             'responsibilities' => $this->responsibilities,
-            'location' => $this->location,
-            'salary' => $this->salary,
-            'employment_type' => $this->employment_type,
-            'experience_level' => $this->experience_level,
-            'deadline' => $this->deadline,
-            'status' => $this->status,
+            'qualifications' => $this->qualification,
+            'benefits' => $this->benefits,
+            'location' => $this->location ? [
+                'country' => [
+                    'id' => $this->location->country_id,
+                    'name' => $this->location->country->name ?? null,
+                ],
+                'city' => [
+                    'id' => $this->location->city_id,
+                    'name' => $this->location->city->name ?? null,
+                ],
+                'address' => $this->location->address,
+            ] : null,
+            'salary' => [
+                'min' => $this->salary_min,
+                'max' => $this->salary_max,
+                'formatted' => $this->salary_min && $this->salary_max
+                    ? number_format($this->salary_min, 2) . ' - ' . number_format($this->salary_max, 2)
+                    : null,
+            ],
+            'work_type' => $this->work_type,
+            'work_place' => $this->work_place,
+            'deadline' => $this->deadline ? $this->deadline->toDateTimeString() : null,
+            'is_active' => $this->is_active,
             'employer' => $this->employer ? [
                 'id' => $this->employer->id,
                 'name' => $this->employer->name,
-                'company' => $this->employer->company_name,
+                'company' => $this->employer->company_name ?? null,
                 'email' => $this->employer->email,
             ] : null,
             'category' => $this->category ? [
@@ -33,7 +51,7 @@ class JobPostResource extends JsonResource
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
             'human_readable_posted_date' => $this->created_at->diffForHumans(),
-            'days_remaining' => now()->diffInDays($this->deadline, false),
+            'days_remaining' => $this->deadline ? now()->diffInDays($this->deadline, false) : null,
         ];
     }
 }

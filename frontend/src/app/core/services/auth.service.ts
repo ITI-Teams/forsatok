@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { BehaviorSubject, throwError } from 'rxjs';
-import { Router } from '@angular/router'; 
+import { Router } from '@angular/router';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'https://balkiest-irretraceable-timika.ngrok-free.dev/api/auth';
+  // private apiUrl = 'https://balkiest-irretraceable-timika.ngrok-free.dev/api/auth';
+  private apiUrl = 'http://localhost:8000/api/auth';
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(
@@ -34,9 +35,9 @@ export class AuthService {
       tap((res: any) => {
         if (res.token) {
           localStorage.setItem('token', res.token);
-          this.setUser(res.user); 
+          this.setUser(res.user);
           this.loggedIn.next(true);
-          this.router.navigate(['/home']); 
+          this.router.navigate(['/home']);
         }
       }),
       catchError(error => {
@@ -99,11 +100,11 @@ export class AuthService {
         const user = JSON.parse(decodeURIComponent(userParam));
         this.setToken(token);
         this.setUser(user);
-        
+
         this.clearUrlParams();
-        
-        this.router.navigate(['/home']); 
-        
+
+        this.router.navigate(['/home']);
+
         return { success: true, token, user };
       } catch (e) {
         return { success: false, error: 'Invalid user data' };
