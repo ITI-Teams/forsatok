@@ -1,105 +1,108 @@
-<div>
-    <h3 class="mb-3 fw-bold text-primary">Permissions Management</h3>
+<div class="container-fluid px-3 px-md-4 py-3 bg-body text-body">
+    @if (session()->has('message'))
+        <div class="alert alert-success d-flex align-items-center fade show mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            {{ session('message') }}
+        </div>
+    @endif
 
-    <!-- ✅ تنبيه ثابت في الأعلى -->
-    <div class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;">
-        @if (session()->has('message'))
-            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="fa fa-check-circle me-2"></i>
-                    <span>{{ session('message') }}</span>
-                    <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
+    <!-- Header -->
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h4 class="fw-semibold mb-0">
+            <i class="fa-solid fa-key me-2 text-primary"></i> Permissions Management
+        </h4>
     </div>
 
-    <!-- ✅ نموذج الإضافة/التعديل -->
-    <form wire:submit.prevent="{{ $updateMode ? 'update' : 'store' }}" class="card p-3 border-0 shadow-sm mb-4 bg-body-tertiary">
-        <div class="mb-3">
-            <label class="form-label fw-semibold">Permission Name</label>
-            <input type="text" wire:model="name" placeholder="Enter permission name"
-                   class="form-control @error('name') is-invalid @enderror">
-            @error('name')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+    <!-- Form Card -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form wire:submit.prevent="{{ $updateMode ? 'update' : 'store' }}">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-tag me-2 text-primary"></i>Permission Name
+                        </label>
+                        <input type="text" wire:model="name" placeholder="Enter permission name"
+                            class="form-control @error('name') is-invalid @enderror">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-primary px-4 w-100">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>
+                            {{ $updateMode ? 'Update' : 'Create' }}
+                        </button>
+                        @if($updateMode)
+                            <button type="button" wire:click="resetInput" class="btn btn-outline-secondary px-4">
+                                <i class="fa-solid fa-times me-2"></i>Cancel
+                            </button>
+                        @endif
+                    </div>
+                </div>
+                @error('name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+            </form>
         </div>
+    </div>
 
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">
-                <i class="fa {{ $updateMode ? 'fa-save' : 'fa-plus' }} me-1"></i>
-                {{ $updateMode ? 'Update Permission' : 'Create Permission' }}
-            </button>
-            @if($updateMode)
-                <button type="button" wire:click="resetInput" class="btn btn-secondary">
-                    <i class="fa fa-times me-1"></i>Cancel
-                </button>
-            @endif
-        </div>
-    </form>
-
-    <!-- ✅ جدول الصلاحيات -->
-    <div class="card border-0 shadow-sm">
+    <!-- Permissions Table -->
+    <div class="card shadow-sm border border-body bg-body text-body rounded-3">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                    <tr>
-                        <th class="border-0">#</th>
-                        <th class="border-0">Permission Name</th>
-                        <th class="border-0 text-center">Actions</th>
-                    </tr>
+                    <thead>
+                        <tr class="border-bottom">
+                            <th>#</th>
+                            <th>Permission Name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @forelse ($permissions as $permission)
-                        <tr>
-                            <td>{{ $permission->id }}</td>
-                            <td>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary fs-6">
+                        @forelse ($permissions as $permission)
+                            <tr>
+                                <td>{{ $permission->id }}</td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary">
                                         {{ ucfirst($permission->name) }}
                                     </span>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-warning" wire:click="edit({{ $permission->id }})">
-                                    <i class="fa fa-edit me-1"></i>Edit
-                                </button>
-                                <button class="btn btn-sm btn-danger"
-                                        wire:click="confirmDelete({{ $permission->id }})"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal">
-                                    <i class="fa fa-trash me-1"></i>Delete
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center text-muted py-4">
-                                <i class="fa fa-inbox fa-2x mb-2"></i>
-                                <br>
-                                No permissions found.
-                            </td>
-                        </tr>
-                    @endforelse
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-warning me-2" wire:click="edit({{ $permission->id }})">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" wire:click="confirmDelete({{ $permission->id }})"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">
+                                    No permissions found.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- ✅ الترقيم -->
-    <div class="mt-3">
+    <!-- Pagination -->
+    <div class="p-3">
         {{ $permissions->links() }}
     </div>
 
     <!-- ✅ مودال التأكيد على الحذف -->
-    <div wire:ignore.self class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="deleteModalLabel">
                         <i class="fa fa-exclamation-triangle me-2"></i>Confirm Delete
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center py-4">
                     <i class="fa fa-trash-alt text-danger fa-3x mb-3"></i>
@@ -120,33 +123,33 @@
 </div>
 
 @push('script')
-<script>
-    // ✅ معالجة الرسائل من Livewire
-    Livewire.on('show-message', (event) => {
-        // إزالة أي تنبيهات سابقة
-        const existingAlerts = document.querySelectorAll('.alert');
-        existingAlerts.forEach(alert => alert.remove());
+    <script>
+        // ✅ معالجة الرسائل من Livewire
+        Livewire.on('show-message', (event) => {
+            // إزالة أي تنبيهات سابقة
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
 
-        // إنشاء التنبيه الجديد
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${event.type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3 shadow-sm`;
-        alertDiv.style.zIndex = '9999';
-        alertDiv.innerHTML = `
-            <div class="d-flex align-items-center">
-                <i class="fa ${event.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
-                <span>${event.message}</span>
-                <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
+            // إنشاء التنبيه الجديد
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${event.type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3 shadow-sm`;
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fa ${event.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+                    <span>${event.message}</span>
+                    <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
 
-        document.body.appendChild(alertDiv);
+            document.body.appendChild(alertDiv);
 
-        // إزالة التنبيه تلقائياً بعد 5 ثواني
-        setTimeout(() => {
-            if (alertDiv.parentElement) {
-                alertDiv.remove();
-            }
-        }, 5000);
-    });
-</script>
+            // إزالة التنبيه تلقائياً بعد 5 ثواني
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        });
+    </script>
 @endpush

@@ -1,29 +1,27 @@
-{{-- <x-app-layout> --}}
-    <div class="">
-
-        {{-- Success Message --}}
-        @if (session('message'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('message') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        {{-- Header --}}
-        <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-            <h4 class="fw-semibold mb-0">
-                <i class="fa-solid fa-user-tie text-primary me-2"></i> Employer Profile
-            </h4>
-            <a href="{{ route('employer.profile.edit') }}" class="btn btn-primary px-4">
-                <i class="fa-solid fa-pen-to-square me-2"></i> Edit Profile
-            </a>
+<div class="container-fluid px-3 px-md-4 py-3 bg-body text-body">
+    @if (session('message'))
+        <div class="alert alert-success d-flex align-items-center fade show mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            {{ session('message') }}
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
         </div>
+    @endif
 
-        {{-- Profile Card Full Width --}}
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow-lg border rounded-4 bg-body text-body w-100">
+    {{-- Header --}}
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h4 class="fw-semibold mb-0">
+            <i class="fa-solid fa-user-tie me-2 text-primary"></i> Employer Profile
+        </h4>
+        <a href="{{ route('employer.profile.edit') }}" class="btn btn-primary px-4">
+            <i class="fa-solid fa-pen-to-square me-2"></i> Edit Profile
+        </a>
+    </div>
+
+    {{-- Profile Card Full Width --}}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border border-body bg-body text-body rounded-3 w-100">
                     <div class="card-body p-4">
 
                         {{-- Company Rating --}}
@@ -93,6 +91,5 @@
                 </div> <!-- End card -->
             </div>
         </div>
-
     </div>
-    {{-- </x-app-layout> --}}
+</div>

@@ -23,8 +23,6 @@ class Skill extends Model
         return $this->belongsToMany(JobPost::class, 'job_skill');
     }
 
-
-
     protected static function boot()
     {
         parent::boot();
