@@ -1,18 +1,8 @@
-// candidate-profile.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Candidate {
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  education: string;
-  experience: string;
-  bio: string;
-  resume: string | File;
-}
+import { CandidateService, CandidateInfo, Application, GRADIENT_PRESETS } from '../../core/services/candidate.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,103 +12,236 @@ interface Candidate {
   styleUrls: ['./profile.css'],
 })
 export class Profile implements OnInit {
+  candidate: CandidateInfo | null = null;
+  applications: Application[] = [];
+  loading = true;
+  error: string | null = null;
 
-  candidate: Candidate = {
-    name: 'Ahmed Mohamed',
-    email: 'ahmed.mohamed@example.com',
-    password: '********',
-    phone: '+20 123 456 7890',
-    education: `Bachelor of Computer Science
-    Cairo University - 2018-2022
-    GPA: 3.8/4.0
+  editCandidate: Partial<CandidateInfo> & { 
+    resume?: File; 
+    cover_gradient?: string;
+    name?: string;
+    email?: string;
+    password?: string;
+  } = {};
+  showModal = false;
+  showGradientPicker = false;
+  selectedGradient = 'from-purple-600 via-blue-600 to-indigo-600';
+  gradients = GRADIENT_PRESETS;
+  selectedProfileImage: File | null = null;
+  profileImagePreview: string | null = null;
 
-    Relevant Coursework:
-    - Data Structures & Algorithms
-    - Web Development
-    - Database Management
-    - Software Engineering`,
-        experience: `Senior Frontend Developer
-    Tech Solutions Inc. | 2022 - Present
-    - Developed and maintained multiple Angular applications
-    - Led a team of 3 junior developers
-    - Improved application performance by 40%
-
-    Junior Developer
-    StartUp XYZ | 2021 - 2022
-    - Built responsive web applications using Angular
-    - Collaborated with design team for UI/UX improvements`,
-    bio: 'Passionate full-stack developer with 3+ years of experience in building scalable web applications. Specialized in Angular, TypeScript, and modern web technologies. Always eager to learn new technologies and solve complex problems.',
-    resume: ''
-  };
-
-  editCandidate: Candidate = { ...this.candidate };
-  showModal: boolean = false;
+  constructor(
+    private candidateService: CandidateService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    this.loadProfile();
+    this.loadApplications();
+  }
 
+  loadProfile(): void {
+    this.loading = true;
+    this.candidateService.getProfile().subscribe({
+      next: (data) => {
+        this.candidate = data;
+        // Get gradient from local storage or use default (frontend only)
+        const savedGradient = localStorage.getItem(`candidate_${data.user_id}_gradient`);
+        this.selectedGradient = savedGradient || 'from-purple-600 via-blue-600 to-indigo-600';
+        
+        this.loading = false;
+        this.error = null;
+      },
+      error: (err) => {
+        console.error('Error loading profile:', err);
+        
+        // Better error messages
+        if (err.status === 404) {
+          this.error = 'Profile not found. Please create your profile first.';
+        } else if (err.status === 403) {
+          this.error = 'Unauthorized. Please login as a candidate.';
+        } else if (err.status === 401) {
+          this.error = 'Please login to view your profile.';
+        } else if (err.status === 0) {
+          this.error = 'Cannot connect to server. Please check your connection.';
+        } else {
+          this.error = err.error?.message || 'Failed to load profile. Please try again.';
+        }
+        
+        this.loading = false;
+      }
+    });
+  }
+
+  loadApplications(): void {
+    this.candidateService.getApplications().subscribe({
+      next: (data) => {
+        this.applications = data.map((app: any) => ({
+          ...app,
+          job: app.job_post || app.job,
+          applied_at: app.applied_at || app.applied_date
+        }));
+      },
+      error: (err) => {
+        console.error('Error loading applications:', err);
+      }
+    });
   }
 
   openEditModal(): void {
-    this.editCandidate = { ...this.candidate };
-    this.showModal = true;
+    if (this.candidate) {
+      this.editCandidate = { 
+        ...this.candidate,
+        name: this.candidate.user?.name,
+        email: this.candidate.user?.email,
+        password: ''
+      };
+      // Get gradient from local storage or candidate data
+      const savedGradient = localStorage.getItem(`candidate_${this.candidate.user_id}_gradient`);
+      this.selectedGradient = savedGradient || 'from-purple-600 via-blue-600 to-indigo-600';
+      this.showModal = true;
+    }
   }
 
   closeModal(): void {
     this.showModal = false;
-    this.editCandidate = { ...this.candidate };
+    this.showGradientPicker = false;
+    this.selectedProfileImage = null;
+    this.profileImagePreview = null;
+    if (this.candidate) {
+      this.editCandidate = { ...this.candidate };
+    }
+  }
+
+  openGradientPicker(): void {
+    this.showGradientPicker = !this.showGradientPicker;
+  }
+
+  selectGradient(gradient: string): void {
+    this.selectedGradient = gradient;
+    this.editCandidate.cover_gradient = gradient;
+    this.showGradientPicker = false;
+    
+    // Save to local storage (frontend only for now)
+    if (this.candidate?.user_id) {
+      localStorage.setItem(`candidate_${this.candidate.user_id}_gradient`, gradient);
+    }
+  }
+
+  onProfileImageSelected(event: any): void {
+    // Frontend only - no logic for now
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.selectedProfileImage = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.profileImagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onResumeSelected(event: any): void {
+    // Frontend only - no logic for now
+    const file = event.target.files[0];
+    if (file) {
+      this.editCandidate.resume = file;
+    }
   }
 
   saveChanges(): void {
-    this.candidate = { ...this.editCandidate };
+    if (!this.candidate) return;
 
-    this.closeModal();
+    const updateData: any = {
+      name: this.editCandidate.name,
+      email: this.editCandidate.email,
+      phone: this.editCandidate.phone,
+      education: this.editCandidate.education,
+      experience: this.editCandidate.experience,
+      bio: this.editCandidate.bio,
+    };
 
-    console.log('Profile updated successfully!', this.candidate);
+    // Only include password if it's not empty
+    if (this.editCandidate.password && this.editCandidate.password.trim() !== '') {
+      updateData.password = this.editCandidate.password;
+    }
+
+    // Update profile via API
+    this.candidateService.updateProfile(updateData).subscribe({
+      next: (data) => {
+        this.candidate = data;
+        
+        // Save gradient to local storage (frontend only)
+        if (this.candidate && this.selectedGradient) {
+          localStorage.setItem(`candidate_${this.candidate.user_id}_gradient`, this.selectedGradient);
+        }
+        
+        // Reload profile to get updated user data
+        this.loadProfile();
+        this.closeModal();
+      },
+      error: (err) => {
+        console.error('Error updating profile:', err);
+        const errorMessage = err.error?.message || 'Failed to update profile. Please try again.';
+        alert(errorMessage);
+      }
+    });
   }
 
   getInitials(): string {
-    const names = this.candidate.name.split(' ');
+    if (!this.candidate?.user?.name) return 'U';
+    const names = this.candidate.user.name.split(' ');
     if (names.length >= 2) {
       return (names[0][0] + names[1][0]).toUpperCase();
     }
-    return this.candidate.name.substring(0, 2).toUpperCase();
+    return this.candidate.user.name.substring(0, 2).toUpperCase();
   }
 
-    onFileSelected(event: any): void {
-      const file = event.target.files[0];
-      if (file && file.type === 'application/pdf') {
-        this.editCandidate.resume = file;
-      } else {
-        alert('Please upload a valid PDF file.');
-      }
-    }
-
-
-
-  viewResume() {
-    if (this.candidate.resume) {
-      if (typeof this.candidate.resume === 'string') {
-        window.open(this.candidate.resume, '_blank');
-      } else if (this.candidate.resume instanceof File) {
-        const fileUrl = URL.createObjectURL(this.candidate.resume);
-        window.open(fileUrl, '_blank');
-      }
-    }
+  getCoverGradient(): string {
+    return this.candidate?.cover_gradient || this.selectedGradient || 'from-purple-600 via-blue-600 to-indigo-600';
   }
 
+  getProfileImageUrl(): string | null {
+    if (this.profileImagePreview) {
+      return this.profileImagePreview;
+    }
+    if (this.candidate?.profile_image) {
+      return this.candidate.profile_image;
+    }
+    return null;
+  }
+
+  viewResume(): void {
+    if (this.candidate?.resume_url) {
+      window.open(this.candidate.resume_url, '_blank');
+    }
+  }
 
   getResumeName(): string {
-    if (this.candidate.resume instanceof File) {
-      return this.candidate.resume.name;
-    } else if (typeof this.candidate.resume === 'string' && this.candidate.resume !== '') {
-      return this.candidate.resume.split('/').pop() || 'Resume.pdf';
+    if (this.candidate?.resume_url) {
+      return this.candidate.resume_url.split('/').pop() || 'Resume.pdf';
     }
     return 'No Resume Uploaded';
   }
 
-  isResumeFile(): boolean {
-    return this.candidate.resume instanceof File;
+  getStatusColor(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'accepted':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'rejected':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
   }
 
-
+  getResumeFileName(): string {
+    if (this.editCandidate.resume && this.editCandidate.resume instanceof File) {
+      return this.editCandidate.resume.name;
+    }
+    return 'Resume.pdf';
+  }
 }
