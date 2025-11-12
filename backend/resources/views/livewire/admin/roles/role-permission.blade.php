@@ -1,12 +1,19 @@
-<div class="container-fluid py-3">
+<div class="container-fluid px-3 px-md-4 py-3 bg-body text-body">
+    @if(session()->has('message'))
+        <div class="alert alert-success d-flex align-items-center fade show mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            {{ session('message') }}
+        </div>
+    @endif
 
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold text-primary mb-0">
-            <i class="fa-solid fa-shield-halved me-2"></i>Assign Permissions to Role
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h4 class="fw-semibold mb-0">
+            <i class="fa-solid fa-shield-halved me-2 text-primary"></i> Assign Permissions to Role
         </h4>
         <a wire:navigate href="{{ route('admin.roles') }}" class="btn btn-outline-secondary">
-            <i class="fa-solid fa-arrow-left me-2"></i>Back
+            <i class="fa-solid fa-arrow-left me-2"></i> Back
         </a>
     </div>
 
@@ -27,9 +34,9 @@
 
     <!-- Permissions List -->
     @if($roleId)
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border border-body bg-body text-body rounded-3">
             <div class="card-body">
-                <h5 class="fw-semibold text-secondary mb-3">
+                <h5 class="fw-semibold mb-3">
                     <i class="fa-solid fa-key me-2 text-primary"></i>Permissions
                 </h5>
 
@@ -58,30 +65,4 @@
             </div>
         </div>
     @endif
-
-    <!-- Toast Message -->
-    @if(session()->has('message'))
-        <div class="position-fixed top-0 end-0 p-3" style="z-index:1080;">
-            <div class="toast show text-white bg-success border-0 shadow-lg" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body fw-semibold">
-                        <i class="fa-solid fa-circle-check me-2"></i>{{ session('message') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const toastEl = document.querySelector('.toast');
-                if (toastEl) {
-                    const toast = new bootstrap.Toast(toastEl);
-                    toast.show();
-                    setTimeout(() => toast.hide(), 3000);
-                }
-            });
-        </script>
-    @endif
-
 </div>

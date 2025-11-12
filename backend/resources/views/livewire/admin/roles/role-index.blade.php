@@ -1,43 +1,76 @@
-<div>
-    <h3 class="mb-3 fw-bold text-primary">Roles Management</h3>
-
-    <form wire:submit.prevent="{{ $updateMode ? 'update' : 'store' }}">
-        <div class="mb-3">
-            <input type="text" wire:model="name" placeholder="Role name" class="form-control">
-            @error('name') <span class="text-danger">{{ $message }}</span> @enderror
+<div class="container-fluid px-3 px-md-4 py-3 bg-body text-body">
+    @if (session()->has('message'))
+        <div class="alert alert-success d-flex align-items-center fade show mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            {{ session('message') }}
         </div>
-        <button class="btn btn-primary">{{ $updateMode ? 'Update' : 'Create' }}</button>
-    </form>
+    @endif
 
-    <hr>
+    <!-- Header -->
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h4 class="fw-semibold mb-0">
+            <i class="fa-solid fa-user-shield me-2 text-primary"></i> Roles Management
+        </h4>
+    </div>
 
-    <table class="table table-hover mt-3 align-middle">
-        <thead class="table-light">
-        <tr>
-            <th>#</th>
-            <th>Role Name</th>
-            <th class="text-center">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach ($roles as $role)
-            <tr>
-                <td>{{ $role->id }}</td>
-                <td>{{ ucfirst($role->name) }}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-warning" wire:click="edit({{ $role->id }})">
-                        <i class="fa fa-edit me-1"></i>Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger" wire:click="confirmDelete({{ $role->id }})" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <i class="fa fa-trash me-1"></i>Delete
-                    </button>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+    <!-- Form Card -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form wire:submit.prevent="{{ $updateMode ? 'update' : 'store' }}">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-tag me-2 text-primary"></i>Role Name
+                        </label>
+                        <input type="text" wire:model="name" placeholder="Enter role name" class="form-control @error('name') is-invalid @enderror">
+                        @error('name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button class="btn btn-primary px-4 w-100">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>{{ $updateMode ? 'Update' : 'Create' }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <div class="mt-3">
+    <!-- Roles Table -->
+    <div class="card shadow-sm border border-body bg-body text-body rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr class="border-bottom">
+                            <th>#</th>
+                            <th>Role Name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($roles as $role)
+                            <tr>
+                                <td>{{ $role->id }}</td>
+                                <td>{{ ucfirst($role->name) }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-warning me-2" wire:click="edit({{ $role->id }})">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" wire:click="confirmDelete({{ $role->id }})" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="p-3">
         {{ $roles->links() }}
     </div>
 

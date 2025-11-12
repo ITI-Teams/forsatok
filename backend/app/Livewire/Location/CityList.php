@@ -5,34 +5,24 @@ namespace App\Livewire\Location;
 use App\Domains\Location\Actions\City\SoftDeleteCityAction;
 use App\Domains\Location\Models\City;
 use Livewire\Component;
+use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class CityList extends Component
 {
-    public $cities;
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
     public $search = '';
+    public $searchFields = ['name', 'country.name'];
+    public $perPage = 5;
 
-    public function mount()
+    #[On('citySearchUpdated')]
+    public function handleSearch($payload)
     {
-        $this->loadCities();
-    }
-
-    public function loadCities()
-    {
-        $query = City::with('country')->latest();
-        
-        if ($this->search) {
-            $query->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('country', function($q) {
-                      $q->where('name', 'like', '%' . $this->search . '%');
-                  });
-        }
-        
-        $this->cities = $query->get();
-    }
-
-    public function updatedSearch()
-    {
-        $this->loadCities();
+        $this->search = $payload['query'] ?? '';
+        $this->searchFields = $payload['fields'] ?? ['name', 'country.name'];
+        $this->resetPage();
     }
 
     public function delete($id, SoftDeleteCityAction $delete)
@@ -41,12 +31,37 @@ class CityList extends Component
         $delete->execute($city);
 
         session()->flash('message', '🗑️ City moved to trash!');
-        $this->loadCities();
     }
 
     public function render()
     {
-        return view('livewire.location.city-list')->layout('layouts.app');
+        $query = City::with('country')->latest();
+
+        if ($this->search && count($this->searchFields) > 0) {
+            $query->where(function ($q) {
+                foreach ($this->searchFields as $i => $field) {
+                    if (str_contains($field, '.')) {
+                        [$relation, $col] = explode('.', $field);
+                        if ($i === 0) {
+                            $q->whereHas($relation, fn($q2) => $q2->where($col, 'like', "%{$this->search}%"));
+                        } else {
+                            $q->orWhereHas($relation, fn($q2) => $q2->where($col, 'like', "%{$this->search}%"));
+                        }
+                    } else {
+                        if ($i === 0) {
+                            $q->where($field, 'like', "%{$this->search}%");
+                        } else {
+                            $q->orWhere($field, 'like', "%{$this->search}%");
+                        }
+                    }
+                }
+            });
+        }
+
+        $cities = $query->paginate($this->perPage);
+
+        return view('livewire.location.city-list', [
+            'cities' => $cities,
+        ])->layout('layouts.app');
     }
 }
-
