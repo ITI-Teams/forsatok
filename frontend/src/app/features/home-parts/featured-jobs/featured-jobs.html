@@ -3,42 +3,52 @@
     <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Featured Jobs</h2>
     <p class="text-gray-500 dark:text-gray-400 mb-10">Know your worth and find the job that qualify your life</p>
 
-    <div class="w-full grid gap-8  mx-auto">
+    <div class="w-full grid gap-8 mx-auto">
       <!-- Job Card -->
       <div
-        class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out">
+        *ngFor="let job of jobs"
+        (click)="viewJob(job?.id)"
+        class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out cursor-pointer">
 
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <!-- Left section (logo + main info) -->
           <div class="flex items-start sm:items-center gap-4 flex-1">
             <!-- Company logo -->
             <div class="w-14 h-14 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-s fa-lg text-emerald-600"></i>
+              <i class="fa-solid fa-{{ getCompanyLogo(job?.company) }} fa-lg text-emerald-600"></i>
             </div>
 
             <!-- Job details -->
             <div class="flex-1 min-w-0">
               <h4 class="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-100 leading-tight mb-1">
-                Software Engineer (Android), Libraries
+                {{ job?.title || 'Job Title' }}
               </h4>
 
               <!-- Meta info -->
               <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500 dark:text-gray-400">
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-center gap-1" *ngIf="job?.company">
                   <i class="fa-regular fa-building"></i>
-                  Segment
+                  {{ job.company }}
                 </span>
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-center gap-1" *ngIf="job?.location">
                   <i class="fa-solid fa-location-dot"></i>
-                  London, UK
+                  {{ job.location }}
                 </span>
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-center gap-1" *ngIf="job?.deadline">
                   <i class="fa-regular fa-clock"></i>
-                  11 hours ago
+                  Apply by {{ formatDate(job.deadline) }}
                 </span>
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-center gap-1" *ngIf="job?.salary_min || job?.salary_max">
                   <i class="fa-solid fa-sack-dollar"></i>
-                  $35k - $45k
+                  <span *ngIf="job?.salary_min && job?.salary_max">
+                    {{ formatSalary(job.salary_min) }} - {{ formatSalary(job.salary_max) }}
+                  </span>
+                  <span *ngIf="job?.salary_min && !job?.salary_max">
+                    From {{ formatSalary(job.salary_min) }}
+                  </span>
+                  <span *ngIf="!job?.salary_min && job?.salary_max">
+                    Up to {{ formatSalary(job.salary_max) }}
+                  </span>
                 </span>
               </div>
             </div>
@@ -46,33 +56,44 @@
 
           <!-- Right section (actions + badges) -->
           <div class="flex flex-row-reverse justify-between sm:items-end md:flex-col gap-4">
-            <!-- Bookmark -->
-            <button type="button" aria-label="Save job"
-              class="self-end sm:self-auto text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-              <i class="fa-regular fa-bookmark text-xl"></i>
+            <!-- Bookmark Button -->
+            <button
+              type="button"
+              aria-label="Save job"
+              (click)="toggleSaveJob(job, $event)"
+              [class.text-indigo-600]="job?.saved"
+              [class.dark:text-indigo-400]="job?.saved"
+              [class.text-gray-400]="!job?.saved"
+              class="self-end sm:self-auto hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
+              <i [class]="job?.saved ? 'fa-solid fa-bookmark text-xl' : 'fa-regular fa-bookmark text-xl'"></i>
             </button>
 
             <!-- Badges -->
             <div class="flex flex-wrap gap-2 mt-2 md:mt-3">
-              <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
-                <i class="fa-solid fa-lock mr-1.5"></i> Private
+              <span *ngIf="job?.type"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                <i class="fa-regular fa-clock mr-1.5"></i> {{ job.type }}
               </span>
               <span
+                *ngIf="isUrgent(job)"
                 class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
                 <i class="fa-solid fa-bolt mr-1.5"></i> Urgent
-              </span>
-              <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-                <i class="fa-regular fa-clock mr-1.5"></i> Full Time
               </span>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- No Jobs Message -->
+      <div *ngIf="jobs.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
+        <i class="fa-regular fa-folder-open text-4xl mb-4"></i>
+        <p class="text-lg">No featured jobs available at the moment</p>
+        <p class="text-sm">Check back later for new opportunities</p>
+      </div>
     </div>
 
     <button
+      *ngIf="jobs.length > 0"
       class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white mt-10 px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
       Load More Listing
     </button>
