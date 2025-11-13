@@ -1,13 +1,13 @@
 import { Component , Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink,Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { HomeService } from '../../../core/services/home.service';
 import { ToastService } from '../../../core/services/toast.service';
 
 
 @Component({
   selector: 'app-featured-jobs',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   standalone: true,
   templateUrl: './featured-jobs.html',
   styleUrl: './featured-jobs.css',
