@@ -67,7 +67,7 @@ Route::middleware(['web'])->group(function () {
 
 
 // ================================
-// 🟦 ADMIN ROUTES
+// ADMIN ROUTES
 // ================================
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
@@ -105,6 +105,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Admin Panel
     Route::prefix('admin')->group(function () {
+        Route::get('/', function(){
+            return redirect()->route('dashboard');
+        })->name('admin.');
         Route::get('/roles', RoleIndex::class)->name('admin.roles');
         Route::get('/roles/permissions', RolePermission::class)->name('admin.roles.permissions');
         Route::get('/permissions', PermissionIndex::class)->name('admin.permissions');
@@ -124,8 +127,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
 });
 
-
-// Employer Routes
+// ================================
+// Employer ROUTES
+// ================================
 Route::middleware(['auth', 'role:employer'])->group(function () {
 
     // Jobs
