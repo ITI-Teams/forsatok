@@ -1,130 +1,169 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
-    <!-- ===== Job Card ===== -->
-    <div
-        class="bg-white dark:bg-gray-800 rounded-2xl shadow px-6 py-6 mt-20 flex flex-col lg:flex-row items-center gap-6 transition-colors">
-        <div class="flex items-center gap-6 w-full lg:w-auto">
-            <img [src]="job.company_logo" alt="Company Logo"
-                class="w-28 h-28 md:w-36 md:h-36 rounded-lg object-cover border border-gray-200 dark:border-gray-700" />
-            <div class="text-left">
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ job.title }}</h1>
-                <p class="text-blue-600 font-medium">{{ job.company }}</p>
-
-                <div class="mt-2 text-gray-500 dark:text-gray-400 text-sm space-y-1">
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-map-marker-alt"></i> {{ job.location }}
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-briefcase"></i> {{ job.type | titlecase }}
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-money-bill-wave"></i> {{ job.salary_min }} - {{ job.salary_max }} EGP
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-calendar"></i> Deadline: {{ job.deadline | date }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="ml-auto flex gap-3">
-            <button
-                class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white px-5 py-2 rounded-lg">
-                Apply Now
-            </button>
-        </div>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-20">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading job details...</p>
     </div>
 
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="text-center py-20">
+        <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
+        <button routerLink="/jobs"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+            Back to Jobs
+        </button>
+    </div>
 
-    <!-- Main Content -->
-    <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 transition-colors">
-        <!-- Left Column -->
-        <div class="md:col-span-2 space-y-8">
-            <!-- Job Description -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Job Description
-                </h2>
-                <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {{ job.description }}
-                </p>
-            </div>
+    <!-- Job Details -->
+    <div *ngIf="job && !loading">
+        <!-- ===== Job Card ===== -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-2xl shadow px-6 py-6 mt-20 flex flex-col lg:flex-row items-center gap-6 transition-colors">
+            <div class="flex items-center gap-6 w-full lg:w-auto">
+                <div class="w-28 h-28 md:w-36 md:h-36 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                    <i class="fa fa-building text-4xl text-gray-400"></i>
+                </div>
+                <div class="text-left">
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ job.title }}</h1>
+                    <p class="text-blue-600 font-medium">{{ job.employer?.name || 'Unknown Company' }}</p>
 
-            <!-- Responsibilities -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Responsibilities
-                </h2>
-                <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
-                    <li *ngFor="let item of job.responsibilities">{{ item }}</li>
-                </ul>
-            </div>
-
-            <!-- Qualifications -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Qualifications
-                </h2>
-                <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
-                    <li *ngFor="let q of job.qualifications">{{ q }}</li>
-                </ul>
-            </div>
-
-            <!-- Company Info -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Company Information
-                </h2>
-                <div class="flex items-start gap-4">
-                    <img [src]="job.company_logo" alt="{{ job.company }}"
-                        class="w-20 h-20 object-cover rounded-lg border" />
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
-                            {{ job.company }}
-                        </h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">
-                            {{ job.company_description }}
-                        </p>
-                        <a [href]="job.company_website" target="_blank"
-                            class="inline-block mt-3 text-blue-600 hover:text-blue-700 font-medium">
-                            Visit Website →
-                        </a>
+                    <div class="mt-2 text-gray-500 dark:text-gray-400 text-sm space-y-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-map-marker-alt"></i> {{ formatLocation() }}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-briefcase"></i> {{ getJobType() }}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-location-arrow"></i> {{ getWorkPlace() }}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-money-bill-wave"></i> {{ formatSalary() }}
+                        </div>
+                        <div class="flex items-center gap-2" *ngIf="job.deadline">
+                            <i class="fa fa-calendar"></i> Deadline: {{ job.deadline | date }}
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="ml-auto flex gap-3">
+                <button
+                    (click)="applyForJob()"
+                    class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white px-5 py-2 rounded-lg">
+                    Apply Now
+                </button>
+            </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="space-y-6">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Job Overview
-                </h2>
-                <ul class="text-gray-600 dark:text-gray-300 space-y-2 text-sm">
-                    <li><strong>Posted:</strong> {{ job.posted_date }}</li>
-                    <li><strong>Expiration date:</strong> {{ job.deadline }}</li>
-                    <li><strong>Location:</strong> {{ job.location }}</li>
-                    <li><strong>Experience:</strong> {{ job.experience }}</li>
-                    <li>
-                        <strong>Salary:</strong> {{ job.salary_min }} - {{ job.salary_max }}
-                        EGP
-                    </li>
-                    <li><strong>Job Type:</strong> {{ job.type }}</li>
-                </ul>
+
+        <!-- Main Content -->
+        <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 transition-colors">
+            <!-- Left Column -->
+            <div class="md:col-span-2 space-y-8">
+                <!-- Job Description -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Job Description
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                        {{ job.description || 'No description available' }}
+                    </p>
+                </div>
+
+                <!-- Responsibilities -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700" *ngIf="job.responsibilities">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Responsibilities
+                    </h2>
+                    <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
+                        <li *ngFor="let item of splitLines(job.responsibilities)">{{ item }}</li>
+                    </ul>
+                </div>
+
+                <!-- Requirements -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700" *ngIf="job.requirements">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Requirements
+                    </h2>
+                    <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
+                        <li *ngFor="let req of splitLines(job.requirements)">{{ req }}</li>
+                    </ul>
+                </div>
+
+                <!-- Qualifications -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700" *ngIf="job.qualification">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Qualifications
+                    </h2>
+                    <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
+                        <li *ngFor="let qualification of splitLines(job.qualification)">{{ qualification }}</li>
+                    </ul>
+                </div>
+
+                <!-- Benefits -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700" *ngIf="job.benefits">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Benefits
+                    </h2>
+                    <ul class="list-disc ml-6 text-gray-600 dark:text-gray-300 space-y-2">
+                        <li *ngFor="let benefit of splitLines(job.benefits)">{{ benefit }}</li>
+                    </ul>
+                </div>
+
+                <!-- Company Info -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Company Information
+                    </h2>
+                    <div class="flex items-start gap-4">
+                        <div class="w-20 h-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center border">
+                            <i class="fa fa-building text-2xl text-gray-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                                {{ job.employer?.name || 'Unknown Company' }}
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">
+                                {{ job.employer?.email || 'No email available' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Job Location -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    Job Location
-                </h2>
-                <iframe [src]="safeMapUrl" width="100%" height="250" class="rounded-lg border-0"
-                    loading="lazy"></iframe>
-            </div>
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Job Overview
+                    </h2>
+                    <ul class="text-gray-600 dark:text-gray-300 space-y-2 text-sm">
+                        <li *ngIf="job.created_at"><strong>Posted:</strong> {{ job.created_at | date }}</li>
+                        <li *ngIf="job.deadline"><strong>Expiration date:</strong> {{ job.deadline | date }}</li>
+                        <li><strong>Location:</strong> {{ formatLocation() }}</li>
+                        <li *ngIf="job.experience"><strong>Experience:</strong> {{ job.experience }}</li>
+                        <li><strong>Salary:</strong> {{ formatSalary() }}</li>
+                        <li><strong>Work Type:</strong> {{ getJobType() }}</li>
+                        <li><strong>Work Place:</strong> {{ getWorkPlace() }}</li>
+                        <li *ngIf="job.category"><strong>Category:</strong> {{ job.category.name }}</li>
+                    </ul>
+                </div>
 
-            <!-- Apply With -->
-            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium shadow">
-                Apply Now
-            </button>
+                <!-- Job Location -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700" *ngIf="safeMapUrl">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                        Job Location
+                    </h2>
+                    <iframe [src]="safeMapUrl" width="100%" height="250" class="rounded-lg border-0"
+                        loading="lazy"></iframe>
+                </div>
+
+                <!-- Apply Button -->
+                <button (click)="applyForJob()"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium shadow">
+                    Apply Now
+                </button>
 
             <div
                 class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
@@ -157,30 +196,105 @@
             </div>
 
         </div>
-    </div>
 
-    <!-- Similar Jobs Section -->
-    <div class="max-w-6xl mx-auto px-4 py-10">
-        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
-            Similar Jobs
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div *ngFor="let j of similarJobs"
-                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-1">
-                    {{ j.title }}
-                </h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm">
-                    {{ j.company }} • {{ j.location }}
-                </p>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mt-2">
-                    {{ j.salary }}
-                </p>
-                <p class="text-blue-600 text-sm font-medium mt-2">{{ j.type }}</p>
-                <button class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm">
-                    View Details
-                </button>
-            </div>
-        </div>
-    </div>
+        <!-- Similar Jobs Section -->
+      </div>
+      <div class="max-w-6xl mx-auto px-4 py-12">
+          <section
+              class="rounded-3xl bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800/60 dark:via-gray-800/40 dark:to-gray-800/60 border border-white/60 dark:border-gray-700/40 shadow-inner p-8"
+          >
+              <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+                  <div>
+                      <p class="text-sm uppercase tracking-widest text-blue-500 dark:text-blue-300 font-semibold">
+                          More opportunities
+                      </p>
+                      <h2 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                          Similar Jobs
+                      </h2>
+                      <p class="text-gray-600 dark:text-gray-300 mt-2 max-w-xl">
+                          Jobs that match the same category and work type as this role. Explore them to find the best fit.
+                      </p>
+                  </div>
+                  <button
+                      *ngIf="similarJobs.length"
+                      (click)="router.navigate(['/jobs'], { queryParams: { category_id: job?.category?.id } })"
+                      class="self-start sm:self-auto inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 transition-colors"
+                  >
+                      Browse all jobs
+                      <i class="fa fa-arrow-right text-xs"></i>
+                  </button>
+              </div>
+
+              <ng-container *ngIf="similarJobs.length > 0; else noSimilarJobs">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div
+                          *ngFor="let j of similarJobs"
+                          class="group bg-white/80 dark:bg-gray-900/60 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 flex flex-col gap-4"
+                      >
+                          <div class="flex items-start justify-between gap-3">
+                              <div class="space-y-1">
+                                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
+                                      {{ j.title }}
+                                  </h3>
+                                  <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                                      <i class="fa fa-building text-gray-400"></i>
+                                      {{ j.employer?.name || 'Unknown Company' }}
+                                  </p>
+                              </div>
+                              <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                                  {{ getJobTypeForJob(j) }}
+                              </span>
+                          </div>
+
+                          <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                              {{ getExcerpt(j.description) || 'No description provided.' }}
+                          </p>
+
+                          <div class="flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-300">
+                              <span class="inline-flex items-center gap-2">
+                                  <i class="fa fa-map-marker-alt text-red-500/80"></i>
+                                  {{ formatLocationForJob(j) }}
+                              </span>
+                              <span class="inline-flex items-center gap-2">
+                                  <i class="fa fa-money-bill text-emerald-500/80"></i>
+                                  {{ formatSalaryForJob(j) }}
+                              </span>
+                              <span class="inline-flex items-center gap-2">
+                                  <i class="fa fa-location-arrow text-indigo-500/80"></i>
+                                  {{ getWorkPlaceForJob(j) }}
+                              </span>
+                          </div>
+
+                            <div class="mt-auto pt-4">
+                                <a
+                                    [routerLink]="['/job', j.id]"
+                                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all duration-200 shadow hover:shadow-md"
+                                >
+                                    View Details
+                                    <i class="fa fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                      </div>
+                  </div>
+              </ng-container>
+
+              <ng-template #noSimilarJobs>
+                  <div class="bg-white/60 dark:bg-gray-900/50 border border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-10 text-center">
+                      <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                          No similar jobs found at the moment.
+                      </p>
+                      <p class="text-gray-500 dark:text-gray-400 mt-2">
+                          Keep exploring other categories or check back later for new opportunities.
+                      </p>
+                      <button
+                          class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+                          (click)="router.navigate(['/jobs'])"
+                      >
+                          Explore All Jobs
+                          <i class="fa fa-search text-xs"></i>
+                      </button>
+                  </div>
+              </ng-template>
+          </section>
+      </div>
 </div>

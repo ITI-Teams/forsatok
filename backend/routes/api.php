@@ -4,11 +4,14 @@ use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
-use App\Domains\Candidates\controllers\Api\CandidateInfoController;
+use App\Domains\Candidates\Controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
-use App\Domains\Contact\controllers\Api\ContactMessageController;
+use App\Domains\Contact\Controllers\Api\ContactMessageController;
+use App\Domains\Jobs\Controllers\Api\CategoryController;
+use App\Domains\Jobs\Controllers\Api\JobFilterController;
+use App\Domains\Location\Controllers\Api\LocationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -47,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
- //  company reviews
+//  company reviews
 Route::prefix('company-reviews')->group(function () {
     Route::get('/company/{companyId}', [CompanyReviewsController::class, 'showCompanyReviews']);
     Route::post('/', [CompanyReviewsController::class, 'store']);
@@ -55,15 +58,25 @@ Route::prefix('company-reviews')->group(function () {
     Route::delete('/{id}', [CompanyReviewsController::class, 'destroy']);
 });
 
-// Jobs Routs
+// Jobs Routes
+Route::get('/jobs/filter-options', [JobFilterController::class, 'getFilterOptions']);
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
+
+// Categories
+Route::get('/categories', [CategoryController::class, 'index']);
+
+// Locations
+Route::prefix('locations')->group(function () {
+    Route::get('/countries', [LocationController::class, 'getCountries']);
+    Route::get('/cities', [LocationController::class, 'getCities']);
+});
 
 // Contact Message Routs
 Route::prefix('contact')->group(function () {
     Route::post('/', [ContactMessageController::class, 'store']);
     Route::get('/', [ContactMessageController::class, 'index'])
-         ->middleware('auth:sanctum');
+        ->middleware('auth:sanctum');
 });
 
 
