@@ -26,8 +26,8 @@ Route::prefix('auth')->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
     Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
-    Route::get('/candidates', [CandidateInfoController::class, 'index']);
-    Route::get('/candidates/{id}', [CandidateInfoController::class, 'show']);
+    Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
+    Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
 
 });
 // cadidate api routes
@@ -72,7 +72,8 @@ Route::prefix('contact')->group(function () {
     Route::get('/', [ContactMessageController::class, 'index'])
          ->middleware('auth:sanctum');
 });
-
+// Skills Routs
+Route::get('/skills', [SkillController::class, 'index']);
 
 
 // Home Route
