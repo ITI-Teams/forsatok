@@ -36,6 +36,14 @@ class CandidateAuthController extends Controller
             $user->assignRole('candidate');
         }
 
+        $user->candidateInfo()->create([
+            'phone' => null,
+            'resume' => null,
+            'education' => null,
+            'experience' => null,
+            'bio' => null,
+        ]);
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([

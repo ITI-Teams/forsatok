@@ -3,12 +3,6 @@
   class="mt-15 min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900 py-8 px-4 transition-colors duration-300">
   <div class="max-w-7xl mx-auto px-4 lg:px-8">
 
-    <!-- Loading State -->
-    <div *ngIf="loading" class="text-center py-20">
-      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      <p class="mt-4 text-gray-600 dark:text-gray-400">Loading profile...</p>
-    </div>
-
     <!-- Error State -->
     <div *ngIf="error && !loading" class="text-center py-20">
       <div
