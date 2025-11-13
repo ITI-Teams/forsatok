@@ -1,13 +1,13 @@
 import { Component , Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterLink,Router } from '@angular/router';
 import { HomeService } from '../../../core/services/home.service';
 import { ToastService } from '../../../core/services/toast.service';
 
 
 @Component({
   selector: 'app-featured-jobs',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   standalone: true,
   templateUrl: './featured-jobs.html',
   styleUrl: './featured-jobs.css',
@@ -127,6 +127,10 @@ export class FeaturedJobs {
   getCompanyLogo(company: string | undefined): string {
     if (!company) return 'building';
     return 'building';
+  }
+
+  showjobs(){
+    this.router.navigate(['/jobs']);
   }
 
 }
