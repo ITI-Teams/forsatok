@@ -20,4 +20,13 @@ export class HomeService {
       map((res) => res.data)
     );
   }
+
+  saveJob(jobId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/jobs/save`, { job_post_id: jobId });
+  }
+
+  unsaveJob(jobId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/jobs/unsave/${jobId}`);
+  }
+
 }
