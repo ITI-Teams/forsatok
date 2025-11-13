@@ -1,247 +1,189 @@
 import { Component, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
-import { CandidateService, CandidateInfo, Application, GRADIENT_PRESETS } from '../../core/services/candidate.service';
-import { AuthService } from '../../core/services/auth.service';
+
+import { Candidate, CandidateService } from '../../core/services/candidate.service';
 
 @Component({
+
   selector: 'app-profile',
+
   standalone: true,
+
   imports: [CommonModule, FormsModule],
+
   templateUrl: './profile.html',
+
   styleUrls: ['./profile.css'],
+
 })
+
 export class Profile implements OnInit {
-  candidate: CandidateInfo | null = null;
-  applications: Application[] = [];
-  loading = true;
-  error: string | null = null;
 
-  editCandidate: Partial<CandidateInfo> & { 
-    resume?: File; 
-    cover_gradient?: string;
-    name?: string;
-    email?: string;
-    password?: string;
-  } = {};
+  candidate: Candidate | null = null;
+
+  editCandidate: Candidate | null = null;
+
   showModal = false;
-  showGradientPicker = false;
-  selectedGradient = 'from-purple-600 via-blue-600 to-indigo-600';
-  gradients = GRADIENT_PRESETS;
-  selectedProfileImage: File | null = null;
-  profileImagePreview: string | null = null;
 
-  constructor(
-    private candidateService: CandidateService,
-    private authService: AuthService
-  ) {}
+  isLoading = false;
+
+  constructor(private candidateService: CandidateService) {}
 
   ngOnInit(): void {
-    this.loadProfile();
-    this.loadApplications();
+
+    this.loadCandidateProfile();
+
   }
 
-  loadProfile(): void {
-    this.loading = true;
-    this.candidateService.getProfile().subscribe({
+  loadCandidateProfile(): void {
+
+    this.isLoading = true;
+
+    this.candidateService.getMyProfile().subscribe({
+
       next: (data) => {
+
         this.candidate = data;
-        // Get gradient from local storage or use default (frontend only)
-        const savedGradient = localStorage.getItem(`candidate_${data.user_id}_gradient`);
-        this.selectedGradient = savedGradient || 'from-purple-600 via-blue-600 to-indigo-600';
-        
-        this.loading = false;
-        this.error = null;
-      },
-      error: (err) => {
-        console.error('Error loading profile:', err);
-        
-        // Better error messages
-        if (err.status === 404) {
-          this.error = 'Profile not found. Please create your profile first.';
-        } else if (err.status === 403) {
-          this.error = 'Unauthorized. Please login as a candidate.';
-        } else if (err.status === 401) {
-          this.error = 'Please login to view your profile.';
-        } else if (err.status === 0) {
-          this.error = 'Cannot connect to server. Please check your connection.';
-        } else {
-          this.error = err.error?.message || 'Failed to load profile. Please try again.';
-        }
-        
-        this.loading = false;
-      }
-    });
-  }
 
-  loadApplications(): void {
-    this.candidateService.getApplications().subscribe({
-      next: (data) => {
-        this.applications = data.map((app: any) => ({
-          ...app,
-          job: app.job_post || app.job,
-          applied_at: app.applied_at || app.applied_date
-        }));
+        this.isLoading = false;
+
       },
+
       error: (err) => {
-        console.error('Error loading applications:', err);
+
+        console.error('Error loading profile', err);
+
+        this.isLoading = false;
+
       }
+
     });
+
   }
 
   openEditModal(): void {
+
     if (this.candidate) {
-      this.editCandidate = { 
-        ...this.candidate,
-        name: this.candidate.user?.name,
-        email: this.candidate.user?.email,
-        password: ''
-      };
-      // Get gradient from local storage or candidate data
-      const savedGradient = localStorage.getItem(`candidate_${this.candidate.user_id}_gradient`);
-      this.selectedGradient = savedGradient || 'from-purple-600 via-blue-600 to-indigo-600';
+
+      this.editCandidate = { ...this.candidate };
+
       this.showModal = true;
+
     }
+
   }
 
   closeModal(): void {
+
     this.showModal = false;
-    this.showGradientPicker = false;
-    this.selectedProfileImage = null;
-    this.profileImagePreview = null;
-    if (this.candidate) {
-      this.editCandidate = { ...this.candidate };
-    }
-  }
 
-  openGradientPicker(): void {
-    this.showGradientPicker = !this.showGradientPicker;
-  }
+    this.editCandidate = null;
 
-  selectGradient(gradient: string): void {
-    this.selectedGradient = gradient;
-    this.editCandidate.cover_gradient = gradient;
-    this.showGradientPicker = false;
-    
-    // Save to local storage (frontend only for now)
-    if (this.candidate?.user_id) {
-      localStorage.setItem(`candidate_${this.candidate.user_id}_gradient`, gradient);
-    }
-  }
-
-  onProfileImageSelected(event: any): void {
-    // Frontend only - no logic for now
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      this.selectedProfileImage = file;
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.profileImagePreview = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  onResumeSelected(event: any): void {
-    // Frontend only - no logic for now
-    const file = event.target.files[0];
-    if (file) {
-      this.editCandidate.resume = file;
-    }
   }
 
   saveChanges(): void {
-    if (!this.candidate) return;
 
-    const updateData: any = {
-      name: this.editCandidate.name,
-      email: this.editCandidate.email,
-      phone: this.editCandidate.phone,
-      education: this.editCandidate.education,
-      experience: this.editCandidate.experience,
-      bio: this.editCandidate.bio,
-    };
+    if (!this.editCandidate) return;
 
-    // Only include password if it's not empty
-    if (this.editCandidate.password && this.editCandidate.password.trim() !== '') {
-      updateData.password = this.editCandidate.password;
-    }
+    const formData = new FormData();
 
-    // Update profile via API
-    this.candidateService.updateProfile(updateData).subscribe({
-      next: (data) => {
-        this.candidate = data;
-        
-        // Save gradient to local storage (frontend only)
-        if (this.candidate && this.selectedGradient) {
-          localStorage.setItem(`candidate_${this.candidate.user_id}_gradient`, this.selectedGradient);
+    Object.entries(this.editCandidate).forEach(([key, value]) => {
+
+      if (value !== null && value !== undefined) {
+
+        if (key === 'skills' && Array.isArray(value)) {
+
+          formData.append(key, JSON.stringify(value));
+
+        } else if (key === 'resume' && value instanceof File) {
+
+          formData.append('resume', value);
+
+        } else {
+
+          formData.append(key, value as any);
+
         }
-        
-        // Reload profile to get updated user data
-        this.loadProfile();
-        this.closeModal();
-      },
-      error: (err) => {
-        console.error('Error updating profile:', err);
-        const errorMessage = err.error?.message || 'Failed to update profile. Please try again.';
-        alert(errorMessage);
+
       }
+
     });
+
+    this.candidateService.updateProfile(formData).subscribe({
+
+      next: (res) => {
+
+        console.log('Profile updated successfully!', res);
+
+        this.candidate = this.editCandidate;
+
+        this.closeModal();
+
+      },
+
+      error: (err) => {
+
+        console.error('Error updating profile', err);
+
+      }
+
+    });
+
   }
 
-  getInitials(): string {
-    if (!this.candidate?.user?.name) return 'U';
-    const names = this.candidate.user.name.split(' ');
-    if (names.length >= 2) {
-      return (names[0][0] + names[1][0]).toUpperCase();
-    }
-    return this.candidate.user.name.substring(0, 2).toUpperCase();
-  }
+  onFileSelected(event: any): void {
 
-  getCoverGradient(): string {
-    return this.candidate?.cover_gradient || this.selectedGradient || 'from-purple-600 via-blue-600 to-indigo-600';
-  }
+    const file = event.target.files[0];
 
-  getProfileImageUrl(): string | null {
-    if (this.profileImagePreview) {
-      return this.profileImagePreview;
+    if (file && file.type === 'application/pdf') {
+
+      if (this.editCandidate) this.editCandidate.resume = file;
+
+    } else {
+
+      alert('Please upload a valid PDF file.');
+
     }
-    if (this.candidate?.profile_image) {
-      return this.candidate.profile_image;
-    }
-    return null;
+
   }
 
   viewResume(): void {
-    if (this.candidate?.resume_url) {
-      window.open(this.candidate.resume_url, '_blank');
-    }
+
+    const resume = this.editCandidate?.resume || this.candidate?.resume;
+
+    if (!resume) return;
+
+    if (typeof resume === 'string') window.open(resume, '_blank');
+
+    else if (resume instanceof File) window.open(URL.createObjectURL(resume), '_blank');
+
   }
 
   getResumeName(): string {
-    if (this.candidate?.resume_url) {
-      return this.candidate.resume_url.split('/').pop() || 'Resume.pdf';
-    }
+
+    const resume = this.editCandidate?.resume || this.candidate?.resume;
+
+    if (resume instanceof File) return resume.name;
+
+    if (typeof resume === 'string' && resume !== '') return resume.split('/').pop() || 'Resume.pdf';
+
     return 'No Resume Uploaded';
+
   }
 
-  getStatusColor(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'accepted':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'rejected':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
-    }
+  getInitials(): string {
+
+    const name = this.candidate?.name || '';
+
+    const parts = name.split(' ');
+
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
+
   }
 
-  getResumeFileName(): string {
-    if (this.editCandidate.resume && this.editCandidate.resume instanceof File) {
-      return this.editCandidate.resume.name;
-    }
-    return 'Resume.pdf';
-  }
 }
+
+ 
