@@ -24,16 +24,20 @@ class HomeController extends Controller
 
 
         $topCities = Locationable::query()
-        ->join('cities', 'locationables.city_id', '=', 'cities.id')
-        ->join('job_posts', function ($join) {
-            $join->on('locationables.locationable_id', '=', 'job_posts.id')
-                 ->where('locationables.locationable_type', JobPost::class);
-        })
-        ->select('cities.id', 'cities.name', DB::raw('COUNT(job_posts.id) as job_count'))
-        ->groupBy('cities.id', 'cities.name')
-        ->orderByDesc('job_count')
-        ->take(5)
-        ->get();
+            ->join('cities', 'locationables.city_id', '=', 'cities.id')
+            ->join('job_posts', function ($join) {
+                $join->on('locationables.locationable_id', '=', 'job_posts.id')
+                    ->where('locationables.locationable_type', JobPost::class);
+            })
+            ->select('cities.id', 'cities.name', DB::raw('COUNT(job_posts.id) as job_count'))
+            ->groupBy('cities.id', 'cities.name')
+            ->orderByDesc('job_count')
+            ->take(5)
+            ->get()
+            ->map(function ($city, $index) {
+                $city->image = asset('images/Location/Location' . ($index + 1) . '.jpeg');
+                return $city;
+            });
 
 
         $candidates = CandidateInfo::with('user:id,name')
