@@ -1,79 +1,51 @@
-<div class="py-4 px-3" data-bs-theme="auto">
-    <div class="container">
+<div class="container-fluid py-2">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h4 class="fw-semibold mb-0">
+            <i class="fa-solid fa-file-lines me-2 text-primary"></i>
+            @if ($applicationId) Edit Application @else Create Application @endif
+        </h4>
+        <a wire:navigate href="{{ route('job.app.index') }}" class="btn btn-outline-secondary d-flex align-items-center">
+            <i class="fa-solid fa-arrow-left me-2"></i> Back to List
+        </a>
+    </div>
 
-        <!-- Main Card -->
-        <div class="card border-0 shadow-sm rounded-3">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
 
-            <!-- Header -->
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <div>
-                    <h2 class="h5 mb-0 fw-bold text-body">
-                        {{ $applicationId ? 'Edit Application' : 'Create New Application' }}
-                    </h2>
-                    <small class="text-secondary">
-                        {{ $applicationId ? 'Update the application information' : 'Fill in the details to add a new application' }}
-                    </small>
-                </div>
-                <div class="rounded-circle d-flex align-items-center justify-content-center bg-body-tertiary"
-                     style="width: 40px; height: 40px;">
-                    <i class="fa-solid fa-file-lines text-secondary"></i>
-                </div>
-            </div>
+            @if (session('message'))
+                <div class="alert alert-success">{{ session('message') }}</div>
+            @endif
 
-            <!-- Form Section -->
-            <div class="card-body">
-
-                @if (session()->has('message'))
-                    <div class="alert alert-success d-flex align-items-center gap-2 small mb-4">
-                        <i class="fa-solid fa-circle-check"></i>
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                <form wire:submit.prevent="save">
-
-                    <!-- Candidate -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Candidate <span class="text-danger">*</span></label>
-                        <div class="position-relative">
-                            <i class="fa-solid fa-user position-absolute"
-                               style="left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--bs-secondary-color);"></i>
-                            <select wire:model="candidate_id"
-                                    class="form-select ps-5 @error('candidate_id') is-invalid @enderror"
-                                    wire:change="$refresh">
-                                <option value="">Select Candidate</option>
-                                @foreach($candidates as $candidate)
-                                    <option value="{{ $candidate->id }}">{{ $candidate->name }} ({{ $candidate->email }})</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @error('candidate_id')
-                        <div class="invalid-feedback d-flex align-items-center gap-1">
-                            <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
-                        </div>
-                        @enderror
+            <form wire:submit.prevent="save">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-user me-2 text-primary"></i>Candidate
+                        </label>
+                        <select wire:model="candidate_id"
+                                class="form-select @error('candidate_id') is-invalid @enderror"
+                                wire:change="$refresh">
+                            <option value="">Select Candidate</option>
+                            @foreach($candidates as $candidate)
+                                <option value="{{ $candidate->id }}">{{ $candidate->name }} ({{ $candidate->email }})</option>
+                            @endforeach
+                        </select>
+                        @error('candidate_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Job Post -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Job Post <span class="text-danger">*</span></label>
-                        <div class="position-relative">
-                            <i class="fa-solid fa-briefcase position-absolute"
-                               style="left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--bs-secondary-color);"></i>
-                            <select wire:model="job_post_id"
-                                    class="form-select ps-5 @error('job_post_id') is-invalid @enderror"
-                                    wire:change="$refresh">
-                                <option value="">Select Job Post</option>
-                                @foreach($jobPosts as $jobPost)
-                                    <option value="{{ $jobPost->id }}">{{ $jobPost->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @error('job_post_id')
-                        <div class="invalid-feedback d-flex align-items-center gap-1">
-                            <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
-                        </div>
-                        @enderror
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-briefcase me-2 text-primary"></i>Job Post
+                        </label>
+                        <select wire:model="job_post_id"
+                                class="form-select @error('job_post_id') is-invalid @enderror"
+                                wire:change="$refresh">
+                            <option value="">Select Job Post</option>
+                            @foreach($jobPosts as $jobPost)
+                                <option value="{{ $jobPost->id }}">{{ $jobPost->title }}</option>
+                            @endforeach
+                        </select>
+                        @error('job_post_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
 
                         <!-- عرض رسالة التقديم الموجود -->
                         @if($candidate_id && $job_post_id)
@@ -109,43 +81,29 @@
                         @endif
                     </div>
 
-                    <!-- Cover Letter -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Cover Letter</label>
-                        <div class="position-relative">
-                            <i class="fa-solid fa-envelope position-absolute"
-                               style="left: 0.9rem; top: 1.2rem; color: var(--bs-secondary-color);"></i>
-                            <textarea wire:model="cover_letter"
-                                      class="form-control ps-5 @error('cover_letter') is-invalid @enderror"
-                                      rows="5"
-                                      placeholder="Enter cover letter content..."></textarea>
-                        </div>
-                        @error('cover_letter')
-                        <div class="invalid-feedback d-flex align-items-center gap-1">
-                            <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
-                        </div>
-                        @enderror
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-envelope me-2 text-primary"></i>Cover Letter
+                        </label>
+                        <textarea wire:model="cover_letter"
+                                  class="form-control @error('cover_letter') is-invalid @enderror"
+                                  rows="5"
+                                  placeholder="Enter cover letter content..."></textarea>
+                        @error('cover_letter') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Status -->
-                    <div class="mb-4">
-                        <label class="form-label small fw-semibold">Status <span class="text-danger">*</span></label>
-                        <div class="position-relative">
-                            <i class="fa-solid fa-flag position-absolute"
-                               style="left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--bs-secondary-color);"></i>
-                            <select wire:model="status"
-                                    class="form-select ps-5 @error('status') is-invalid @enderror">
-                                <option value="">Select Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="accepted">Accepted</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
-                        </div>
-                        @error('status')
-                        <div class="invalid-feedback d-flex align-items-center gap-1">
-                            <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
-                        </div>
-                        @enderror
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-flag me-2 text-primary"></i>Status
+                        </label>
+                        <select wire:model="status"
+                                class="form-select @error('status') is-invalid @enderror">
+                            <option value="">Select Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        @error('status') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
 
                     <!-- Current Resume (if editing) -->
@@ -206,29 +164,18 @@
                         </div>
                     </div>
 
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-center gap-2 pt-3 border-top">
-                        <button type="button" wire:click="cancel"
-                                class="btn btn-outline-secondary fw-semibold px-4"
-                                wire:loading.attr="disabled">
-                            Cancel
-                        </button>
-                        <button type="submit"
-                                class="btn btn-primary fw-semibold px-4"
-                                wire:loading.attr="disabled"
-                                @if($errors->has('job_post_id') && str_contains($errors->first('job_post_id'), 'already applied')) disabled @endif>
-                            <span wire:loading.remove>
-                                {{ $applicationId ? 'Update' : 'Create' }} Application
-                            </span>
-                            <span wire:loading>
-                                <i class="fa-solid fa-spinner fa-spin"></i>
-                                {{ $applicationId ? 'Updating...' : 'Creating...' }}
-                            </span>
-                        </button>
-                    </div>
+                </div>
 
-                </form>
-            </div>
+                <div class="mt-4 d-flex flex-wrap justify-content-end gap-2">
+                    <button type="button" wire:click="cancel" class="btn btn-outline-secondary px-4">
+                        <i class="fa-solid fa-rotate-left me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fa-solid fa-floppy-disk me-2"></i>
+                        @if ($applicationId) Update @else Create @endif
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

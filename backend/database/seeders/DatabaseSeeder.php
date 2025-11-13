@@ -18,10 +18,11 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             CitySeeder::class,
             CategorySeeder::class,
-            UserSeeder::class,
-            JobPostSeeder::class,
+            // UserSeeder::class,
+            // JobPostSeeder::class,
             CandidateInfoSeeder::class,
             LocationableSeeder::class,
+            RolesAndUsersSeeder::class
         ]);
     }
 }

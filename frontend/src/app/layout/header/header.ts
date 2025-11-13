@@ -19,6 +19,7 @@ export class Header implements OnInit{
   openDropdown: string | null = null;
   isLoggedIn = false;
   hasNotifications = false;
+  currentUser: any = null;
 
   constructor(
     private themeService: ThemeService,
@@ -27,16 +28,49 @@ export class Header implements OnInit{
   ) {}
 
   ngOnInit() {
-    this.isLoggedIn = this.auth.hasToken();
-
+    this.checkAuthStatus();
     this.auth.isLoggedIn$().subscribe(status => {
       this.isLoggedIn = status;
+      if (status) {
+        this.loadUserData();
+      } else {
+        this.currentUser = null;
+      }
     });
+  }
+  private checkAuthStatus() {
+    this.isLoggedIn = this.auth.hasToken();
+    if (this.isLoggedIn) {
+      this.loadUserData();
+    }
+  }
+  private loadUserData() {
+    const userData = this.auth.getUser();
+    if (userData) {
+      this.currentUser = userData;
+    }
+  }
+
+  getUserAvatar(): string {
+    if (this.currentUser?.avatar) {
+      if (this.currentUser.avatar.startsWith('http')) {
+        return this.currentUser.avatar;
+      }
+      return `/images/avatars/${this.currentUser.avatar}`;
+    }
+    return '/images/avatars/avatar.svg';
+  }
+  getUserName(): string {
+    return this.currentUser?.name || 'User';
+  }
+  getUserEmail(): string {
+    return this.currentUser?.email || 'user@example.com';
   }
 
   logout() {
     this.auth.logout();
     this.isLoggedIn = false;
+    this.currentUser = null;
     this.router.navigate(['/login']);
   }
 
@@ -83,10 +117,5 @@ export class Header implements OnInit{
 
   @HostListener('window:resize') onResize() {
     if (window.innerWidth >= 1024) this.closeMobileMenu();
-  }
-
-  // helper for icons
-  get userIcon() {
-    return 'assets/images/user-placeholder.svg'; // default icon
   }
 }

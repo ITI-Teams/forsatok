@@ -1,15 +1,14 @@
 <?php
 use App\Domains\Applications\Controllers\Api\ApplicationController;
-use App\Domains\Candidates\controllers\Api\CandidateListController;
 use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
-use App\Domains\Candidates\Controllers\Api\CandidateInfoController;
+use App\Domains\Candidates\controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
-use App\Domains\Contact\Controllers\Api\ContactMessageController;
+use App\Domains\Contact\controllers\Api\ContactMessageController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,19 +20,13 @@ Route::prefix('auth')->group(function () {
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
     Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
     Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
-
-// cadidate api routes
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
-    Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
-    Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
-    Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
-
-});
-// cadidate api routes
-Route::middleware(['auth:sanctum'])->group(function () {
-
-});
+    // cadidate api routes
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
+        Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
+        Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
+        Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
+    });
 });
 // Protected (requires token)
 Route::middleware('auth:sanctum')->group(function () {

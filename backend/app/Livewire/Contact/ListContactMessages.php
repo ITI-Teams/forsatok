@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Contact;
 
-use App\Domains\Contact\Actions\StoreContactMessageAction;
 use App\Domains\Contact\Actions\GetAllContactMessagesAction;
 use App\Domains\Contact\Models\ContactMessage;
 use Livewire\Component;
@@ -10,7 +9,7 @@ use Livewire\WithPagination;
 
 class ListContactMessages extends Component
 {
-   use WithPagination;
+    use WithPagination;
 
     public $search = '';
     protected $paginationTheme = 'bootstrap';
@@ -23,8 +22,8 @@ class ListContactMessages extends Component
         $message->delete();
 
         session()->flash('success', 'Message deleted successfully!');
+        $this->resetPage();
     }
-
     public function render(GetAllContactMessagesAction $getAllMessagesAction)
     {
         $messages = $getAllMessagesAction->execute(10, $this->search);

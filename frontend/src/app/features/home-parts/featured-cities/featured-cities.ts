@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component , Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -9,5 +9,6 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./featured-cities.css'],
 })
 export class FeaturedCities {
-
+  @Input() cities: Array<{ id?: number; name?: string; jobs_count?: number; image?: string }> = [];
+  
 }

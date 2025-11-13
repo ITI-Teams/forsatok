@@ -13,7 +13,7 @@ class CandidateInfo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'bio', 'phone', 'location', 'experience_years', 'education', 'cv_path'
+        'user_id', 'bio', 'phone', 'experience', 'education', 'resume'
     ];
 
     public function user()
@@ -31,10 +31,8 @@ class CandidateInfo extends Model
         return $this->hasMany(JobApplication::class, 'candidate_id');
     }
 
-    // public function location()
-    // {
-    //     return $this->morphOne(Locationable::class, 'locationable');
-    // }
-
-
+    public function location()
+    {
+        return $this->morphOne(Locationable::class, 'locationable');
+    }
 }

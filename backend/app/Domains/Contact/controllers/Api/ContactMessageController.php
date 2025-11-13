@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Contact\Controllers\Api;
+namespace App\Domains\Contact\controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
