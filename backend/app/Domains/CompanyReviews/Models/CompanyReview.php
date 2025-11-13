@@ -19,6 +19,7 @@ class CompanyReview extends Model
         'candidate_id',
         'rating',
         'review',
+        'status',
     ];
 
     public function company()

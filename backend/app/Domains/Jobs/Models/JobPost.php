@@ -29,6 +29,7 @@ class JobPost extends Model
     'benefits',
     'work_type',
     'work_place',
+    'views',
 ];
 
 

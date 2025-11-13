@@ -40,7 +40,7 @@ class HomeController extends Controller
             });
 
 
-        $candidates = CandidateInfo::with('user:id,name')
+        $candidates = CandidateInfo::with(['user:id,name','location'])
             ->latest()
             ->take(32)
             ->get([

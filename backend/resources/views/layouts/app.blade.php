@@ -13,6 +13,7 @@
     <!-- Bootstrap + App -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    @stack('styles')
 </head>
 
 <body>
@@ -72,7 +73,7 @@
             }
         })();
     </script>
-    @stack('script')
+    @stack('scripts')
 </body>
 
 </html>
