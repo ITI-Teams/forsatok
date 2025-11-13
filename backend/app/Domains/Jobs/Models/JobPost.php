@@ -3,21 +3,35 @@
 namespace App\Domains\Jobs\Models;
 
 use App\Domains\Applications\Models\JobApplication;
+use App\Domains\Location\Models\Locationable;
 use App\Domains\Users\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Domains\Location\Models\Locationable;
 
 class JobPost extends Model
 {
     use HasFactory,SoftDeletes;
 
     protected $fillable = [
-        'title', 'description', 'category_id', 'employer_id',
-        'salary_min', 'salary_max', 'type', 'status',
-        'experience', 'deadline', 'is_active'
-    ];
+    'employer_id',
+    'title',
+    'category_id',
+    'is_active',
+    'deadline',
+    'experience',
+    'location',
+    'salary_min',
+    'salary_max',
+    'description',
+    'responsibilities',
+    'qualification',
+    'benefits',
+    'work_type',
+    'work_place',
+];
+
+
 
     public function category()
     {
@@ -43,8 +57,8 @@ class JobPost extends Model
     {
         return $this->hasMany(SavedJob::class);
     }
-    public function locationable()
-    {
-        return $this->morphOne(Locationable::class, 'locationable');
-    }
+    public function location()
+{
+    return $this->morphOne(Locationable::class, 'locationable');
+}
 }

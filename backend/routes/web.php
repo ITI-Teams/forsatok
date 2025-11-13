@@ -1,40 +1,55 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Middleware\RoleMiddleware;
+
+// Controllers
+use App\Domains\Users\Controllers\api\LinkedinController;
+
+// Livewire Components
 use App\Livewire\Admin\Permissions\PermissionIndex;
 use App\Livewire\Admin\Roles\RoleIndex;
 use App\Livewire\Admin\Roles\RolePermission;
 use App\Livewire\Admin\Users\UserRolePermission;
+
 use App\Livewire\Applications\ApplicationForm;
 use App\Livewire\Applications\ApplicationList;
 use App\Livewire\Applications\ApplicationShow;
 use App\Livewire\Applications\ApplicationTrash;
+
 use App\Livewire\Category\CategoryForm;
 use App\Livewire\Category\CategoryList;
 use App\Livewire\Category\CategoryTrash;
+
 use App\Livewire\Employers\EditEmployerInfo;
 use App\Livewire\Employers\EmployerProfile;
+
 use App\Livewire\Jobs\JobForm;
-use Illuminate\Support\Facades\Route;
 use App\Livewire\Jobs\JobList;
 use App\Livewire\Jobs\JobShow;
 use App\Livewire\Jobs\JobTrash;
+
 use App\Livewire\User\UserForm;
 use App\Livewire\User\UserList;
 use App\Livewire\User\UserTrash;
+
 use App\Livewire\Skills\SkillForm;
 use App\Livewire\Skills\SkillList;
 use App\Livewire\Skills\SkillTrash;
+
 use App\Livewire\Location\CountryForm;
 use App\Livewire\Location\CountryList;
 use App\Livewire\Location\CountryTrash;
 use App\Livewire\Location\CityForm;
 use App\Livewire\Location\CityList;
 use App\Livewire\Location\CityTrash;
+
 use App\Livewire\CompanyReviews\ListCompanyReviews;
 use App\Livewire\CompanyReviews\TrashCompanyReview;
 use App\Livewire\Contact\ListContactMessages;
-use App\Domains\Users\Controllers\api\LinkedinController;
-use Spatie\Permission\Middleware\RoleMiddleware;
 
+
+// Public routes
 Route::view('/', 'welcome');
 
 Route::view('dashboard', 'dashboard')
@@ -43,7 +58,7 @@ Route::view('dashboard', 'dashboard')
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
-    ->name(name: 'profile');
+    ->name('profile');
 
 Route::middleware(['web'])->group(function () {
     Route::get('/api/auth/linkedin/redirect', [LinkedinController::class, 'redirect']);
@@ -51,8 +66,12 @@ Route::middleware(['web'])->group(function () {
 });
 
 
-// ADMIN routes
+// ================================
+// 🟦 ADMIN ROUTES
+// ================================
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    // Categories
     Route::prefix('categories')->group(function () {
         Route::get('/', CategoryList::class)->name('categories.index');
         Route::get('/create', CategoryForm::class)->name('categories.create');
@@ -60,6 +79,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/trash', CategoryTrash::class)->name('categories.trash');
     });
 
+    // Skills
     Route::prefix('skills')->group(function () {
         Route::get('/', SkillList::class)->name('skills.index');
         Route::get('/create', SkillForm::class)->name('skills.create');
@@ -67,6 +87,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/trash', SkillTrash::class)->name('skills.trash');
     });
 
+    // Countries
     Route::prefix('countries')->group(function () {
         Route::get('/', CountryList::class)->name('countries.index');
         Route::get('/create', CountryForm::class)->name('countries.create');
@@ -74,6 +95,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/trash', CountryTrash::class)->name('countries.trash');
     });
 
+    // Cities
     Route::prefix('cities')->group(function () {
         Route::get('/', CityList::class)->name('cities.index');
         Route::get('/create', CityForm::class)->name('cities.create');
@@ -81,15 +103,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/trash', CityTrash::class)->name('cities.trash');
     });
 
+    // Admin Panel
     Route::prefix('admin')->group(function () {
         Route::get('/roles', RoleIndex::class)->name('admin.roles');
         Route::get('/roles/permissions', RolePermission::class)->name('admin.roles.permissions');
         Route::get('/permissions', PermissionIndex::class)->name('admin.permissions');
         Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
         Route::get('/contact-messages', ListContactMessages::class)->name('admin.contact-messages');
-        Route::get('/profile', function () {return view('profile');})->name('admin.profile');
+        Route::get('/profile', function () {
+            return view('profile');
+        })->name('admin.profile');
     });
 
+    // Users
     Route::prefix('users')->group(function () {
         Route::get('/', UserList::class)->name('users.index');
         Route::get('/create', UserForm::class)->name('users.create');
@@ -98,33 +124,39 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
 });
 
-// EMPLOYER routes
+
+// Employer Routes
 Route::middleware(['auth', 'role:employer'])->group(function () {
-    Route::prefix('jobs')->group(function () {
-        Route::get('/', JobList::class)->name('jobs.index');
-        Route::get('/create', JobForm::class)->name('jobs.create');
-        Route::get('/{job}/edit', JobForm::class)->name('jobs.edit');
-        Route::get('/{id}', JobShow::class)->name('jobs.show');
-        Route::get('/trash', JobTrash::class)->name('jobs.trash');
+
+    // Jobs
+    Route::prefix('jobs')->name('jobs.')->group(function () {
+        Route::get('/', JobList::class)->name('index');
+        Route::get('/create', JobForm::class)->name('create');
+        Route::get('/{job}/edit', JobForm::class)->name('edit');
+        Route::get('/trash', JobTrash::class)->name('trash');
+        Route::get('/{id}', JobShow::class)->name('show');
     });
 
-    Route::prefix('job/application')->group(function () {
-        Route::get('/', ApplicationList::class)->name('job.app.index');
-        Route::get('/create', ApplicationForm::class)->name('job.app.create');
-        Route::get('/{application}/edit', ApplicationForm::class)->name('job.app.edit');
-        Route::get('/trash', ApplicationTrash::class)->name('job.app.trash');
-        Route::get('/{id}', ApplicationShow::class)->name('job.app.show');
+    // Applications
+    Route::prefix('job/application')->name('job.app.')->group(function () {
+        Route::get('/', ApplicationList::class)->name('index');
+        Route::get('/create', ApplicationForm::class)->name('create');
+        Route::get('/{application}/edit', ApplicationForm::class)->name('edit');
+        Route::get('/trash', ApplicationTrash::class)->name('trash');
+        Route::get('/{id}', ApplicationShow::class)->name('show');
     });
 
-    Route::prefix('company-reviews')->group(function () {
-        Route::get('/', ListCompanyReviews::class)->name('company-reviews.index');
-        Route::get('/trash', TrashCompanyReview::class)->name('company-reviews.trash');
+    // Company Reviews
+    Route::prefix('company-reviews')->name('company-reviews.')->group(function () {
+        Route::get('/', ListCompanyReviews::class)->name('index');
+        Route::get('/trash', TrashCompanyReview::class)->name('trash');
     });
 
-    Route::prefix('employer')->group(function () {
-        Route::get('/', EmployerProfile::class)->name('employer.profile');
-        Route::get('/edit', EditEmployerInfo::class)->name('employer.profile.edit');
+    // Employer Profile
+    Route::prefix('employer')->name('employer.')->group(function () {
+        Route::get('/', EmployerProfile::class)->name('profile');
+        Route::get('/edit', EditEmployerInfo::class)->name('profile.edit');
     });
 });
-require __DIR__.'/auth.php';
 
+require __DIR__.'/auth.php';

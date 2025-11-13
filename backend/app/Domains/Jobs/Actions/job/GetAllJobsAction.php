@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 class GetAllJobsAction{
     public function execute():Collection{
-        return JobPost::with(['employer', 'category'])->latest()->get();
+        return JobPost::with(['employer', 'category','location.country', 'location.city'])
+        ->latest()
+        ->get();
     }
 }
 

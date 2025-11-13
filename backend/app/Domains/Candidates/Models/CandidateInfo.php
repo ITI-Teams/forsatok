@@ -13,7 +13,7 @@ class CandidateInfo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'bio', 'phone', 'location', 'experience_years', 'education', 'cv_path'
+        'user_id', 'bio', 'phone', 'experience', 'education', 'resume'
     ];
 
     public function user()

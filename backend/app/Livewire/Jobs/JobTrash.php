@@ -10,15 +10,28 @@ use Livewire\Component;
 class JobTrash extends Component
 {
     public $trashedJobs;
+    public $confirmingDelete = false;
+    public $selectedJobId = null;
 
     public function mount()
     {
         $this->loadTrashed();
     }
+
+
+
+
     public function loadTrashed()
     {
-        $this->trashedJobs = JobPost::onlyTrashed()->latest()->get();
+        $this->trashedJobs = JobPost::onlyTrashed()
+        ->with(['category', 'employer', 'location.country', 'location.city'])
+        ->latest()
+        ->get();
     }
+
+
+
+
     public function restore($id, RestoreJobAction $restore)
     {
         $restore->execute($id);
@@ -26,10 +39,24 @@ class JobTrash extends Component
         $this->loadTrashed();
     }
 
-    public function forceDelete($id, DeleteJobAction $delete)
+     public function confirmForceDelete($id)
     {
-        $delete->execute($id);
+        $this->selectedJobId = $id;
+        $this->confirmingDelete = true;
+    }
+
+    public function cancelForceDelete()
+    {
+        $this->selectedJobId = null;
+        $this->confirmingDelete = false;
+    }
+
+    public function forceDelete(DeleteJobAction $delete)
+    {
+        $delete->execute($this->selectedJobId);
         session()->flash('message', 'Job permanently deleted!');
+        $this->confirmingDelete = false;
+        $this->selectedJobId = null;
         $this->loadTrashed();
     }
 
