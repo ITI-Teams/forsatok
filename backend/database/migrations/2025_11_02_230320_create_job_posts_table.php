@@ -20,8 +20,6 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('salary_min', 10, 2)->nullable();
             $table->decimal('salary_max', 10, 2)->nullable();
-            $table->enum('type', ['full-time', 'part-time', 'remote', 'internship'])->default('full-time');
-            $table->string('location')->nullable();
             $table->timestamp('deadline')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

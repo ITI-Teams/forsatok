@@ -8,6 +8,7 @@ import { Login } from './features/auth/login/login';
 import { ForgetPass } from './features/auth/forget-pass/forget-pass';
 import { VerCode } from './features/auth/ver-code/ver-code';
 import { ResetPass } from './features/auth/reset-pass/reset-pass';
+import { AuthCallback } from './features/auth/auth-callback/auth-callback';
 
 // Import Global Pages
 import { Layout } from './layout/layout/layout';
@@ -51,6 +52,7 @@ export const routes: Routes = [
   { path: 'forget-pass', component: ForgetPass,canActivate: [guestGuard] },
   { path: 'ver-code', component: VerCode,canActivate: [guestGuard] },
   { path: 'reset-pass', component: ResetPass,canActivate: [guestGuard] },
+  { path: 'auth/callback', component: AuthCallback,canActivate: [guestGuard] },
 
   // 404 Page
   { path: '**', component: NotFound }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component , Input} from '@angular/core';
 
 @Component({
   selector: 'app-featured-jobs',
@@ -7,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrl: './featured-jobs.css',
 })
 export class FeaturedJobs {
+   @Input() jobs: Array<{
+    id?: number;
+    title?: string;
+    company?: string;
+    location?: string;
+    salary_min?: number;
+    salary_max?: number;
+    type?: string;
+    deadline?: string;
+  }> = [];
 
 }

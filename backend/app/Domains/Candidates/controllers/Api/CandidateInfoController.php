@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Candidates\Controllers\Api;
+namespace App\Domains\Candidates\controllers\Api;
 
 use App\Domains\Candidates\Models\CandidateInfo;
 use App\Http\Controllers\Controller;
@@ -51,6 +51,25 @@ class CandidateInfoController extends Controller
         $candidateInfo = CandidateInfo::firstOrCreate(['user_id' => $user->id]);
 
         $validated = $request->validated();
+
+        // Update user info (name, email, password)
+        $userData = [];
+        if (isset($validated['name'])) {
+            $userData['name'] = $validated['name'];
+        }
+        if (isset($validated['email'])) {
+            $userData['email'] = $validated['email'];
+        }
+        if (isset($validated['password'])) {
+            $userData['password'] = bcrypt($validated['password']);
+        }
+        
+        if (!empty($userData)) {
+            $user->update($userData);
+        }
+
+        // Remove user fields from validated array
+        unset($validated['name'], $validated['email'], $validated['password']);
 
         if ($request->hasFile('resume')) {
             $path = $request->file('resume')->store('resumes', 'public');

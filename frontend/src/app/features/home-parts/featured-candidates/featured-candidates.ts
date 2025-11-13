@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, Input, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -10,19 +10,11 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./featured-candidates.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class FeaturedCandidates {
-  candidates = [
-    { id: 1, name: 'Darlene Robertson', title: 'UI Designer', location: 'London, UK', image: '' },
-    { id: 2, name: 'Floyd Miles', title: 'Chartered Accountant', location: 'London, UK', image: '' },
-    { id: 3, name: 'Wade Warren', title: 'Developer', location: 'London, UK', image: '' },
-    { id: 4, name: 'Floyd Miles', title: 'Chartered Accountant', location: 'London, UK', image: '' },
-    { id: 5, name: 'Leslie Alexander', title: 'Marketing Expert', location: 'London, UK', image: '' },
-    { id: 6, name: 'Floyd Miles', title: 'Chartered Accountant', location: 'London, UK', image: '' },
-    { id: 8, name: 'Darlene Robertson', title: 'UI Designer', location: 'London, UK', image: '' },
-    { id: 9, name: 'Wade Warren', title: 'Developer', location: 'London, UK', image: '' },
-  ];
+export class FeaturedCandidates implements OnInit{
+  @Input() candidates: Array<{ id?: number; name?: string; title?: string; location?: string; image?: string }> = [];
 
   ngOnInit() {
     import('swiper/element/bundle').then(({ register }) => register());
   }
+
 }

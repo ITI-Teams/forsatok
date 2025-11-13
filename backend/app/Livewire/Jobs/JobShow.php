@@ -11,7 +11,8 @@ class JobShow extends Component
 
     public function mount($id)
     {
-        $this->job = JobPost::with(['employer', 'category'])->findOrFail($id);
+        $this->job = JobPost::with(['employer', 'category', 'location.country', 'location.city'])
+        ->findOrFail($id);
     }
 
     public function render()

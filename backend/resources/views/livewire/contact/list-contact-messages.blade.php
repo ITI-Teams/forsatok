@@ -1,77 +1,74 @@
-<div class="container mt-4">
-
-    <!-- Header -->
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="h4 fw-bold text-body">Contact Messages</h1>
-    </div>
-
-    <!-- Search -->
-    <div class="mb-3 w-50">
-        <input type="text" wire:model.live="search"
-               class="form-control"
-               placeholder="🔍 Search by name, email or subject...">
-    </div>
-
-    <!-- Success Message -->
+<div class="container-fluid px-3 px-md-4 py-3 bg-body text-body">
     @if (session()->has('success'))
-        <div class="alert alert-success border-0 rounded-3 shadow-sm d-flex align-items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+        <div class="alert alert-success d-flex align-items-center fade show mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            {{ session('success') }}
         </div>
     @endif
 
-    <!-- Table Card -->
-    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-
-        <div class="card-header bg-body-tertiary py-3">
-            <h6 class="mb-0 text-secondary fw-semibold">All Messages</h6>
+    <!-- Header + Search -->
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h4 class="fw-semibold mb-0">
+            <i class="fa-solid fa-envelope me-2 text-primary"></i> Contact Messages
+        </h4>
+        <div class="d-flex flex-wrap gap-2">
+            <input type="text" wire:model.live="search" class="form-control"
+                placeholder="Search by name, email or subject...">
         </div>
+    </div>
 
+    <!-- Messages Table -->
+    <div class="card shadow-sm border border-body bg-body text-body rounded-3">
         <div class="card-body p-0">
-            <table class="table table-hover mb-0 align-middle">
-                <thead class="bg-body-tertiary">
-                    <tr>
-                        <th class="px-4 py-3">Full Name</th>
-                        <th class="px-4 py-3">Email</th>
-                        <th class="px-4 py-3">Subject</th>
-                        <th class="px-4 py-3">Message</th>
-                        <th class="px-4 py-3 text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($messages as $message)
-                        <tr>
-                            <td class="px-4 py-3">{{ $message->full_name }}</td>
-                            <td class="px-4 py-3">{{ $message->email }}</td>
-                            <td class="px-4 py-3">{{ $message->subject ?? '-' }}</td>
-                            <td class="px-4 py-3 text-truncate" style="max-width: 250px;">
-                                {{ $message->message }}
-                                @if(strlen($message->message) > 50)
-                                    <a href="#" onclick="showMessageModal('{{ addslashes($message->full_name) }}', '{{ addslashes($message->message) }}')">…Read more</a>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-center">
-                                <button onclick="confirmDelete({{ $message->id }})"
-                                        class="btn btn-sm btn-danger rounded-3 px-3">
-                                    <i class="fa-solid fa-trash"></i> Delete
-                                </button>
-                            </td>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr class="border-bottom">
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th class="text-center">Actions</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-secondary">
-                                No messages found.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($messages as $message)
+                            <tr>
+                                <td>{{ $message->full_name }}</td>
+                                <td>{{ $message->email }}</td>
+                                <td>{{ $message->subject ?? '-' }}</td>
+                                <td class="text-truncate" style="max-width: 250px;">
+                                    {{ $message->message }}
+                                    @if(strlen($message->message) > 50)
+                                        <a href="#"
+                                            onclick="showMessageModal('{{ addslashes($message->full_name) }}', '{{ addslashes($message->message) }}')">…Read
+                                            more</a>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <button onclick="confirmDelete({{ $message->id }})"
+                                        class="btn btn-sm btn-danger">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    No messages found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
+    </div>
 
-        <!-- Pagination -->
-        <div class="card-footer d-flex justify-content-end">
-            {{ $messages->links() }}
-        </div>
-
+    <!-- Pagination -->
+    <div class="p-3">
+        {{ $messages->links() }}
     </div>
 </div>
 

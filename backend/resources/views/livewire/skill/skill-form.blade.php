@@ -1,74 +1,56 @@
-<div class="py-4 px-3">
-    <div class="container">
-        <div class="card border-0 shadow-sm rounded-3 bg-body text-body">
+<div class="container-fluid py-2">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h4 class="fw-semibold mb-0">
+            <i class="fa-solid fa-wrench me-2 text-primary"></i>
+            @if ($skillId) Edit Skill @else Create Skill @endif
+        </h4>
+        <a wire:navigate href="{{ route('skills.index') }}" class="btn btn-outline-secondary d-flex align-items-center">
+            <i class="fa-solid fa-arrow-left me-2"></i> Back to List
+        </a>
+    </div>
 
-            <!-- Header -->
-            <div class="px-4 py-3 border-bottom d-flex align-items-center justify-content-between bg-body-tertiary">
-                <div>
-                    <h2 class="h5 mb-0 fw-bold text-body"> 
-                        {{ $skillId ? 'Edit Skill' : 'Create New Skill' }}
-                    </h2>
-                    <small class="text-secondary">
-                        {{ $skillId ? 'Update skill details' : 'Fill in skill information to add' }}
-                    </small>
-                </div>
-                <div class="rounded-circle d-flex align-items-center justify-content-center bg-body-secondary" style="width: 40px; height: 40px;">
-                    <i class="fa-solid fa-wrench text-secondary"></i>
-                </div>
-            </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            @if (session('message'))
+                <div class="alert alert-success">{{ session('message') }}</div>
+            @endif
 
-            <!-- Form Content -->
-            <div class="card-body p-4">
-                @if (session()->has('message'))
-                    <div class="alert alert-success small d-flex align-items-center gap-2">
-                        <i class="fa-solid fa-circle-check"></i>
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                <form wire:submit.prevent="save">
-                    <!-- Name -->
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Skill Name <span class="text-danger">*</span></label>
-                        <div class="position-relative">
-                            <i class="fa-solid fa-gear position-absolute" style="left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--bs-secondary-color);"></i>
-                            <input type="text"
-                                   wire:model.defer="name"
-                                   class="form-control ps-5 @error('name') is-invalid @enderror"
-                                   placeholder="Enter skill name">
-                        </div>
-                        @error('name')
-                            <div class="invalid-feedback d-flex align-items-center gap-1">
-                                <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
-                            </div>
-                        @enderror
+            <form wire:submit.prevent="save">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-gear me-2 text-primary"></i>Skill Name
+                        </label>
+                        <input type="text" wire:model.defer="name"
+                            class="form-control @error('name') is-invalid @enderror"
+                            placeholder="Enter skill name">
+                        @error('name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Category -->
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small">Category <span class="text-danger">*</span></label>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-tag me-2 text-primary"></i>Category
+                        </label>
                         <select wire:model="category_id" class="form-select @error('category_id') is-invalid @enderror">
                             <option value="">-- Select Category --</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
-                        @error('category_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        @error('category_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
+                </div>
 
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-center gap-2 pt-3 border-top">
-                        <button type="button" wire:click="cancel" class="btn btn-outline-secondary fw-semibold px-4">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-primary fw-semibold px-4">
-                            {{ $skillId ? 'Update' : 'Create' }}
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="mt-4 d-flex flex-wrap justify-content-end gap-2">
+                    <button type="button" wire:click="cancel" class="btn btn-outline-secondary px-4">
+                        <i class="fa-solid fa-rotate-left me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fa-solid fa-floppy-disk me-2"></i>
+                        @if ($skillId) Update @else Create @endif
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
