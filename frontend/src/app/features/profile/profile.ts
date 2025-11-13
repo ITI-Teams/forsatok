@@ -1,107 +1,124 @@
+// candidate-profile.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Candidate, CandidateService } from '../../core/services/candidate.service';
-import { HttpClientModule } from '@angular/common/http';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 
+interface Candidate {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  education: string;
+  experience: string;
+  bio: string;
+  resume: string | File;
+}
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule ,NgSelectModule ,ReactiveFormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css'],
 })
 export class Profile implements OnInit {
 
-  profileForm!: FormGroup;
-  candidate!: Candidate;
-  resumeFile?: File | null;
-  allSkills: { id: number; name: string }[] = [];
+  candidate: Candidate = {
+    name: 'Ahmed Mohamed',
+    email: 'ahmed.mohamed@example.com',
+    password: '********',
+    phone: '+20 123 456 7890',
+    education: `Bachelor of Computer Science
+    Cairo University - 2018-2022
+    GPA: 3.8/4.0
 
-  constructor(
-    private fb: FormBuilder,
-    private candidateService: CandidateService
-  ) {}
+    Relevant Coursework:
+    - Data Structures & Algorithms
+    - Web Development
+    - Database Management
+    - Software Engineering`,
+    experience: `Senior Frontend Developer
+    Tech Solutions Inc. | 2022 - Present
+    - Developed and maintained multiple Angular applications
+    - Led a team of 3 junior developers
+    - Improved application performance by 40%
+
+    Junior Developer
+    StartUp XYZ | 2021 - 2022
+    - Built responsive web applications using Angular
+    - Collaborated with design team for UI/UX improvements`,
+    bio: 'Passionate full-stack developer with 3+ years of experience in building scalable web applications. Specialized in Angular, TypeScript, and modern web technologies. Always eager to learn new technologies and solve complex problems.',
+    resume: ''
+  };
+
+  editCandidate: Candidate = { ...this.candidate };
+  showModal: boolean = false;
 
   ngOnInit(): void {
-    this.initForm();
-    this.loadProfile();
-    this.loadAllSkills();
+
   }
 
-  private initForm(): void {
-    this.profileForm = this.fb.group({
-      name: [''],
-      email: [''],
-      password: [''],
-      phone: [''],
-      education: [''],
-      experience: [''],
-      bio: [''],
-      gender: [''],
-      dateOfBirth: [''],
-      resume: [null],
-      skills: [[]]
-    });
+  openEditModal(): void {
+    this.editCandidate = { ...this.candidate };
+    this.showModal = true;
   }
 
-  loadProfile(): void {
-    this.candidateService.getMyProfile().subscribe({
-      next: (data: Candidate) => {
-        this.candidate = data;
-        this.profileForm.patchValue({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          education: data.education,
-          experience: data.experience,
-          bio: data.bio,
-          gender: data.gender,
-          dateOfBirth: data.dateOfBirth,
-          skills: data.skills?.map(s => s.id) ?? []
-        });
-      },
-      error: (err) => console.error('Error loading profile', err)
-    });
+  closeModal(): void {
+    this.showModal = false;
+    this.editCandidate = { ...this.candidate };
   }
 
-  onResumeChange(event: any): void {
+  saveChanges(): void {
+    this.candidate = { ...this.editCandidate };
+
+    this.closeModal();
+
+    console.log('Profile updated successfully!', this.candidate);
+  }
+
+  getInitials(): string {
+    const names = this.candidate.name.split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[1][0]).toUpperCase();
+    }
+    return this.candidate.name.substring(0, 2).toUpperCase();
+  }
+
+  onFileSelected(event: any): void {
     const file = event.target.files[0];
-    if (file) this.resumeFile = file;
+    if (file && file.type === 'application/pdf') {
+      this.editCandidate.resume = file;
+    } else {
+      alert('Please upload a valid PDF file.');
+    }
   }
 
-  onSubmit(): void {
-    const formData = new FormData();
-    const formValue = this.profileForm.value;
 
-    Object.keys(formValue).forEach(key => {
-      if (key === 'resume' && this.resumeFile) {
-        formData.append('resume', this.resumeFile);
-      } else if (key === 'skills') {
-        formData.append('skills', JSON.stringify(formValue.skills));
-      } else if (formValue[key] !== null && formValue[key] !== '') {
-        formData.append(key, formValue[key]);
+
+  viewResume() {
+    if (this.candidate.resume) {
+      if (typeof this.candidate.resume === 'string') {
+        window.open(this.candidate.resume, '_blank');
+      } else if (this.candidate.resume instanceof File) {
+        const fileUrl = URL.createObjectURL(this.candidate.resume);
+        window.open(fileUrl, '_blank');
       }
-    });
+    }
+  }
 
-    this.candidateService.updateProfile(formData).subscribe({
-      next: (res) => {
-        console.log('Profile updated', res);
-        this.loadProfile();
-      },
-      error: (err) => console.error('Error updating profile', err)
-    });
+
+  getResumeName(): string {
+    if (this.candidate.resume instanceof File) {
+      return this.candidate.resume.name;
+    } else if (typeof this.candidate.resume === 'string' && this.candidate.resume !== '') {
+      return this.candidate.resume.split('/').pop() || 'Resume.pdf';
+    }
+    return 'No Resume Uploaded';
   }
-  
-  loadAllSkills(): void {
-    // Skills API endpoint
-    this.candidateService.getAllSkills().subscribe({
-      next: (skills) => {
-        this.allSkills = skills.map(s => ({ id: s.id, name: s.name }));
-      },
-      error: (err) => console.error('Error loading skills', err)
-    });
+
+  isResumeFile(): boolean {
+    return this.candidate.resume instanceof File;
   }
+
+
 }
