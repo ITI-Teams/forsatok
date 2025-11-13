@@ -46,7 +46,8 @@ class JobPost extends Model
 
     public function skills()
     {
-        return $this->belongsToMany(Skill::class, 'job_skill');
+        return $this->belongsToMany(Skill::class, 'job_skills', 'job_id', 'skill_id')
+            ->withTimestamps();
     }
 
     public function applications()
@@ -58,8 +59,14 @@ class JobPost extends Model
     {
         return $this->hasMany(SavedJob::class);
     }
+
+    public function locationable()
+    {
+        return $this->morphOne(Locationable::class, 'locationable');
+    }
+
     public function location()
-{
-    return $this->morphOne(Locationable::class, 'locationable');
-}
+    {
+        return $this->locationable();
+    }
 }

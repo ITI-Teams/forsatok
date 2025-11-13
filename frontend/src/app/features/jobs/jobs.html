@@ -1,17 +1,13 @@
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
   <!-- Hero Section -->
   <section
-    class="relative flex flex-col items-center justify-center text-center py-24 px-6 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white overflow-hidden"
-  >
+    class="relative flex flex-col items-center justify-center text-center py-24 px-6 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white overflow-hidden">
     <!-- Background image overlay -->
-    <img
-      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f"
-      alt="job search background"
-      class="absolute inset-0 w-full h-full object-cover opacity-30"
-    />
+    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="job search background"
+      class="absolute inset-0 w-full h-full object-cover opacity-30" />
     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/70 to-transparent"></div>
 
-    <div class="relative z-10 max-w-2xl mx-auto">
+    <div class="relative z-10 max-w-4xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">
         Find Your <span class="text-yellow-300">Dream Job</span>
       </h1>
@@ -21,38 +17,36 @@
 
       <!-- Search bar -->
       <div
-        class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col md:flex-row items-stretch md:items-center gap-3 p-4 transition-all duration-300 hover:scale-[1.02]"
-      >
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (input)="onSearchInput()"
+        class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col md:flex-row items-stretch md:items-center gap-3 p-4 transition-all duration-300 hover:scale-[1.02]">
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearchInput()"
           placeholder="Search job title or company..."
-          class="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+          class="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
         <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-          <!-- Location Dropdown -->
-          <select
-            [(ngModel)]="selectedLocation"
-            (change)="applyFilters()"
-            class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Locations</option>
-            <option *ngFor="let location of locations" [value]="location.value">
-              {{location.name}}
+          <!-- Country Dropdown -->
+          <select [(ngModel)]="selectedCountry" (change)="onCountryChange(selectedCountry)"
+            class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option [ngValue]="null">All Countries</option>
+            <option *ngFor="let country of countries" [ngValue]="country.id">
+              {{country.name}}
+            </option>
+          </select>
+
+          <!-- City Dropdown -->
+          <select [(ngModel)]="selectedLocation" (change)="applyFilters()"
+            class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option [ngValue]="null">All Cities</option>
+            <option *ngFor="let city of cities" [ngValue]="city.id">
+              {{city.name}}
             </option>
           </select>
 
           <!-- Category Dropdown -->
-          <select
-            [(ngModel)]="selectedCategory"
-            (change)="applyFilters()"
-            class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Categories</option>
-            <option *ngFor="let category of jobCategories" [value]="category.value">
-              {{category.name}}
+          <select [(ngModel)]="selectedCategory" (change)="applyFilters()"
+            class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option [ngValue]="null">All Categories</option>
+            <option *ngFor="let category of jobCategories" [ngValue]="category.id">
+              {{category.name}} ({{category.jobs_count || 0}})
             </option>
           </select>
         </div>
@@ -60,12 +54,9 @@
 
       <!-- Quick Categories -->
       <div class="flex flex-wrap justify-center gap-3 mt-8">
-        <button
-          *ngFor="let category of jobCategories"
-          (click)="selectQuickCategory(category.value)"
-          class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 hover:border-white/50"
-        >
-          {{category.name}}
+        <button *ngFor="let category of jobCategories" (click)="selectQuickCategory(category.id)"
+          class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 hover:border-white/50">
+          {{category.name}} ({{category.jobs_count || 0}})
         </button>
       </div>
     </div>
@@ -87,13 +78,10 @@
   <div class="container mx-auto px-4 py-12">
     <div class="flex flex-col lg:flex-row gap-8 relative">
       <!-- Sidebar Filters -->
-      <aside
-        [ngClass]="{
+      <aside [ngClass]="{
           'fixed inset-0 z-50 mobile-filter-overlay': isFilterOpen
-        }"
-        [class.hidden]="!isFilterOpen"
-        class="lg:block lg:w-1/4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md lg:overflow-visible overflow-y-auto transition-all duration-300 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-700 dark:scrollbar-track-gray-900 lg:h-auto lg:self-start"
-      >
+        }" [class.hidden]="!isFilterOpen"
+        class="lg:block lg:w-1/4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md lg:overflow-visible overflow-y-auto transition-all duration-300 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-700 dark:scrollbar-track-gray-900 lg:h-auto lg:self-start">
         <div class="flex justify-between items-center mb-6 lg:mb-4">
           <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">Filter By</h2>
           <button (click)="toggleFilters()"
@@ -103,24 +91,36 @@
         </div>
 
         <!-- Employment Type -->
-        <div class="mb-8">
-          <h3 class="font-semibold text-lg mb-4 text-gray-700 dark:text-gray-300">
+        <div class="mb-6">
+          <h3 class="font-semibold text-lg mb-3 text-gray-700 dark:text-gray-300">
             Type Of Employment
           </h3>
           <div class="space-y-3">
-            <div *ngFor="let type of employmentTypes" class="flex items-center">
-              <p-checkbox
-                [(ngModel)]="type.selected"
-                (onChange)="applyFilters()"
-                [binary]="true"
-                inputId="{{ type.name }}"
-              ></p-checkbox>
-              <label
-                for="{{ type.name }}"
-                class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer"
-              >
+            <div *ngFor="let type of employmentTypes; trackBy: trackByValue" class="flex items-center">
+              <p-checkbox [(ngModel)]="type.selected" (onChange)="applyFilters()" [binary]="true"
+                inputId="employment-{{ type.value }}"></p-checkbox>
+              <label for="employment-{{ type.value }}"
+                class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer flex items-center gap-2">
                 {{ type.name }}
-                <span class="text-gray-500 dark:text-gray-400">({{ type.count }})</span>
+                <span class="text-gray-500 dark:text-gray-400 text-xs">({{ type.count }})</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Work Place -->
+        <div class="mb-6">
+          <h3 class="font-semibold text-lg mb-3 text-gray-700 dark:text-gray-300">
+            Work Place
+          </h3>
+          <div class="space-y-3">
+            <div *ngFor="let place of workPlaces; trackBy: trackByValue" class="flex items-center">
+              <p-checkbox [(ngModel)]="place.selected" (onChange)="applyFilters()" [binary]="true"
+                inputId="workplace-{{ place.value }}"></p-checkbox>
+              <label for="workplace-{{ place.value }}"
+                class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer flex items-center gap-2">
+                {{ place.name }}
+                <span class="text-gray-500 dark:text-gray-400 text-xs">({{ place.count }})</span>
               </label>
             </div>
           </div>
@@ -129,29 +129,50 @@
         <!-- Location Filter -->
         <div class="mb-6">
           <h3 class="font-semibold text-lg mb-3">Location</h3>
-          <select
-            [(ngModel)]="selectedLocation"
-            (change)="applyFilters()"
-            class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Locations</option>
-            <option *ngFor="let location of locations" [value]="location.value">
-              {{location.name}}
-            </option>
-          </select>
+
+          <!-- Country Filter -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</label>
+            <select [(ngModel)]="selectedCountry" (change)="onCountryChange(selectedCountry)"
+              class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option [ngValue]="null">All Countries</option>
+              <option *ngFor="let country of countries" [ngValue]="country.id">
+                {{country.name}}
+              </option>
+            </select>
+          </div>
+
+          <!-- City Filter -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</label>
+            <ng-container *ngIf="selectedCountry; else cityPlaceholder">
+              <select [(ngModel)]="selectedLocation" (change)="applyFilters()"
+                class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option [ngValue]="null">All Cities</option>
+                <option *ngFor="let city of cities" [ngValue]="city.id">
+                  {{city.name}} {{city.country ? '(' + city.country.name + ')' : ''}}
+                </option>
+              </select>
+              <p *ngIf="cities.length === 0" class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                No cities available for the selected country.
+              </p>
+            </ng-container>
+            <ng-template #cityPlaceholder>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Select a country first to choose a city.
+              </p>
+            </ng-template>
+          </div>
         </div>
 
         <!-- Job Categories -->
         <div class="mb-6">
           <h3 class="font-semibold text-lg mb-3">Category</h3>
-          <select
-            [(ngModel)]="selectedCategory"
-            (change)="applyFilters()"
-            class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Categories</option>
-            <option *ngFor="let category of jobCategories" [value]="category.value">
-              {{category.name}}
+          <select [(ngModel)]="selectedCategory" (change)="applyFilters()"
+            class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option [ngValue]="null">All Categories</option>
+            <option *ngFor="let category of jobCategories" [ngValue]="category.id">
+              {{category.name}} ({{category.jobs_count || 0}})
             </option>
           </select>
         </div>
@@ -160,17 +181,10 @@
         <div class="mb-8">
           <h3 class="font-semibold text-lg mb-4 text-gray-700 dark:text-gray-300">Job Level</h3>
           <div class="space-y-3">
-            <div *ngFor="let level of jobLevels" class="flex items-center">
-              <p-checkbox
-                [(ngModel)]="level.selected"
-                (onChange)="applyFilters()"
-                [binary]="true"
-                inputId="{{ level.name }}"
-              ></p-checkbox>
-              <label
-                for="{{ level.name }}"
-                class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer"
-              >
+            <div *ngFor="let level of jobLevels; trackBy: trackByValue" class="flex items-center">
+              <p-checkbox [(ngModel)]="level.selected" (onChange)="applyFilters()" [binary]="true"
+                inputId="level-{{ level.value }}"></p-checkbox>
+              <label for="level-{{ level.value }}" class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer">
                 {{ level.name }}
                 <span class="text-gray-500 dark:text-gray-400">({{ level.count }})</span>
               </label>
@@ -181,36 +195,39 @@
         <!-- Salary Range -->
         <div class="mb-8">
           <h3 class="font-semibold text-lg mb-4 text-gray-700 dark:text-gray-300">Salary Range</h3>
-          <p-slider
-            [(ngModel)]="salaryRange"
-            (onSlideEnd)="applyFilters()"
-            [range]="true"
-            [min]="1000"
-            [max]="10000"
-            styleClass="mb-2"
-          ></p-slider>
+          <p-slider [(ngModel)]="salaryRange" (onSlideEnd)="onSalarySliderChange()" [range]="true" [min]="salaryMin"
+            [max]="salaryMax" styleClass="mb-2"></p-slider>
           <div class="flex justify-between text-gray-600 dark:text-gray-400">
-            <span>${{ salaryRange[0] }}</span>
-            <span>${{ salaryRange[1] }}</span>
+            <span>${{ salaryRange[0] | number }}</span>
+            <span>${{ salaryRange[1] | number }}</span>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 mt-4">
+            <div class="flex-1">
+              <label for="salary-min" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                Minimum
+              </label>
+              <input id="salary-min" type="number" min="0" [attr.max]="salaryMax" [(ngModel)]="salaryRangeInput.min"
+                (change)="onSalaryInputChange()"
+                class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Min salary" />
+            </div>
+            <div class="flex-1">
+              <label for="salary-max" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                Maximum
+              </label>
+              <input id="salary-max" type="number" min="0" [(ngModel)]="salaryRangeInput.max"
+                (change)="onSalaryInputChange()"
+                class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Max salary" />
+            </div>
           </div>
         </div>
 
         <div class="flex gap-2">
-          <button
-            pButton
-            type="button"
-            label="Apply Filter"
-            class="w-full p-3"
-            (click)="applyFiltersAndClose()"
-          ></button>
-          <button
-            pButton
-            type="button"
-            label="Reset"
-            class="p-3 w-24"
-            styleClass="p-button-outlined"
-            (click)="resetFilters()"
-          ></button>
+          <button pButton type="button" label="Apply Filter" class="w-full p-3"
+            (click)="applyFiltersAndClose()"></button>
+          <button pButton type="button" label="Reset" class="p-3 w-24" styleClass="p-button-outlined"
+            (click)="resetFilters()"></button>
         </div>
       </aside>
 
@@ -218,45 +235,48 @@
       <section class="lg:w-3/4">
         <div class="mb-8">
           <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
-            <span class="text-blue-600 dark:text-blue-400">AI</span> {{ filteredJobs.length }} Jobs Found
+            <span class="text-blue-600 dark:text-blue-400">AI</span> {{ totalJobs }} Jobs Found
           </h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Showing {{ paginatedJobs.length }} results on this page
+          </p>
         </div>
 
         <!-- Job Cards -->
         <div class="grid gap-6">
-          <div
-            *ngFor="let job of paginatedJobs"
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-          >
+          <div *ngFor="let job of paginatedJobs"
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
             <div class="flex flex-col md:flex-row justify-between">
               <div>
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
                   {{ job.title }}
                 </h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-2">{{ job.company }}</p>
+                <p class="text-gray-600 dark:text-gray-400 mb-2">{{ job.employer?.name ?? 'Unknown Company' }}</p>
                 <p class="text-gray-500 dark:text-gray-400 mb-4">{{ job.description }}</p>
                 <div class="flex flex-wrap gap-2">
-                  <span class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded-full text-sm">{{ job.type }}</span>
-                  <span class="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 rounded-full text-sm">{{ job.category }}</span>
-                  <span class="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 rounded-full text-sm">{{ job.level }}</span>
-                  <span class="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 rounded-full text-sm">${{ job.salary }}</span>
+                  <span
+                    class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded-full text-sm">{{
+                    formatWorkType(job) }}</span>
+                  <span
+                    class="px-3 py-1 bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300 rounded-full text-sm">{{
+                    formatWorkPlace(job) }}</span>
+                  <span
+                    class="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 rounded-full text-sm">{{
+                    job.category?.name ?? 'Uncategorized' }}</span>
+                  <span
+                    class="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 rounded-full text-sm">{{
+                    job.experience ?? 'N/A' }}</span>
+                  <span
+                    class="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 rounded-full text-sm">{{
+                    formatSalary(job) }}</span>
                 </div>
               </div>
               <div class="mt-4 md:mt-0 flex flex-col gap-2">
-                <button
-                  pButton
-                  type="button"
-                  label="View Job"
-                  (click)="viewJob(job.id)"
-                  class="p-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white rounded-lg shadow transition-all duration-300"
-                ></button>
-                <button
-                  pButton
-                  type="button"
-                  label="Apply Now"
+                <button pButton type="button" label="View Job" (click)="viewJob(job.id)"
+                  class="p-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white rounded-lg shadow transition-all duration-300"></button>
+                <button pButton type="button" label="Apply Now"
                   class="p-3 p-button-outlined border rounded-lg transition-all duration-300 hover:bg-blue-600 hover:text-white"
-                  (click)="applyForJob(job.id)"
-                ></button>
+                  (click)="applyForJob(job.id)"></button>
               </div>
             </div>
           </div>
@@ -273,23 +293,17 @@
         <div class="mt-12 text-center text-gray-500 dark:text-gray-400">
           <!-- Pagination -->
           <div class="flex justify-center items-center mt-8 gap-2">
-            <button
-              (click)="previousPage()"
-              [disabled]="currentPage === 1"
-              class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50"
-            >
+            <button (click)="previousPage()" [disabled]="currentPage === 1"
+              class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50">
               Previous
             </button>
 
-              <span class="text-gray-700 dark:text-gray-300 font-medium">
-                Page {{ currentPage }} of {{ totalPages }}
-              </span>
+            <span class="text-gray-700 dark:text-gray-300 font-medium">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
 
-            <button
-              (click)="nextPage()"
-              [disabled]="currentPage === totalPages"
-              class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50"
-            >
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+              class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50">
               Next
             </button>
           </div>
