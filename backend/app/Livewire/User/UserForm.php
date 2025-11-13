@@ -50,9 +50,12 @@ class UserForm extends Component
                 $data['password_confirmation'] = $this->password_confirmation;
             }
 
-            $rules = (new UpdateUserRequest())->rules();
-            $messages = (new UpdateUserRequest())->messages() ?? [];
-            $attributes = (new UpdateUserRequest())->attributes() ?? [];
+            $request = new UpdateUserRequest();
+            $request->merge(['userId' => $this->userId]);
+            
+            $rules = $request->rules();
+            $messages = $request->messages() ?? [];
+            $attributes = $request->attributes() ?? [];
 
             $validated = Validator::make($data, $rules, $messages, $attributes)->validate();
         } else {
