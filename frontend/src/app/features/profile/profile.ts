@@ -1,189 +1,107 @@
 import { Component, OnInit } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
-
-import { FormsModule } from '@angular/forms';
-
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Candidate, CandidateService } from '../../core/services/candidate.service';
+import { HttpClientModule } from '@angular/common/http';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 
 @Component({
-
   selector: 'app-profile',
-
   standalone: true,
-
-  imports: [CommonModule, FormsModule],
-
+  imports: [CommonModule, FormsModule ,NgSelectModule ,ReactiveFormsModule],
   templateUrl: './profile.html',
-
   styleUrls: ['./profile.css'],
-
 })
-
 export class Profile implements OnInit {
 
-  candidate: Candidate | null = null;
+  profileForm!: FormGroup;
+  candidate!: Candidate;
+  resumeFile?: File | null;
+  allSkills: { id: number; name: string }[] = [];
 
-  editCandidate: Candidate | null = null;
-
-  showModal = false;
-
-  isLoading = false;
-
-  constructor(private candidateService: CandidateService) {}
+  constructor(
+    private fb: FormBuilder,
+    private candidateService: CandidateService
+  ) {}
 
   ngOnInit(): void {
-
-    this.loadCandidateProfile();
-
+    this.initForm();
+    this.loadProfile();
+    this.loadAllSkills();
   }
 
-  loadCandidateProfile(): void {
-
-    this.isLoading = true;
-
-    this.candidateService.getMyProfile().subscribe({
-
-      next: (data) => {
-
-        this.candidate = data;
-
-        this.isLoading = false;
-
-      },
-
-      error: (err) => {
-
-        console.error('Error loading profile', err);
-
-        this.isLoading = false;
-
-      }
-
+  private initForm(): void {
+    this.profileForm = this.fb.group({
+      name: [''],
+      email: [''],
+      password: [''],
+      phone: [''],
+      education: [''],
+      experience: [''],
+      bio: [''],
+      gender: [''],
+      dateOfBirth: [''],
+      resume: [null],
+      skills: [[]]
     });
-
   }
 
-  openEditModal(): void {
-
-    if (this.candidate) {
-
-      this.editCandidate = { ...this.candidate };
-
-      this.showModal = true;
-
-    }
-
+  loadProfile(): void {
+    this.candidateService.getMyProfile().subscribe({
+      next: (data: Candidate) => {
+        this.candidate = data;
+        this.profileForm.patchValue({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          education: data.education,
+          experience: data.experience,
+          bio: data.bio,
+          gender: data.gender,
+          dateOfBirth: data.dateOfBirth,
+          skills: data.skills?.map(s => s.id) ?? []
+        });
+      },
+      error: (err) => console.error('Error loading profile', err)
+    });
   }
 
-  closeModal(): void {
-
-    this.showModal = false;
-
-    this.editCandidate = null;
-
+  onResumeChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) this.resumeFile = file;
   }
 
-  saveChanges(): void {
-
-    if (!this.editCandidate) return;
-
+  onSubmit(): void {
     const formData = new FormData();
+    const formValue = this.profileForm.value;
 
-    Object.entries(this.editCandidate).forEach(([key, value]) => {
-
-      if (value !== null && value !== undefined) {
-
-        if (key === 'skills' && Array.isArray(value)) {
-
-          formData.append(key, JSON.stringify(value));
-
-        } else if (key === 'resume' && value instanceof File) {
-
-          formData.append('resume', value);
-
-        } else {
-
-          formData.append(key, value as any);
-
-        }
-
+    Object.keys(formValue).forEach(key => {
+      if (key === 'resume' && this.resumeFile) {
+        formData.append('resume', this.resumeFile);
+      } else if (key === 'skills') {
+        formData.append('skills', JSON.stringify(formValue.skills));
+      } else if (formValue[key] !== null && formValue[key] !== '') {
+        formData.append(key, formValue[key]);
       }
-
     });
 
     this.candidateService.updateProfile(formData).subscribe({
-
       next: (res) => {
-
-        console.log('Profile updated successfully!', res);
-
-        this.candidate = this.editCandidate;
-
-        this.closeModal();
-
+        console.log('Profile updated', res);
+        this.loadProfile();
       },
-
-      error: (err) => {
-
-        console.error('Error updating profile', err);
-
-      }
-
+      error: (err) => console.error('Error updating profile', err)
     });
-
   }
-
-  onFileSelected(event: any): void {
-
-    const file = event.target.files[0];
-
-    if (file && file.type === 'application/pdf') {
-
-      if (this.editCandidate) this.editCandidate.resume = file;
-
-    } else {
-
-      alert('Please upload a valid PDF file.');
-
-    }
-
+  
+  loadAllSkills(): void {
+    // Skills API endpoint
+    this.candidateService.getAllSkills().subscribe({
+      next: (skills) => {
+        this.allSkills = skills.map(s => ({ id: s.id, name: s.name }));
+      },
+      error: (err) => console.error('Error loading skills', err)
+    });
   }
-
-  viewResume(): void {
-
-    const resume = this.editCandidate?.resume || this.candidate?.resume;
-
-    if (!resume) return;
-
-    if (typeof resume === 'string') window.open(resume, '_blank');
-
-    else if (resume instanceof File) window.open(URL.createObjectURL(resume), '_blank');
-
-  }
-
-  getResumeName(): string {
-
-    const resume = this.editCandidate?.resume || this.candidate?.resume;
-
-    if (resume instanceof File) return resume.name;
-
-    if (typeof resume === 'string' && resume !== '') return resume.split('/').pop() || 'Resume.pdf';
-
-    return 'No Resume Uploaded';
-
-  }
-
-  getInitials(): string {
-
-    const name = this.candidate?.name || '';
-
-    const parts = name.split(' ');
-
-    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
-
-  }
-
 }
-
- 
