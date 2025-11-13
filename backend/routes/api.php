@@ -78,7 +78,8 @@ Route::prefix('contact')->group(function () {
     Route::get('/', [ContactMessageController::class, 'index'])
         ->middleware('auth:sanctum');
 });
-
+// Skills Routs
+Route::get('/skills', [SkillController::class, 'index']);
 
 
 // Home Route

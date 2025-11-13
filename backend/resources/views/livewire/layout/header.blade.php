@@ -26,7 +26,12 @@
                 <img src="https://i.pravatar.cc/40?img=8" class="rounded-circle me-2 border border-2 border-primary-subtle" width="36" height="36">
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm animate-dropdown" aria-labelledby="profileDropdown">
-                <li><a class="dropdown-item" wire:navigate href="{{ route('employer.profile') }}"><i class="fa-solid fa-user me-2"></i> Profile</a></li>
+                @role('employer')
+                    <li><a class="dropdown-item" wire:navigate href="{{ route('employer.profile') }}"><i class="fa-solid fa-user me-2"></i> Profile</a></li>
+                @endrole
+                @role('admin')
+                    <li><a class="dropdown-item" wire:navigate href="{{ route('admin.profile') }}"><i class="fa-solid fa-user me-2"></i> Profile</a></li>
+                @endrole
                 <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear me-2"></i> Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>

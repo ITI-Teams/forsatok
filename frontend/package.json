@@ -31,6 +31,7 @@
     "@angular/router": "^20.3.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@ng-icons/core": "^31.4.0",
+    "@ng-select/ng-select": "^20.7.0",
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/postcss": "^4.1.16",
     "flowbite-angular": "^20.1.1",
