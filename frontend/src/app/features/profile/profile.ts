@@ -2,17 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Candidate, CandidateService } from '../../core/services/candidate.service';
 
-interface Candidate {
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  education: string;
-  experience: string;
-  bio: string;
-  resume: string | File;
-}
 
 @Component({
   selector: 'app-profile',
@@ -23,102 +14,102 @@ interface Candidate {
 })
 export class Profile implements OnInit {
 
-  candidate: Candidate = {
-    name: 'Ahmed Mohamed',
-    email: 'ahmed.mohamed@example.com',
-    password: '********',
-    phone: '+20 123 456 7890',
-    education: `Bachelor of Computer Science
-    Cairo University - 2018-2022
-    GPA: 3.8/4.0
+  candidate: Candidate | null = null;
+  editCandidate: Candidate | null = null;
+  showModal = false;
+  isLoading = false;
 
-    Relevant Coursework:
-    - Data Structures & Algorithms
-    - Web Development
-    - Database Management
-    - Software Engineering`,
-        experience: `Senior Frontend Developer
-    Tech Solutions Inc. | 2022 - Present
-    - Developed and maintained multiple Angular applications
-    - Led a team of 3 junior developers
-    - Improved application performance by 40%
-
-    Junior Developer
-    StartUp XYZ | 2021 - 2022
-    - Built responsive web applications using Angular
-    - Collaborated with design team for UI/UX improvements`,
-    bio: 'Passionate full-stack developer with 3+ years of experience in building scalable web applications. Specialized in Angular, TypeScript, and modern web technologies. Always eager to learn new technologies and solve complex problems.',
-    resume: ''
-  };
-
-  editCandidate: Candidate = { ...this.candidate };
-  showModal: boolean = false;
+  constructor(private candidateService: CandidateService) {}
 
   ngOnInit(): void {
-
+    this.loadCandidateProfile();
   }
+
+
+  loadCandidateProfile(): void {
+    this.isLoading = true;
+    this.candidateService.getMyProfile().subscribe({
+      next: (data) => {
+        this.candidate = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading profile', err);
+        this.isLoading = false;
+      }
+    });
+  }
+
 
   openEditModal(): void {
-    this.editCandidate = { ...this.candidate };
-    this.showModal = true;
+    if (this.candidate) {
+      this.editCandidate = { ...this.candidate };
+      this.showModal = true;
+    }
   }
+
 
   closeModal(): void {
     this.showModal = false;
-    this.editCandidate = { ...this.candidate };
+    this.editCandidate = null;
   }
+
 
   saveChanges(): void {
-    this.candidate = { ...this.editCandidate };
+    if (!this.editCandidate) return;
 
-    this.closeModal();
-
-    console.log('Profile updated successfully!', this.candidate);
-  }
-
-  getInitials(): string {
-    const names = this.candidate.name.split(' ');
-    if (names.length >= 2) {
-      return (names[0][0] + names[1][0]).toUpperCase();
-    }
-    return this.candidate.name.substring(0, 2).toUpperCase();
-  }
-
-    onFileSelected(event: any): void {
-      const file = event.target.files[0];
-      if (file && file.type === 'application/pdf') {
-        this.editCandidate.resume = file;
-      } else {
-        alert('Please upload a valid PDF file.');
+    const formData = new FormData();
+    Object.entries(this.editCandidate).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        if (key === 'skills' && Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else if (key === 'resume' && value instanceof File) {
+          formData.append('resume', value);
+        } else {
+          formData.append(key, value as any);
+        }
       }
-    }
+    });
 
-
-
-  viewResume() {
-    if (this.candidate.resume) {
-      if (typeof this.candidate.resume === 'string') {
-        window.open(this.candidate.resume, '_blank');
-      } else if (this.candidate.resume instanceof File) {
-        const fileUrl = URL.createObjectURL(this.candidate.resume);
-        window.open(fileUrl, '_blank');
+    this.candidateService.updateProfile(formData).subscribe({
+      next: (res) => {
+        console.log('Profile updated successfully!', res);
+        this.candidate = this.editCandidate;
+        this.closeModal();
+      },
+      error: (err) => {
+        console.error('Error updating profile', err);
       }
+    });
+  }
+
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      if (this.editCandidate) this.editCandidate.resume = file;
+    } else {
+      alert('Please upload a valid PDF file.');
     }
   }
 
+  viewResume(): void {
+    const resume = this.editCandidate?.resume || this.candidate?.resume;
+    if (!resume) return;
+    if (typeof resume === 'string') window.open(resume, '_blank');
+    else if (resume instanceof File) window.open(URL.createObjectURL(resume), '_blank');
+  }
 
   getResumeName(): string {
-    if (this.candidate.resume instanceof File) {
-      return this.candidate.resume.name;
-    } else if (typeof this.candidate.resume === 'string' && this.candidate.resume !== '') {
-      return this.candidate.resume.split('/').pop() || 'Resume.pdf';
-    }
+    const resume = this.editCandidate?.resume || this.candidate?.resume;
+    if (resume instanceof File) return resume.name;
+    if (typeof resume === 'string' && resume !== '') return resume.split('/').pop() || 'Resume.pdf';
     return 'No Resume Uploaded';
   }
 
-  isResumeFile(): boolean {
-    return this.candidate.resume instanceof File;
+  getInitials(): string {
+    const name = this.candidate?.name || '';
+    const parts = name.split(' ');
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
   }
-
-
 }
