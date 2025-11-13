@@ -23,7 +23,7 @@ class CandidateInfoController extends Controller
             ], 403);
         }
 
-        $candidateInfo = CandidateInfo::with(['user', 'skills', 'applications'])
+        $candidateInfo = CandidateInfo::with(['user', 'skills', 'applications.job.employer','applications.jobPost.employer'])
             ->where('user_id', $user->id)
             ->first();
 
@@ -83,7 +83,7 @@ class CandidateInfoController extends Controller
             $candidateInfo->skills()->sync($request->skills);
         }
 
-        $candidateInfo->load(['user', 'skills', 'applications']);
+        $candidateInfo->load(['user', 'skills', 'applications.job.employer','applications.jobPost.employer']);
 
         return response()->json([
             'success' => true,
@@ -96,7 +96,7 @@ class CandidateInfoController extends Controller
     // show all candidates
     public function index(Request $request)
     {
-        $candidates = CandidateInfo::with(['user', 'applications', 'skills'])
+        $candidates = CandidateInfo::with(['user', 'applications.job.employer','applications.jobPost.employer', 'skills'])
             ->latest()
             ->paginate($request->input('per_page', 10));
 
@@ -119,7 +119,7 @@ class CandidateInfoController extends Controller
     // show single candidate info
      public function show($id)
     {
-        $candidate = CandidateInfo::with(['user', 'applications', 'skills'])
+        $candidate = CandidateInfo::with(['user','applications.job.employer', 'applications.jobPost.employer', 'skills'])
             ->find($id);
 
         if (!$candidate) {

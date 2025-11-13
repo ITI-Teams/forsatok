@@ -3,6 +3,7 @@ use App\Domains\Applications\Controllers\Api\ApplicationController;
 use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
+use App\Domains\Jobs\Controllers\Api\SkillsController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
 use App\Domains\Candidates\controllers\Api\CandidateInfoController;
 use Illuminate\Http\Request;
@@ -66,7 +67,7 @@ Route::prefix('contact')->group(function () {
          ->middleware('auth:sanctum');
 });
 // Skills Routs
-Route::get('/skills', [SkillController::class, 'index']);
+Route::get('/skills', [SkillsController::class, 'index']);
 
 
 // Home Route
