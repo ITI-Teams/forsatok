@@ -13,7 +13,15 @@ class CandidateInfo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'bio', 'phone', 'experience', 'education', 'resume'
+        'user_id',
+        'job_title',
+        'phone',
+        'resume',
+        'education',
+        'experience',
+        'bio',
+        'gender',
+        'date_of_birth',
     ];
 
     public function user()
@@ -23,7 +31,7 @@ class CandidateInfo extends Model
 
     public function skills()
     {
-        return $this->belongsToMany(Skill::class, 'candidate_skills');
+        return $this->belongsToMany(Skill::class, 'candidate_skill');
     }
 
     public function applications()

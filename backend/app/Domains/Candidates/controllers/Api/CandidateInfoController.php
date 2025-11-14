@@ -23,7 +23,9 @@ class CandidateInfoController extends Controller
             ], 403);
         }
 
-        $candidateInfo = CandidateInfo::with('user')->where('user_id', $user->id)->first();
+        $candidateInfo = CandidateInfo::with(['user', 'skills', 'applications'])
+            ->where('user_id', $user->id)
+            ->first();
 
         if (!$candidateInfo) {
             return response()->json([
@@ -62,12 +64,17 @@ class CandidateInfoController extends Controller
             $userData['password'] = bcrypt($validated['password']);
         }
 
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $userData['avatar'] = $avatarPath;
+        }
+
         if (!empty($userData)) {
             $user->update($userData);
         }
 
         // Remove user fields from validated array
-        unset($validated['name'], $validated['email'], $validated['password']);
+        unset($validated['name'], $validated['email'], $validated['password'], $validated['avatar']);
 
         if ($request->hasFile('resume')) {
             $path = $request->file('resume')->store('resumes', 'public');
@@ -75,7 +82,13 @@ class CandidateInfoController extends Controller
         }
 
         $candidateInfo->update($validated);
-        $candidateInfo->load('user');
+
+        // Sync skills if provided
+        if ($request->has('skills')) {
+            $candidateInfo->skills()->sync($request->skills);
+        }
+
+        $candidateInfo->load(['user', 'skills', 'applications']);
 
         return response()->json([
             'success' => true,
@@ -88,7 +101,7 @@ class CandidateInfoController extends Controller
     // show all candidates
     public function index(Request $request)
     {
-        $candidates = CandidateInfo::with(['user', 'applications'])
+        $candidates = CandidateInfo::with(['user', 'applications', 'skills'])
             ->latest()
             ->paginate($request->input('per_page', 10));
 
@@ -109,9 +122,9 @@ class CandidateInfoController extends Controller
 
 
     // show single candidate info
-     public function show($id)
+    public function show($id)
     {
-        $candidate = CandidateInfo::with(['user', 'applications'])
+        $candidate = CandidateInfo::with(['user', 'applications', 'skills'])
             ->find($id);
 
         if (!$candidate) {
@@ -123,7 +136,7 @@ class CandidateInfoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $candidate,
+            'data' => new CandidateInfoResource($candidate),
             'message' => 'Candidate retrieved successfully.'
         ]);
     }

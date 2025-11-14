@@ -1,80 +1,178 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { DomSanitizer,SafeResourceUrl } from '@angular/platform-browser';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { JobService, Job } from '../../core/services/job.service';
+
+type JobDetail = Job & {
+  id?: number | null;
+  requirements?: string | null;
+  responsibilities?: string | null;
+  qualification?: string | null;
+  benefits?: string | null;
+};
 
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './job-details.html',
   styleUrls: ['./job-details.css'],
 })
+export class JobDetails implements OnInit {
+  job: JobDetail | null = null;
+  similarJobs: JobDetail[] = [];
+  loading = true;
+  error: string | null = null;
+  safeMapUrl: SafeResourceUrl | null = null;
 
+  constructor(
+    private route: ActivatedRoute,
+    public router: Router,
+    private jobService: JobService,
+    private sanitizer: DomSanitizer
+  ) {}
 
-export class JobDetails {
-  job = {
-    title: 'ACB Product Sales Specialist',
-    company: 'Tech Innovators Inc.',
-    company_logo: 'https://via.placeholder.com/100x100.png?text=Logo',
-    location: 'Cairo, Egypt',
-    experience: '3+ Years',
-    description: `
-      We are looking for a highly motivated Sales Specialist responsible for driving
-      the growth of our ACB Product line. The ideal candidate will have a strong
-      background in B2B sales, excellent communication skills, and a passion for technology.
-    `,
-    responsibilities: [
-      'Develop and implement sales strategies to increase product awareness.',
-      'Identify and target new business opportunities in the region.',
-      'Collaborate with the marketing team to improve brand positioning.',
-      'Provide after-sales support and build long-term client relationships.',
-    ],
-    qualifications: [
-      'Bachelor’s degree in Business, Marketing, or related field.',
-      'Proven track record of sales success in the tech industry.',
-      'Strong negotiation and presentation skills.',
-      'Fluent in English and Arabic.',
-    ],
-    salary_min: 10000,
-    salary_max: 15000,
-    type: 'Full-time',
-    posted_date: '2025-11-01',
-    deadline: '2025-12-31',
-    company_description: `
-      Tech Innovators Inc. is a leading technology company focused on delivering
-      innovative solutions in the fields of AI, automation, and digital transformation.
-    `,
-    company_website: 'https://techinnovators.com',
-    map_embed:
-      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.8438162801475!2d31.233334!3d30.044420!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145840c66e1f01d1%3A0xa4e2efdb5b95a1e!2sCairo%2C%20Egypt!5e0!3m2!1sen!2seg!4v1707481894213',
-  };
+  ngOnInit() {
+    this.route.paramMap.subscribe((params) => {
+      const idParam = params.get('id');
+      if (idParam) {
+        const jobId = parseInt(idParam, 10);
+        // reset state when navigating within the same component
+        this.job = null;
+        this.similarJobs = [];
+        this.safeMapUrl = null;
+        this.error = null;
+        this.loadJobDetails(jobId);
+      } else {
+        this.error = 'Job ID not found';
+        this.loading = false;
+      }
+    });
+  }
 
-  safeMapUrl!: SafeResourceUrl;
+  loadJobDetails(id: number) {
+    this.loading = true;
+    this.jobService.getJobDetails(id).subscribe({
+      next: (response) => {
+        this.job = response.data;
+        this.loading = false;
 
-  similarJobs = [
-    {
-      title: 'Frontend Developer',
-      company: 'SoftX Solutions',
-      location: 'Alexandria, Egypt',
-      salary: '10,000 - 14,000 EGP',
-      type: 'Full-time',
-    },
-    {
-      title: 'UI/UX Designer',
-      company: 'Creative Studio',
-      location: 'Cairo, Egypt',
-      salary: '8,000 - 12,000 EGP',
-      type: 'Remote',
-    },
-    {
-      title: 'Backend Engineer',
-      company: 'Nova Systems',
-      location: 'Giza, Egypt',
-      salary: '12,000 - 16,000 EGP',
-      type: 'Full-time',
-    },
-  ];
+        // Generate map URL from location
+        if (this.job?.locationable?.city) {
+          const city = this.job.locationable.city;
+          const country = city.country || this.job.locationable.country;
+          const location = `${city.name}, ${country?.name || ''}`;
+          const mapUrl = this.generateMapUrl(location);
+          this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(mapUrl);
+        } else if (this.job?.location) {
+          const mapUrl = this.generateMapUrl(this.job.location);
+          this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(mapUrl);
+        }
 
-  constructor(private sanitizer: DomSanitizer) {
-    this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.job.map_embed);
+        // Load similar jobs after job is loaded
+        this.loadSimilarJobs(id);
+      },
+      error: (err) => {
+        console.error('Error loading job details:', err);
+        this.error = 'Failed to load job details';
+        this.loading = false;
+      },
+    });
+  }
+
+  loadSimilarJobs(currentJobId: number) {
+    // Wait for job to load first, then load similar jobs
+    if (this.job?.category?.id) {
+      this.jobService.getJobs({
+        category_id: this.job.category.id,
+        work_type: this.job.work_type,
+        per_page: 4
+      }).subscribe({
+        next: (response) => {
+          this.similarJobs = response.data.data
+            .filter(job => job.id !== currentJobId)
+            .slice(0, 3);
+        },
+        error: (err) => {
+          console.error('Error loading similar jobs:', err);
+        },
+      });
+    }
+  }
+
+  generateMapUrl(location: string): string {
+    const encodedLocation = encodeURIComponent(location);
+    // return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dS6FG4Q0iDWJ8&q=${encodedLocation}`;
+    return `https://www.google.com/maps/embed/v1/place?key=AIzaSyD5Vv7LJxdp4O7w-S0oA9jFY1iIb2JxW8s&q=${encodedLocation}`;
+  }
+
+  formatSalary(): string {
+    if (!this.job) return 'Not specified';
+    return this.jobService.formatSalary(this.job);
+  }
+
+  formatLocation(): string {
+    if (!this.job) return 'Not specified';
+    return this.jobService.formatJobLocation(this.job);
+  }
+
+  getJobType(): string {
+    if (!this.job) return 'Not specified';
+    return this.jobService.getWorkType(this.job);
+  }
+
+  getWorkPlace(): string {
+    if (!this.job) return 'Not specified';
+    return this.jobService.getWorkPlace(this.job);
+  }
+
+  applyForJob() {
+    if (this.job) {
+      this.router.navigate(['/apply', this.job.id]);
+    }
+  }
+
+  viewJob(id: number) {
+    this.router.navigate(['/job', id]);
+  }
+
+  formatLocationForJob(job: Job): string {
+    return this.jobService.formatJobLocation(job);
+  }
+
+  formatSalaryForJob(job: Job): string {
+    return this.jobService.formatSalary(job);
+  }
+
+  getJobTypeForJob(job: Job): string {
+    return this.jobService.getWorkType(job);
+  }
+
+  getWorkPlaceForJob(job: Job): string {
+    return this.jobService.getWorkPlace(job);
+  }
+
+  splitLines(value?: string | null): string[] {
+    if (!value) {
+      return [];
+    }
+    return value
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+  }
+
+  getExcerpt(text?: string | null, maxLength = 140): string {
+    if (!text) {
+      return '';
+    }
+
+    const cleanText = text.replace(/\s+/g, ' ').trim();
+    if (cleanText.length <= maxLength) {
+      return cleanText;
+    }
+
+    return cleanText.substring(0, maxLength).trimEnd() + '…';
   }
 }

@@ -114,6 +114,40 @@
                   <p class="text-sm text-gray-800 dark:text-gray-200 font-medium">{{ candidate.phone }}</p>
                 </div>
               </div>
+
+              <div class="flex items-center gap-3" *ngIf="candidate.date_of_birth">
+                <div
+                  class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8v4l3 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Age</p>
+                  <p class="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                    {{ getAge(candidate.date_of_birth) }} years
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3" *ngIf="candidate.gender">
+                <div
+                  class="w-10 h-10 bg-pink-100 dark:bg-pink-900/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 14a4 4 0 100-8 4 4 0 000 8zm6-4a6 6 0 11-12 0 6 6 0 0112 0zM12 20v-6m0 0l-3 3m3-3l3 3" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Gender</p>
+                  <p class="text-sm text-gray-800 dark:text-gray-200 font-medium text-capitalize">
+                    {{ candidate.gender }}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -138,11 +172,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              {{ getResumeName() }}
+              Download Resume
             </button>
 
             <p *ngIf="!candidate.resume_url" class="text-gray-500 dark:text-gray-400 text-center py-4">
-              Resume غير موجود
+              Resume Not Existing
             </p>
           </div>
 
@@ -250,6 +284,45 @@
             </div>
           </div>
 
+          <!-- Skills Card -->
+          <div
+            class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-purple-900/20 p-6 transition-colors duration-300">
+
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-amber-100 dark:bg-amber-900/50 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+              </svg>
+            </span>
+              Skills
+            </h2>
+
+            <div
+              class="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/30 rounded-xl p-4 border border-amber-200 dark:border-amber-800/50 transition-colors duration-300">
+
+              <!-- If no skills -->
+              <p *ngIf="!candidate.skills?.length"
+                 class="text-gray-500 dark:text-gray-400 text-sm italic">
+                No skills added
+              </p>
+              <!-- Skills list -->
+              <div *ngIf="candidate.skills?.length"
+                   class="flex flex-wrap gap-2">
+                    <span *ngFor="let skill of candidate.skills_details"
+                          class="px-3 py-1 rounded-full text-sm font-medium
+                                 bg-amber-100 text-amber-800
+                                 dark:bg-amber-900/60 dark:text-amber-300
+                                 shadow-sm border border-amber-200 dark:border-amber-700
+                                 transition-all">
+                      {{ skill.name }}
+                    </span>
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
 
@@ -343,6 +416,96 @@
               <input type="tel" [(ngModel)]="editCandidate.phone" name="phone"
                 class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-green-500 dark:focus:border-green-400 focus:ring-2 focus:ring-green-200 dark:focus:ring-green-900/50 transition-all outline-none">
             </div>
+
+            <!-- job_title -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  Job Title
+                </span>
+              </label>
+              <input  type="text" [(ngModel)]="editCandidate.job_title" name="job_title"
+                     placeholder="Job Title Like (Web Developer)"
+                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-red-500 dark:focus:border-red-400 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900/50 transition-all outline-none">
+            </div>
+            <!-- date_of_birth -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  Date Of Birth
+                </span>
+              </label>
+              <input type="date" [(ngModel)]="editCandidate.date_of_birth" name="date_of_birth"
+                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-green-500 dark:focus:border-green-400 focus:ring-2 focus:ring-green-200 dark:focus:ring-green-900/50 transition-all outline-none">
+            </div>
+            <!-- Gender -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 14a4 4 0 100-8 4 4 0 000 8zm6-4a6 6 0 11-12 0 6 6 0 0112 0zM12 20v-6m0 0l-3 3m3-3l3 3" />
+                  </svg>
+                  Gender
+                </span>
+              </label>
+
+              <select
+                [(ngModel)]="editCandidate.gender"
+                name="gender"
+                class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600
+             dark:bg-gray-700 dark:text-white rounded-lg
+             focus:border-green-500 dark:focus:border-green-400
+             focus:ring-2 focus:ring-green-200 dark:focus:ring-green-900/50
+             transition-all outline-none">
+
+                <option value="" disabled>Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- Skills -->
+            <div class="mt-4">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+                  </svg>
+                  Skills
+                </span>
+              </label>
+
+              <select
+                multiple
+                [(ngModel)]="editCandidate.skills"
+                name="skills"
+                class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600
+             dark:bg-gray-700 dark:text-white rounded-lg
+             focus:border-green-500 dark:focus:border-green-400
+             focus:ring-2 focus:ring-green-200 dark:focus:ring-green-900/50
+             transition-all outline-none h-32">
+
+                <option *ngFor="let skill of skillsList" [value]="skill.id">
+                  {{ skill.name }}
+                </option>
+              </select>
+            </div>
+
           </div>
 
           <!-- Bio -->
@@ -390,6 +553,7 @@
             <textarea [(ngModel)]="editCandidate.experience" name="experience" rows="4" required
               class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-teal-500 dark:focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:focus:ring-teal-900/50 transition-all outline-none resize-none"></textarea>
           </div>
+
 
           <!-- Profile Image Upload -->
           <div
@@ -494,3 +658,4 @@
 
     </div>
   </div>
+</div>

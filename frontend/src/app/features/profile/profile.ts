@@ -16,13 +16,25 @@ export class Profile implements OnInit {
   applications: Application[] = [];
   loading = true;
   error: string | null = null;
+  skillsList: { id: number; name: string }[] = [];
 
-  editCandidate: Partial<CandidateInfo> & { 
-    resume?: File; 
-    cover_gradient?: string;
+  editCandidate: {
     name?: string;
     email?: string;
     password?: string;
+
+    phone?: string;
+    bio?: string;
+    education?: string;
+    experience?: string;
+    job_title?: string;
+    gender?: string;
+    date_of_birth?: string;
+
+    skills?: number[];
+    resume?: string | File | null;
+
+    cover_gradient?: string;
   } = {};
   showModal = false;
   showGradientPicker = false;
@@ -39,6 +51,14 @@ export class Profile implements OnInit {
   ngOnInit(): void {
     this.loadProfile();
     this.loadApplications();
+    this.loadSkills();
+  }
+
+  loadSkills() {
+    this.candidateService.getSkills().subscribe((res: any) => {
+      this.skillsList = res.data;
+    });
+
   }
 
   loadProfile(): void {
@@ -46,16 +66,22 @@ export class Profile implements OnInit {
     this.candidateService.getProfile().subscribe({
       next: (data) => {
         this.candidate = data;
+
+        if (this.candidate?.skills && this.skillsList?.length) {
+          (this.candidate as any).skills_details = this.skillsList.filter(
+            skill => this.candidate!.skills!.includes(skill.id)
+          );
+        }
         // Get gradient from local storage or use default (frontend only)
         const savedGradient = localStorage.getItem(`candidate_${data.user_id}_gradient`);
         this.selectedGradient = savedGradient || 'from-purple-600 via-blue-600 to-indigo-600';
-        
+
         this.loading = false;
         this.error = null;
       },
       error: (err) => {
         console.error('Error loading profile:', err);
-        
+
         // Better error messages
         if (err.status === 404) {
           this.error = 'Profile not found. Please create your profile first.';
@@ -68,7 +94,7 @@ export class Profile implements OnInit {
         } else {
           this.error = err.error?.message || 'Failed to load profile. Please try again.';
         }
-        
+
         this.loading = false;
       }
     });
@@ -91,7 +117,7 @@ export class Profile implements OnInit {
 
   openEditModal(): void {
     if (this.candidate) {
-      this.editCandidate = { 
+      this.editCandidate = {
         ...this.candidate,
         name: this.candidate.user?.name,
         email: this.candidate.user?.email,
@@ -122,7 +148,7 @@ export class Profile implements OnInit {
     this.selectedGradient = gradient;
     this.editCandidate.cover_gradient = gradient;
     this.showGradientPicker = false;
-    
+
     // Save to local storage (frontend only for now)
     if (this.candidate?.user_id) {
       localStorage.setItem(`candidate_${this.candidate.user_id}_gradient`, gradient);
@@ -150,41 +176,33 @@ export class Profile implements OnInit {
     }
   }
 
-  saveChanges(): void {
-    if (!this.candidate) return;
+  saveChanges() {
+    const form = new FormData();
 
-    const updateData: any = {
-      name: this.editCandidate.name,
-      email: this.editCandidate.email,
-      phone: this.editCandidate.phone,
-      education: this.editCandidate.education,
-      experience: this.editCandidate.experience,
-      bio: this.editCandidate.bio,
-    };
+    for (const [key, value] of Object.entries(this.editCandidate)) {
+      if (value === null || value === undefined) continue;
 
-    // Only include password if it's not empty
-    if (this.editCandidate.password && this.editCandidate.password.trim() !== '') {
-      updateData.password = this.editCandidate.password;
+      if (value instanceof File) {
+        form.append(key, value);
+      } else if (Array.isArray(value)) {
+        value.forEach((v, i) => form.append(`${key}[${i}]`, String(v)));
+      } else {
+        form.append(key, String(value)); // force convert to string
+      }
     }
 
-    // Update profile via API
-    this.candidateService.updateProfile(updateData).subscribe({
-      next: (data) => {
-        this.candidate = data;
-        
-        // Save gradient to local storage (frontend only)
-        if (this.candidate && this.selectedGradient) {
-          localStorage.setItem(`candidate_${this.candidate.user_id}_gradient`, this.selectedGradient);
-        }
-        
-        // Reload profile to get updated user data
+    if (this.selectedProfileImage) {
+      form.append('avatar', this.selectedProfileImage);
+    }
+
+    if (this.editCandidate.resume instanceof File) {
+      form.append('resume', this.editCandidate.resume);
+    }
+
+    this.candidateService.updateProfile(form).subscribe({
+      next: () => {
         this.loadProfile();
         this.closeModal();
-      },
-      error: (err) => {
-        console.error('Error updating profile:', err);
-        const errorMessage = err.error?.message || 'Failed to update profile. Please try again.';
-        alert(errorMessage);
       }
     });
   }
@@ -244,4 +262,21 @@ export class Profile implements OnInit {
     }
     return 'Resume.pdf';
   }
+
+  getAge(dateString: string | undefined): number | null {
+    if (!dateString) return null;
+
+    const birth = new Date(dateString);
+    const today = new Date();
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    return age;
+  }
+
 }

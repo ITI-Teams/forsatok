@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Domains\Shared\Services\Audit\AuditLogger;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Socialite\Contracts\Factory;
 use App\Domains\Users\Provider\LinkedInOpenIDProvider;
@@ -13,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(AuditLogger::class, function ($app) {
+            return new AuditLogger($app->make(\Illuminate\Http\Request::class));
+        });
     }
 
     /**
@@ -22,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $socialite = $this->app->make(Factory::class);
-        
+
         $socialite->extend('linkedin', function ($app) use ($socialite) {
             $config = $app['config']['services.linkedin'];
             return $socialite->buildProvider(LinkedInOpenIDProvider::class, $config);

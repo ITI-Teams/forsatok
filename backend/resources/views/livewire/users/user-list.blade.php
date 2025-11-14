@@ -50,10 +50,6 @@
                                 <td>{{ ucfirst($user->type) }}</td>
                                 <td>{{ $user->created_at->format('Y-m-d') }}</td>
                                 <td class="text-center">
-                                    <a
-                                        class="btn btn-sm btn-info me-2">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </a>
                                     <a wire:navigate href="{{ route('users.edit', $user->id) }}"
                                         class="btn btn-sm btn-warning me-2">
                                         <i class="fa-solid fa-pen-to-square"></i>

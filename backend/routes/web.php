@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\AuditLog\RecentActivity;
+use App\Livewire\Dashboard\AdminDashboard;
+use App\Livewire\Dashboard\EmployerDashboard;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Middleware\RoleMiddleware;
 
@@ -52,10 +55,6 @@ use App\Livewire\Contact\ListContactMessages;
 // Public routes
 Route::view('/', 'welcome');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
@@ -64,6 +63,29 @@ Route::middleware(['web'])->group(function () {
     Route::get('/api/auth/linkedin/redirect', [LinkedinController::class, 'redirect']);
     Route::get('/api/auth/linkedin/callback', [LinkedinController::class, 'callback']);
 });
+
+Route::middleware(['auth'])->group(function () {
+    // admin dashboard
+    Route::get('/admin/dashboard', AdminDashboard::class)
+        ->middleware('role:admin')
+        ->name('admin.dashboard');
+
+    // employer dashboard
+    Route::get('/employer/dashboard', EmployerDashboard::class)
+        ->middleware('role:employer')
+        ->name('employer.dashboard');
+
+    // optionally a generic dashboard route that redirect based on role
+    Route::get('/dashboard', function() {
+        $user = auth()->user();
+        if($user->hasRole('admin')) return to_route('admin.dashboard');
+        if($user->hasRole('employer')) return to_route('employer.dashboard');
+        return view('dashboard.general');
+    })->name('dashboard');
+});
+
+
+
 
 
 // ================================
@@ -116,6 +138,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/profile', function () {
             return view('profile');
         })->name('admin.profile');
+        Route::get('audit-logs', RecentActivity::class)->name('admin.audit-logs');
     });
 
     // Users

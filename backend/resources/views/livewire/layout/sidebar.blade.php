@@ -90,6 +90,13 @@
                     <i class="fa-solid fa-envelope"></i><span>Contact Messages</span>
                 </a>
             </li>
+            {{-- Audit Logs --}}
+            <li>
+                <a wire:navigate href="{{ route('admin.audit-logs') }}"
+                   class="nav-link {{ request()->routeIs('admin.audit-logs') ? 'active' : '' }}">
+                    <i class="fa-solid fa-envelope"></i><span>Audit Logs</span>
+                </a>
+            </li>
 
             {{-- Admin Profile --}}
             <li>
