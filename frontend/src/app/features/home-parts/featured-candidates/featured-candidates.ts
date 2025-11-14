@@ -78,8 +78,15 @@ export class FeaturedCandidates implements OnInit{
   }
 
   getCandidateImage(candidate: any): string {
-    if (candidate.user?.avatar) return `http://localhost:8000/storage/${candidate.user?.avatar}`;
-    return '/images/default-avatar.png';
+    if (!candidate.user?.avatar) {
+      return '/images/avatars/avatar.svg';
+    }
+
+    if (candidate.user.avatar.startsWith('http')) {
+      return candidate.user.avatar;
+    }
+
+    return `http://localhost:8000/storage/${candidate.user?.avatar}`;
   }
 
 }
