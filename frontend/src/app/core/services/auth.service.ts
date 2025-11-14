@@ -21,7 +21,6 @@ export class AuthService {
           localStorage.setItem('token', res.token);
           this.setUser(res.user);
           this.loggedIn.next(true);
-          this.router.navigate(['/home']);
         }
       }),
       catchError(error => {
@@ -37,7 +36,6 @@ export class AuthService {
           localStorage.setItem('token', res.token);
           this.setUser(res.user);
           this.loggedIn.next(true);
-          this.router.navigate(['/home']);
         }
       }),
       catchError(error => {
