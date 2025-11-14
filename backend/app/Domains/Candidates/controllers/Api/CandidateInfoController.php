@@ -63,6 +63,7 @@ class CandidateInfoController extends Controller
         if (isset($validated['password'])) {
             $userData['password'] = bcrypt($validated['password']);
         }
+
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $userData['avatar'] = $avatarPath;
@@ -73,7 +74,7 @@ class CandidateInfoController extends Controller
         }
 
         // Remove user fields from validated array
-        unset($validated['name'], $validated['email'], $validated['password'],$validated['avatar']);
+        unset($validated['name'], $validated['email'], $validated['password'], $validated['avatar']);
 
         if ($request->hasFile('resume')) {
             $path = $request->file('resume')->store('resumes', 'public');
@@ -121,7 +122,7 @@ class CandidateInfoController extends Controller
 
 
     // show single candidate info
-     public function show($id)
+    public function show($id)
     {
         $candidate = CandidateInfo::with(['user', 'applications', 'skills'])
             ->find($id);

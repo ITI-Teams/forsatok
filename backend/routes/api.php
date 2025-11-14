@@ -4,11 +4,12 @@ use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
-use App\Domains\Candidates\Controllers\Api\CandidateInfoController;
+use App\Domains\Candidates\controllers\Api\CandidateInfoController;
+use App\Domains\Employers\controllers\Api\EmployerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
-use App\Domains\Contact\Controllers\Api\ContactMessageController;
+use App\Domains\Contact\controllers\Api\ContactMessageController;
 use App\Domains\Jobs\Controllers\Api\CategoryController;
 use App\Domains\Jobs\Controllers\Api\JobFilterController;
 use App\Domains\Location\Controllers\Api\LocationController;
@@ -29,6 +30,12 @@ Route::prefix('auth')->group(function () {
         Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
         Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
         Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
+    });
+
+    // employer api routes
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/employerinfo', [EmployerController::class, 'index']);
+        Route::get('/employerinfo/{id}', [EmployerController::class, 'show']);
     });
 });
 // Protected (requires token)
