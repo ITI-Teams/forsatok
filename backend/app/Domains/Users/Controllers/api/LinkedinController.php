@@ -16,7 +16,7 @@ class LinkedinController extends Controller
     public function redirect()
     {
         return Socialite::driver('linkedin')->redirect();
-        
+
     }
 
     public function callback(Request $request)
@@ -44,6 +44,13 @@ class LinkedinController extends Controller
                     'avatar' => $linkedinUser->getAvatar(),
                     'password' => Hash::make(Str::random(24)),
                     'email_verified_at' => now(),
+                ]);
+                $user->candidateInfo()->create([
+                    'phone' => null,
+                    'resume' => null,
+                    'education' => null,
+                    'experience' => null,
+                    'bio' => null,
                 ]);
             } else {
                 $user->update([

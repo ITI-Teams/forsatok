@@ -77,6 +77,7 @@ class CandidateAuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'type' => $user->type,
+                'avatar' => $user->avatar,
             ],
             'token' => $token,
         ], 200);

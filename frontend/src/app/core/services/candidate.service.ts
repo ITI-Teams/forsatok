@@ -26,9 +26,18 @@ export interface CandidateInfo {
     id: number;
     name: string;
     email: string;
+    avatar?: string;
   };
   applications?: Application[];
   applications_count?: number;
+  location?: {
+    country_id: number | null;
+    city_id: number | null;
+    address: string | null;
+    country?: { id: number; name: string };
+    city?: { id: number; name: string };
+  };
+  category_id?: number;
 }
 
 export interface Application {
@@ -168,8 +177,27 @@ export class CandidateService {
 
   getSkills() {
     return this.http.get<{ data: { id: number; name: string }[] }>(
-      '/api/skills'
+      'http://localhost:8000/api/skills'
     );
+  }
+  getCategories() {
+    return this.http.get('http://localhost:8000/api/categories');
+  }
+
+  getSkillsByCategory(categoryId: number) {
+    return this.http.get(`http://localhost:8000/api/skills`, {
+      params: { category_id: categoryId }
+    });
+  }
+
+  getCountries() {
+    return this.http.get('http://localhost:8000/api/locations/countries');
+  }
+
+  getCities(countryId: number) {
+    return this.http.get(`http://localhost:8000/api/locations/cities`, {
+      params: { country_id: countryId }
+    });
   }
 }
 

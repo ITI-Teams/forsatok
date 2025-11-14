@@ -32,7 +32,10 @@ class UpdateCandidateInfoRequest extends FormRequest
             'skills.*' => 'integer|exists:skills,id',
             'gender' => 'nullable|string|in:male,female,other',
             'date_of_birth' => 'nullable|date',
-
+            'country_id' => 'nullable|exists:countries,id',
+            'city_id' => 'nullable|exists:cities,id',
+            'address' => 'nullable|string|max:255',
+            'category_id' => 'sometimes|integer|exists:categories,id',
         ];
     }
 }
