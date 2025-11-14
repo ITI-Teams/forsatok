@@ -12,7 +12,7 @@ class EmployerController extends Controller
 {
     public function index(Request $request)
     {
-        $employers=EmployerInfo::with(['user','jobs'])
+        $employers=EmployerInfo::with(['user','jobs', 'location.country', 'location.city'])
         ->latest()
         ->paginate($request->input('per_page',10));
         return response()->json([
@@ -35,7 +35,7 @@ class EmployerController extends Controller
 
     public function show(string $id)
     {
-        $employer=EmployerInfo::with(['user','jobs'])
+        $employer=EmployerInfo::with(['user','jobs', 'location.country', 'location.city'])
         ->find($id);
 
         if(!$employer){
@@ -47,7 +47,7 @@ class EmployerController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $employer,
+            'data' => new EmployerInfoResource($employer),
             'message' => 'Employer retrieved successfully.'
         ]);
     }
