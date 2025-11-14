@@ -52,13 +52,15 @@ export class Header implements OnInit {
   }
 
   getUserAvatar(): string {
-    if (this.currentUser?.avatar) {
-      if (this.currentUser.avatar.startsWith('http')) {
-        return this.currentUser.avatar;
-      }
-      return `/images/avatars/${this.currentUser.avatar}`;
+    if (!this.currentUser?.avatar) {
+      return '/images/avatars/avatar.svg';
     }
-    return '/images/avatars/avatar.svg';
+
+    if (this.currentUser.avatar.startsWith('http')) {
+      return this.currentUser.avatar;
+    }
+
+    return `http://localhost:8000/storage/${this.currentUser.avatar}`;
   }
   getUserName(): string {
     return this.currentUser?.name || 'User';

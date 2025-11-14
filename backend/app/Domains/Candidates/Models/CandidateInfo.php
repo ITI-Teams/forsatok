@@ -3,6 +3,7 @@
 namespace App\Domains\Candidates\Models;
 
 use App\Domains\Applications\Models\JobApplication;
+use App\Domains\Jobs\Models\Category;
 use App\Domains\Jobs\Models\Skill;
 use App\Domains\Location\Models\Locationable;
 use App\Domains\Users\Models\User;
@@ -22,6 +23,7 @@ class CandidateInfo extends Model
         'bio',
         'gender',
         'date_of_birth',
+        'category_id',
     ];
 
     public function user()
@@ -42,5 +44,9 @@ class CandidateInfo extends Model
     public function location()
     {
         return $this->morphOne(Locationable::class, 'locationable');
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

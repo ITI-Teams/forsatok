@@ -38,7 +38,7 @@ export const routes: Routes = [
       { path: 'candidates', component: Candidates },
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
-      { path:'profile', component :Profile},
+      { path:'profile', component :Profile ,canActivate: [authGuard]},
       { path:'company/:id',component:Company},
       { path:'company',component:CompaniesList},
       { path: 'apply/:id', component: JobApplication,canActivate: [authGuard] },

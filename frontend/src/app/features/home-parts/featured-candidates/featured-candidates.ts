@@ -17,9 +17,22 @@ export class FeaturedCandidates implements OnInit{
     id?: number;
     user_id?: number;
     name?: string;
-    title?: string;
-    location?: string;
-    image?: string
+    bio?: string;
+    experience?: string;
+    education?: string;
+    user?: {
+      id: number;
+      name: string;
+      avatar: string;
+    };
+    location?: {
+      city?: {
+        name: string;
+      };
+      country?: {
+        name: string;
+      };
+    };
   }> = [];
 
 
@@ -39,6 +52,41 @@ export class FeaturedCandidates implements OnInit{
     } else {
       this.router.navigate(['/candidates']);
     }
+  }
+
+
+
+  getCandidateName(candidate: any): string {
+    return candidate.user?.name || candidate.name || 'Unknown Candidate';
+  }
+
+  getCandidateTitle(candidate: any): string {
+    return candidate?.job_title || candidate.job_title || 'Unknown Job Title';
+  }
+
+  getCandidateLocation(candidate: any): string {
+    if (candidate.location?.city?.name && candidate.location?.country?.name) {
+      return `${candidate.location.city.name}, ${candidate.location.country.name}`;
+    } else if (candidate.location?.city?.name) {
+      return candidate.location.city.name;
+    } else if (candidate.location?.country?.name) {
+      return candidate.location.country.name;
+    } else if (candidate.location) {
+      return candidate.location;
+    }
+    return 'Location not specified';
+  }
+
+  getCandidateImage(candidate: any): string {
+    if (!candidate.user?.avatar) {
+      return '/images/avatars/avatar.svg';
+    }
+
+    if (candidate.user.avatar.startsWith('http')) {
+      return candidate.user.avatar;
+    }
+
+    return `http://localhost:8000/storage/${candidate.user?.avatar}`;
   }
 
 }

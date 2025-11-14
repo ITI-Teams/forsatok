@@ -3,6 +3,7 @@ use App\Domains\Applications\Controllers\Api\ApplicationController;
 use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
+use App\Domains\Jobs\Controllers\Api\SkillController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
 use App\Domains\Candidates\controllers\Api\CandidateInfoController;
 use App\Domains\Employers\controllers\Api\EmployerController;
@@ -72,6 +73,9 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 
 // Categories
 Route::get('/categories', [CategoryController::class, 'index']);
+
+// Skills
+Route::get('/skills', [SkillController::class, 'index']);
 
 // Locations
 Route::prefix('locations')->group(function () {
