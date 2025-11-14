@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { JobService, Job } from '../../core/services/job.service';
 
 type JobDetail = Job & {
+  id?: number | null;
   requirements?: string | null;
   responsibilities?: string | null;
   qualification?: string | null;

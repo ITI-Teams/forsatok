@@ -63,13 +63,17 @@ class CandidateInfoController extends Controller
         if (isset($validated['password'])) {
             $userData['password'] = bcrypt($validated['password']);
         }
-        
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $userData['avatar'] = $avatarPath;
+        }
+
         if (!empty($userData)) {
             $user->update($userData);
         }
 
         // Remove user fields from validated array
-        unset($validated['name'], $validated['email'], $validated['password']);
+        unset($validated['name'], $validated['email'], $validated['password'],$validated['avatar']);
 
         if ($request->hasFile('resume')) {
             $path = $request->file('resume')->store('resumes', 'public');

@@ -48,7 +48,7 @@ export class Jobs implements OnInit {
   employmentTypes: JobType[] = [];
   workPlaces: JobType[] = [];
   jobLevels: ExperienceLevel[] = [];
-  
+
   loading = true;
   totalJobs = 0;
 
@@ -75,7 +75,7 @@ export class Jobs implements OnInit {
 
   ngOnInit() {
     this.loadAllData();
-    
+
     this.route.queryParams.subscribe((params) => {
       if (params['search']) {
         this.searchTerm = params['search'];
@@ -86,7 +86,7 @@ export class Jobs implements OnInit {
 
   loadAllData() {
     this.loading = true;
-    
+
     // Load filter options
     this.filterService.getFilterOptions().subscribe({
       next: (options) => {
@@ -97,12 +97,8 @@ export class Jobs implements OnInit {
         this.salaryMax = options.salary_range.max || 100000;
         this.salaryRange = [this.salaryMin, this.salaryMax];
         this.syncSalaryInputsFromRange();
-        console.log('[Filters] Loaded types:', this.employmentTypes);
-        console.log('[Filters] Loaded work places:', this.workPlaces);
-        console.log('[Filters] Loaded levels:', this.jobLevels);
       },
       error: (err) => {
-        console.error('Error loading filter options:', err);
         this.employmentTypes = this.withFallbackTypes();
         this.workPlaces = this.withFallbackWorkPlaces();
         this.jobLevels = this.withFallbackExperience();
