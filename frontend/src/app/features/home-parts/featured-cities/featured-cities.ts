@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./featured-cities.css'],
 })
 export class FeaturedCities {
-  @Input() cities: Array<{ id?: number; name?: string; jobs_count?: number; image?: string }> = [];
+  @Input() cities: Array<{ id?: number; name?: string; job_count?: number; image?: string }> = [];
 
   getFirstCity() {
     return this.cities && this.cities.length > 0 ? this.cities[0] : null;
@@ -34,7 +34,7 @@ export class FeaturedCities {
   }
 
   getJobsCount(city: any): number {
-    return city?.jobs_count || 0;
+    return city?.job_count || 0;
   }
 
 }

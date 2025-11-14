@@ -40,7 +40,7 @@ class HomeController extends Controller
             });
 
 
-        $candidates = CandidateInfo::with(['user:id,name','location.city:id,name', 'location.country:id,name'])
+        $candidates = CandidateInfo::with(['user:id,name,avatar','location.city:id,name', 'location.country:id,name'])
             ->latest()
             ->take(32)
             ->get([
@@ -50,6 +50,7 @@ class HomeController extends Controller
                 'phone',
                 'experience',
                 'education',
+                'job_title'
             ]);
 
         $carouselCandidates = $candidates;
