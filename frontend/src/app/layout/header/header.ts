@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
-import { ThemeService } from '../../shared/services/theme-service';
+import { ThemeService } from '../../core/services/theme-service';
 import { AuthService } from '../../core/services/auth.service';
 import { take } from 'rxjs/operators';
 
@@ -12,7 +12,7 @@ import { take } from 'rxjs/operators';
   templateUrl: './header.html',
   styleUrls: ['./header.css']
 })
-export class Header implements OnInit{
+export class Header implements OnInit {
   mobileMenuOpen = false;
   megaMenuOpen = false;
   openMegaId: string | null = null;
@@ -25,7 +25,7 @@ export class Header implements OnInit{
     private themeService: ThemeService,
     private router: Router,
     private auth: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.checkAuthStatus();

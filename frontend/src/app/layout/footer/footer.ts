@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { ThemeService } from '../../shared/services/theme-service';
+import { ThemeService } from '../../core/services/theme-service';
 import { CommonModule } from '@angular/common';
 
 @Component({

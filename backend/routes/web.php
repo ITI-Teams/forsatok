@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\AuditLog\RecentActivity;
 use App\Livewire\Dashboard\AdminDashboard;
 use App\Livewire\Dashboard\EmployerDashboard;
 use Illuminate\Support\Facades\Route;
@@ -137,6 +138,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/profile', function () {
             return view('profile');
         })->name('admin.profile');
+        Route::get('audit-logs', RecentActivity::class)->name('admin.audit-logs');
     });
 
     // Users

@@ -20,7 +20,7 @@ export class FeaturedJobs {
     location?: string;
     salary_min?: number;
     salary_max?: number;
-    type?: string;
+    work_type?: string;
     deadline?: string;
     saved?: boolean;
   }> = [];
@@ -127,6 +127,10 @@ export class FeaturedJobs {
   getCompanyLogo(company: string | undefined): string {
     if (!company) return 'building';
     return 'building';
+  }
+
+  showjobs(){
+    this.router.navigate(['/jobs']);
   }
 
 }
