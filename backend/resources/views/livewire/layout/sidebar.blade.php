@@ -12,6 +12,12 @@
 
         {{-- --------------------- ADMIN ONLY --------------------- --}}
         @role('admin')
+            <li>
+                <a wire:navigate href="{{ route('jobs.index') }}"
+                   class="nav-link {{ request()->routeIs('jobs.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-briefcase"></i><span>Job Lists</span>
+                </a>
+            </li>
             {{-- Categories --}}
             <li>
                 <a wire:navigate href="{{ route('categories.index') }}"
@@ -94,7 +100,7 @@
             <li>
                 <a wire:navigate href="{{ route('admin.audit-logs') }}"
                    class="nav-link {{ request()->routeIs('admin.audit-logs') ? 'active' : '' }}">
-                    <i class="fa-solid fa-envelope"></i><span>Audit Logs</span>
+                    <i class="fa-solid fa-triangle-exclamation"></i><span>Audit Logs</span>
                 </a>
             </li>
 

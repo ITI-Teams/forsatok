@@ -2,6 +2,7 @@
 
 namespace App\Domains\Contact\controllers\Api;
 
+use App\Domains\Shared\Services\Audit\AuditLogger;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Domains\Contact\Actions\StoreContactMessageAction;
@@ -15,6 +16,11 @@ class ContactMessageController extends Controller
     public function store(StoreContactMessageRequest $request, StoreContactMessageAction $storeAction)
     {
         $message = $storeAction->execute($request->validated());
+        app(AuditLogger::class)->log([
+            'action' => 'Send message',
+            'model' => $message,
+            'changes' => ['message' => 'Send message to Admin']
+        ]);
 
         return response()->json([
             'success' => true,
