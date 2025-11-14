@@ -51,6 +51,23 @@ class CandidateInfoResource extends JsonResource
             'applications_count' => $this->whenLoaded('applications', function () {
                 return $this->applications->count();
             }),
+            'location' => $this->whenLoaded('location', function () {
+                if ($this->location) {
+                    return [
+                        'city' => $this->location->city ? [
+                            'id' => $this->location->city->id,
+                            'name' => $this->location->city->name,
+                            'country_id' => $this->location->city->country_id,
+                        ] : null,
+                        'country' => $this->location->country ? [
+                            'id' => $this->location->country->id,
+                            'name' => $this->location->country->name,
+                            'code' => $this->location->country->code,
+                        ] : null,
+                    ];
+                }
+                return null;
+            }),
         ];
     }
 }

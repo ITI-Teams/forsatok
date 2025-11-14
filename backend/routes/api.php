@@ -11,7 +11,9 @@ use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
 use App\Domains\Contact\Controllers\Api\ContactMessageController;
 use App\Domains\Jobs\Controllers\Api\CategoryController;
 use App\Domains\Jobs\Controllers\Api\JobFilterController;
+use App\Domains\Jobs\Controllers\Api\SkillController;
 use App\Domains\Location\Controllers\Api\LocationController;
+use App\Domains\Candidates\Controllers\Api\CandidateSearchController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -27,10 +29,16 @@ Route::prefix('auth')->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
         Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
-        Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
-        Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
     });
 });
+
+// Public candidates routes 
+Route::get('/candidates/search', [CandidateSearchController::class, 'search']);
+Route::get('/candidates/filter-options', [CandidateSearchController::class, 'getFilterOptions']);
+// Public candidate profile routes
+Route::get('/candidates', [CandidateInfoController::class, 'index']);
+Route::get('/candidates/{id}', [CandidateInfoController::class, 'show']);
+
 // Protected (requires token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('candidate/logout', [CandidateAuthController::class, 'logout']);
