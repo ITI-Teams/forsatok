@@ -40,7 +40,7 @@ class HomeController extends Controller
             });
 
 
-        $candidates = CandidateInfo::with(['user:id,name','location'])
+        $candidates = CandidateInfo::with(['user:id,name','location.city:id,name', 'location.country:id,name'])
             ->latest()
             ->take(32)
             ->get([
@@ -52,7 +52,7 @@ class HomeController extends Controller
                 'education',
             ]);
 
-        $carouselCandidates = $candidates->chunk(4)->values();
+        $carouselCandidates = $candidates;
 
         return response()->json([
             'status' => true,
