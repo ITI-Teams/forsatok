@@ -61,7 +61,7 @@ class CandidateInfoController extends Controller
         if (isset($validated['password'])) {
             $userData['password'] = bcrypt($validated['password']);
         }
-        
+
         if (!empty($userData)) {
             $user->update($userData);
         }

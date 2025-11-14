@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             CitySeeder::class,
             CategorySeeder::class,
-            // UserSeeder::class,
+            UserSeeder::class,
             // JobPostSeeder::class,
             CandidateInfoSeeder::class,
             LocationableSeeder::class,

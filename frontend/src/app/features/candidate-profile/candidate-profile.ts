@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CandidateService, Candidate, Education, Experience, Skill } from '../../core/services/candidate-profile.service';
+import { CandidateProfileService, Candidate, Education, Experience, Skill } from '../../core/services/candidate-profile.service';
 
 @Component({
   selector: 'app-candidate-profile',
@@ -15,6 +15,7 @@ export class CandidateProfile implements OnInit {
   activeTab = 'description';
   candidateId: number = 0;
   isLoading = true;
+  errorMessage = '';
 
   candidate: Candidate = {
     id: 0,
@@ -44,23 +45,27 @@ export class CandidateProfile implements OnInit {
   experience: Experience[] = [];
   skills: Skill[] = [];
 
-  // Contact form model (template-driven)
+  // Contact form model
   contactModel = { name: '', email: '', message: '' };
+  isSubmittingContact = false;
+  contactSuccess = false;
+  contactError = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private candidateService: CandidateService
+    private candidateService: CandidateProfileService
   ) {}
 
   ngOnInit() {
     // Get candidate ID from route params
     this.route.params.subscribe(params => {
-      this.candidateId = +params['id']; // Convert string to number
+      this.candidateId = +params['id'];
       if (this.candidateId) {
         this.loadCandidateProfile();
       } else {
         console.error('No candidate ID provided');
+        this.errorMessage = 'No candidate ID provided';
         this.isLoading = false;
       }
     });
@@ -68,10 +73,12 @@ export class CandidateProfile implements OnInit {
 
   loadCandidateProfile() {
     this.isLoading = true;
+    this.errorMessage = '';
+
     this.candidateService.getCandidate(this.candidateId).subscribe({
       next: (data) => {
         this.candidate = data;
-        this.description.text = data.description || 'No description available.';
+        this.description.text = data.bio || data.description || 'No description available yet.';
         this.education = data.education || [];
         this.experience = data.workExperience || [];
         this.skills = data.skills || [];
@@ -79,8 +86,8 @@ export class CandidateProfile implements OnInit {
       },
       error: (err) => {
         console.error('Error loading candidate profile:', err);
+        this.errorMessage = err.error?.message || 'Failed to load candidate profile. Please try again.';
         this.isLoading = false;
-        alert('Failed to load candidate profile. Please try again.');
       }
     });
   }
@@ -94,20 +101,49 @@ export class CandidateProfile implements OnInit {
 
   submitContact() {
     if (!this.contactModel.name || !this.contactModel.email || !this.contactModel.message) {
-      alert('Please fill all fields');
+      this.contactError = 'Please fill all fields';
       return;
     }
 
-    console.log('Contact submit:', this.contactModel);
-    // TODO: Implement API call to send message to candidate
-    alert('Message sent successfully!');
-    this.contactModel = { name: '', email: '', message: '' };
+    this.isSubmittingContact = true;
+    this.contactSuccess = false;
+    this.contactError = '';
+
+    const contactData = {
+      name: this.contactModel.name,
+      email: this.contactModel.email,
+      message: this.contactModel.message,
+      candidate_id: this.candidateId
+    };
+
+    this.candidateService.sendContactMessage(contactData).subscribe({
+      next: (response) => {
+        console.log('Contact message sent:', response);
+        this.contactSuccess = true;
+        this.contactModel = { name: '', email: '', message: '' };
+        this.isSubmittingContact = false;
+
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+          this.contactSuccess = false;
+        }, 3000);
+      },
+      error: (err) => {
+        console.error('Error sending contact message:', err);
+        this.contactError = err.error?.message || 'Failed to send message. Please try again.';
+        this.isSubmittingContact = false;
+      }
+    });
   }
 
   downloadCV() {
-    // TODO: Implement CV download functionality
-    console.log('Download CV for candidate:', this.candidateId);
-    alert('CV download feature coming soon!');
+    if (this.candidate.resume) {
+      // Assuming resume is stored in Laravel public storage
+      const resumeUrl = `http://localhost:8000/storage/${this.candidate.resume}`;
+      window.open(resumeUrl, '_blank');
+    } else {
+      alert('No resume available for this candidate.');
+    }
   }
 
   shortlistCandidate() {

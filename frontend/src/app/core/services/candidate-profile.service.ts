@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 export interface Candidate {
   id: number;
@@ -14,30 +16,24 @@ export interface Candidate {
   experience: string;
   languages: string[];
   description?: string;
+  bio?: string;
   education?: Education[];
   workExperience?: Experience[];
   skills?: Skill[];
-  age?: number;
-  gender?: string;
-  social?: {
-    linkedin?: string;
-    github?: string;
-    twitter?: string;
-    facebook?: string;
-  };
+  resume?: string;
 }
 
 export interface Education {
   university: string;
-  years: string;
   degree: string;
+  years: string;
   description: string;
 }
 
 export interface Experience {
   company: string;
-  years: string;
   position: string;
+  years: string;
   description: string;
 }
 
@@ -46,55 +42,174 @@ export interface Skill {
   level: number;
 }
 
+export interface ContactMessage {
+  name: string;
+  email: string;
+  message: string;
+  contactable_id?: number;
+  contactable_type?: string;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
-export class CandidateService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+export class CandidateProfileService {
+  private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
-  // Get all candidates
-  getCandidates(page: number = 1, perPage: number = 10): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/candidatelist?page=${page}&per_page=${perPage}`).pipe(
-      map(response => {
-        return {
-          candidates: response?.data?.map((candidate: any) => this.mapCandidate(candidate)) ?? [],
-          meta: response?.meta ?? {}
-        };
-      })
-    );
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
   }
 
-  // Get single candidate
+  // Get single candidate by ID
   getCandidate(id: number): Observable<Candidate> {
-    return this.http.get<any>(`${this.apiUrl}/candidatelist/${id}`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/auth/candidatelist/${id}`, {
+      headers: this.getHeaders()
+    }).pipe(
       map(response => {
-        return this.mapCandidate(response?.data);
+        if (response.success && response.data) {
+          const data = response.data;
+
+          // Transform API data to match frontend interface
+          return {
+            id: data.id,
+            name: data.user?.name || 'Unknown',
+            email: data.user?.email || '',
+            phone: data.phone || '',
+            title: 'Candidate', // Default title, can be updated later
+            location: 'Location TBD', // Add when available in migration
+            image: data.profile_image || 'https://i.pravatar.cc/300',
+            salary: 'Negotiable', // Add when available in migration
+            experience: data.experience || 'Not specified',
+            languages: [], // Add when available in migration
+            description: data.bio || '',
+            bio: data.bio || '',
+            resume: data.resume,
+            education: this.parseEducation(data.education),
+            workExperience: this.parseExperience(data.experience),
+            skills: [] // Add when available in migration
+          };
+        }
+        throw new Error(response.message || 'Failed to load candidate');
       })
     );
   }
 
-  // Map API response to Candidate interface
-  private mapCandidate(data: any): Candidate {
-    return {
-      id: data.id,
-      name: data.user?.name ?? data.name ?? 'Unknown',
-      title: data.job_title ?? data.title ?? 'N/A',
-      location: data.location ?? 'N/A',
-      email: data.user?.email ?? data.email ?? 'N/A',
-      phone: data.phone ?? 'N/A',
-      image: data.user?.profile_picture ?? data.image ?? 'https://i.pravatar.cc/300',
-      salary: data.expected_salary ? `$${data.expected_salary}` : 'N/A',
-      experience: data.years_of_experience ? `${data.years_of_experience} Years` : 'N/A',
-      languages: data.languages ? JSON.parse(data.languages) : [],
-      description: data.bio ?? data.description ?? '',
-      education: data.education ? JSON.parse(data.education) : [],
-      workExperience: data.work_experience ? JSON.parse(data.work_experience) : [],
-      skills: data.skills ? JSON.parse(data.skills) : [],
-      age: data.age ?? null,
-      gender: data.gender ?? 'N/A',
-      social: data.social_links ? JSON.parse(data.social_links) : {}
-    };
+  // Get all candidates with pagination
+  getCandidates(page: number = 1, perPage: number = 10): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/auth/candidatelist?page=${page}&per_page=${perPage}`, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        if (response.success) {
+          return {
+            candidates: response.data.map((data: any) => ({
+              id: data.id,
+              name: data.user?.name || 'Unknown',
+              email: data.user?.email || '',
+              phone: data.phone || '',
+              title: 'Candidate',
+              location: 'Location TBD',
+              image: data.profile_image || 'https://i.pravatar.cc/300',
+              experience: data.experience || 'Not specified',
+              bio: data.bio || ''
+            })),
+            meta: response.meta
+          };
+        }
+        throw new Error(response.message || 'Failed to load candidates');
+      })
+    );
+  }
+
+  // Send contact message to candidate
+  sendContactMessage(contactData: ContactMessage): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/contact`, contactData, {
+    headers: this.getHeaders()
+  }).pipe(
+    map(response => {
+      if (response.success) {
+        return response;
+      }
+      throw new Error(response.message || 'Failed to send message');
+    })
+  );
+}
+
+  // Parse education string to Education array
+  //  Format expected: "University Name - Degree (Years); ..."
+  private parseEducation(educationStr: string | null): Education[] {
+    if (!educationStr) return [];
+
+    try {
+      // Try parsing as JSON first
+      const parsed = JSON.parse(educationStr);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (e) {
+      // If not JSON, parse as string format
+      return educationStr.split(';').map(item => {
+        const trimmed = item.trim();
+        const match = trimmed.match(/(.+?)\s*-\s*(.+?)\s*\((.+?)\)/);
+        if (match) {
+          return {
+            university: match[1].trim(),
+            degree: match[2].trim(),
+            years: match[3].trim(),
+            description: ''
+          };
+        }
+        return {
+          university: trimmed,
+          degree: '',
+          years: '',
+          description: ''
+        };
+      }).filter(e => e.university);
+    }
+
+    return [];
+  }
+
+  // Parse experience string to Experience array
+  //  Format expected: "Company Name - Position (Years); ..."
+  private parseExperience(experienceStr: string | null): Experience[] {
+    if (!experienceStr) return [];
+
+    try {
+      // Try parsing as JSON first
+      const parsed = JSON.parse(experienceStr);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (e) {
+      // If not JSON, parse as string format
+      return experienceStr.split(';').map(item => {
+        const trimmed = item.trim();
+        const match = trimmed.match(/(.+?)\s*-\s*(.+?)\s*\((.+?)\)/);
+        if (match) {
+          return {
+            company: match[1].trim(),
+            position: match[2].trim(),
+            years: match[3].trim(),
+            description: ''
+          };
+        }
+        return {
+          company: trimmed,
+          position: '',
+          years: '',
+          description: ''
+        };
+      }).filter(e => e.company);
+    }
+
+    return [];
   }
 }
