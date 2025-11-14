@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Employers\Models\EmployerInfo;
+use App\Domains\Shared\Services\Audit\AuditLogger;
 use App\Domains\Users\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,12 @@ new #[Layout('layouts.guest')] class extends Component {
 
         event(new Registered($user));
         Auth::login($user);
+        app(AuditLogger::class)->log([
+            'action' => 'Create New account',
+            'user' => auth()->user(),
+            'model' => auth()->user(),
+            'changes' => ['message' => 'A new account has been created', 'User' => $user->name,]
+        ]);
 
         $this->redirect(route('dashboard', absolute: false), navigate: true);
     }

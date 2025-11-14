@@ -1,12 +1,12 @@
 <?php
 
+use App\Domains\Shared\Services\Audit\AuditLogger;
 use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
-{
+new #[Layout('layouts.guest')] class extends Component {
     public LoginForm $form;
 
     public function login(): void
@@ -14,6 +14,12 @@ new #[Layout('layouts.guest')] class extends Component
         $this->validate();
         $this->form->authenticate();
         Session::regenerate();
+        app(AuditLogger::class)->log([
+            'action' => 'login',
+            'user' => auth()->user(),
+            'model' => auth()->user(),
+            'changes' => ['message' => 'User logged in','User'=>auth()->user()->name,]
+        ]);
 
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
@@ -25,7 +31,7 @@ new #[Layout('layouts.guest')] class extends Component
     <p class="text-muted mb-4">Welcome back! Please login to your account.</p>
 
     <!-- Session Status -->
-    <x-auth-session-status class="mb-3" :status="session('status')" />
+    <x-auth-session-status class="mb-3" :status="session('status')"/>
 
     <!-- Error Messages -->
     @if ($errors->any())

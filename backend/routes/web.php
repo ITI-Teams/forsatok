@@ -1,55 +1,46 @@
 <?php
 
-use App\Livewire\AuditLog\RecentActivity;
-use App\Livewire\Dashboard\AdminDashboard;
-use App\Livewire\Dashboard\EmployerDashboard;
-use Illuminate\Support\Facades\Route;
-use Spatie\Permission\Middleware\RoleMiddleware;
-
-// Controllers
 use App\Domains\Users\Controllers\api\LinkedinController;
-
-// Livewire Components
 use App\Livewire\Admin\Permissions\PermissionIndex;
 use App\Livewire\Admin\Roles\RoleIndex;
 use App\Livewire\Admin\Roles\RolePermission;
 use App\Livewire\Admin\Users\UserRolePermission;
-
 use App\Livewire\Applications\ApplicationForm;
 use App\Livewire\Applications\ApplicationList;
 use App\Livewire\Applications\ApplicationShow;
 use App\Livewire\Applications\ApplicationTrash;
-
+use App\Livewire\AuditLog\RecentActivity;
 use App\Livewire\Category\CategoryForm;
 use App\Livewire\Category\CategoryList;
 use App\Livewire\Category\CategoryTrash;
-
+use App\Livewire\CompanyReviews\ListCompanyReviews;
+use App\Livewire\CompanyReviews\TrashCompanyReview;
+use App\Livewire\Contact\ListContactMessages;
+use App\Livewire\Dashboard\AdminDashboard;
+use App\Livewire\Dashboard\EmployerDashboard;
 use App\Livewire\Employers\EditEmployerInfo;
 use App\Livewire\Employers\EmployerProfile;
-
 use App\Livewire\Jobs\JobForm;
 use App\Livewire\Jobs\JobList;
 use App\Livewire\Jobs\JobShow;
 use App\Livewire\Jobs\JobTrash;
-
-use App\Livewire\User\UserForm;
-use App\Livewire\User\UserList;
-use App\Livewire\User\UserTrash;
-
-use App\Livewire\Skills\SkillForm;
-use App\Livewire\Skills\SkillList;
-use App\Livewire\Skills\SkillTrash;
-
-use App\Livewire\Location\CountryForm;
-use App\Livewire\Location\CountryList;
-use App\Livewire\Location\CountryTrash;
 use App\Livewire\Location\CityForm;
 use App\Livewire\Location\CityList;
 use App\Livewire\Location\CityTrash;
+use App\Livewire\Location\CountryForm;
+use App\Livewire\Location\CountryList;
+use App\Livewire\Location\CountryTrash;
+use App\Livewire\Skills\SkillForm;
+use App\Livewire\Skills\SkillList;
+use App\Livewire\Skills\SkillTrash;
+use App\Livewire\User\UserForm;
+use App\Livewire\User\UserList;
+use App\Livewire\User\UserTrash;
+use Illuminate\Support\Facades\Route;
 
-use App\Livewire\CompanyReviews\ListCompanyReviews;
-use App\Livewire\CompanyReviews\TrashCompanyReview;
-use App\Livewire\Contact\ListContactMessages;
+// Controllers
+
+// Livewire Components
 
 
 // Public routes
@@ -154,16 +145,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // Employer ROUTES
 // ================================
 Route::middleware(['auth', 'role:employer'])->group(function () {
-
-    // Jobs
-    Route::prefix('jobs')->name('jobs.')->group(function () {
-        Route::get('/', JobList::class)->name('index');
-        Route::get('/create', JobForm::class)->name('create');
-        Route::get('/{job}/edit', JobForm::class)->name('edit');
-        Route::get('/trash', JobTrash::class)->name('trash');
-        Route::get('/{id}', JobShow::class)->name('show');
-    });
-
     // Applications
     Route::prefix('job/application')->name('job.app.')->group(function () {
         Route::get('/', ApplicationList::class)->name('index');
@@ -185,5 +166,22 @@ Route::middleware(['auth', 'role:employer'])->group(function () {
         Route::get('/edit', EditEmployerInfo::class)->name('profile.edit');
     });
 });
-
+// ================================
+// ADMIN & Employer ROUTES
+// ================================
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('jobs')->name('jobs.')->group(function () {
+        // Employer only
+        Route::middleware(['permission:jobs.manage'])->group(function () {
+            Route::get('/create', JobForm::class)->name('create');
+            Route::get('/{job}/edit', JobForm::class)->name('edit');
+            Route::get('/trash', JobTrash::class)->name('trash');
+        });
+        // Employer + Admin
+        Route::middleware(['permission:jobs.view'])->group(function () {
+            Route::get('/', JobList::class)->name('index');
+            Route::get('/{id}', JobShow::class)->name('show');
+        });
+    });
+});
 require __DIR__.'/auth.php';

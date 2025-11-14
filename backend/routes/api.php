@@ -25,13 +25,7 @@ Route::prefix('auth')->group(function () {
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
     Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
     Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
-    // cadidate api routes
-    Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
-        Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
-        Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
-        Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
-    });
+
 
     // employer api routes
     Route::middleware(['auth:sanctum'])->group(function () {
@@ -96,4 +90,10 @@ Route::get('/skills', [SkillController::class, 'index']);
 // Home Route
 Route::get('/home', [HomeController::class, 'index']);
 
-
+// cadidate api routes
+Route::prefix('auth')->group(function () {
+    Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
+    Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
+    Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
+    Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
+});
