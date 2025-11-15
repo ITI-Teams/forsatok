@@ -4,6 +4,7 @@ namespace App\Domains\Jobs\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Domains\Jobs\Models\JobPost;
+use App\Domains\Jobs\Models\Skill;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -92,21 +93,17 @@ class JobFilterController extends Controller
             ->whereNotNull('experience')
             ->select('experience', DB::raw('COUNT(*) as total'))
             ->groupBy('experience')
+            ->orderBy('experience')
             ->pluck('total', 'experience');
 
-        $experienceLabels = collect($this->defaultExperienceLevels())
-            ->merge($experienceCounts->keys())
-            ->filter()
-            ->unique()
-            ->values();
-
-        $experienceLevels = $experienceLabels->map(function ($label) use ($experienceCounts) {
+        // Get experience levels directly from database (no hardcoded values)
+        $experienceLevels = $experienceCounts->map(function ($count, $label) {
             return [
                 'value' => $label,
                 'name' => $label,
-                'count' => (int) ($experienceCounts[$label] ?? 0),
+                'count' => (int) $count,
             ];
-        });
+        })->values();
 
         // Get salary range
         $salaryRange = JobPost::where('is_active', true)
@@ -116,12 +113,30 @@ class JobFilterController extends Controller
             )
             ->first();
 
+        // Get skills with job counts
+        $skills = Skill::query()
+            ->withCount(['jobs' => function ($query) {
+                $query->where('is_active', true);
+            }])
+            ->orderBy('name')
+            ->get()
+            ->map(function ($skill) {
+                return [
+                    'id' => $skill->id,
+                    'name' => $skill->name,
+                    'slug' => $skill->slug,
+                    'category_id' => $skill->category_id,
+                    'jobs_count' => $skill->jobs_count ?? 0,
+                ];
+            });
+
         return response()->json([
             'status' => true,
             'data' => [
                 'types' => $types->values(),
                 'experience_levels' => $experienceLevels->values(),
                 'work_places' => $workPlaces->values(),
+                'skills' => $skills,
                 'salary_range' => [
                     'min' => (int)($salaryRange->min_salary ?? 0),
                     'max' => (int)($salaryRange->max_salary ?? 0)
@@ -156,10 +171,6 @@ class JobFilterController extends Controller
             'full-time' => 'Full Time',
             'part-time' => 'Part Time',
             'freelance' => 'Freelance',
-            'remote' => 'Remote',
-            'contract' => 'Contract',
-            'internship' => 'Internship',
-            'temporary' => 'Temporary',
         ];
     }
 
@@ -172,18 +183,6 @@ class JobFilterController extends Controller
         ];
     }
 
-    private function defaultExperienceLevels(): array
-    {
-        return [
-            'Entry Level',
-            'Junior',
-            '1-3 years',
-            '3-5 years',
-            '5+ years',
-            'Senior',
-            'Lead',
-        ];
-    }
 
     private function normalizeKey(?string $value): ?string
     {

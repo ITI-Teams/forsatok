@@ -11,19 +11,23 @@
       <input
         type="text"
         [(ngModel)]="searchTerm"
-        (input)="applyFilters()"
+        (input)="onSearchInput()"
         placeholder="Search company name..."
         class="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
-      <select [(ngModel)]="selectedLocation" (change)="applyFilters()" class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option value="">All Locations</option>
-        <option *ngFor="let location of locations" [value]="location.value">{{location.name}}</option>
+      <select [(ngModel)]="selectedCountry" (change)="onCountryChange(selectedCountry)" class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option [ngValue]="null">All Countries</option>
+        <option *ngFor="let country of countries" [ngValue]="country.id">
+          {{country.name}}<span *ngIf="country.companies_count !== undefined"> ({{country.companies_count}})</span>
+        </option>
       </select>
 
-      <select [(ngModel)]="selectedIndustry" (change)="applyFilters()" class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <select [(ngModel)]="selectedIndustry" (change)="onIndustryChange()" class="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
         <option value="">All Industries</option>
-        <option *ngFor="let industry of industries" [value]="industry.value">{{industry.name}}</option>
+        <option *ngFor="let industry of industries" [value]="industry.value">
+          {{industry.name}} ({{industry.count}})
+        </option>
       </select>
     </div>
   </section>
@@ -58,19 +62,29 @@
 
         <!-- Location -->
         <div class="mb-6">
-          <h3 class="font-semibold text-lg mb-3">Location</h3>
-          <select [(ngModel)]="selectedLocation" (change)="applyFilters()" class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50">
-            <option value="">All Locations</option>
-            <option *ngFor="let location of locations" [value]="location.value">{{location.name}}</option>
+          <h3 class="font-semibold text-lg mb-3 text-gray-700 dark:text-gray-300">Location</h3>
+          <select [(ngModel)]="selectedCountry" (change)="onCountryChange(selectedCountry)" class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+            <option [ngValue]="null">All Countries</option>
+            <option *ngFor="let country of countries" [ngValue]="country.id">
+              {{country.name}}<span *ngIf="country.companies_count !== undefined"> ({{country.companies_count}})</span>
+            </option>
+          </select>
+          <select [(ngModel)]="selectedCity" (change)="onCityChange()" [disabled]="!selectedCountry" class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option [ngValue]="null">All Cities</option>
+            <option *ngFor="let city of cities" [ngValue]="city.id">
+              {{city.name}}<span *ngIf="city.companies_count !== undefined"> ({{city.companies_count}})</span>
+            </option>
           </select>
         </div>
 
         <!-- Industry -->
         <div class="mb-6">
-          <h3 class="font-semibold text-lg mb-3">Industry</h3>
-          <select [(ngModel)]="selectedIndustry" (change)="applyFilters()" class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50">
+          <h3 class="font-semibold text-lg mb-3 text-gray-700 dark:text-gray-300">Industry</h3>
+          <select [(ngModel)]="selectedIndustry" (change)="onIndustryChange()" class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">All Industries</option>
-            <option *ngFor="let industry of industries" [value]="industry.value">{{industry.name}}</option>
+            <option *ngFor="let industry of industries" [value]="industry.value">
+              {{industry.name}} ({{industry.count}})
+            </option>
           </select>
         </div>
 
@@ -84,48 +98,92 @@
       <section class="lg:w-3/4">
         <div class="mb-8">
           <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
-            <span class="text-blue-600 dark:text-blue-400">{{ filteredCompanies.length }}</span> Companies Found
+            <span class="text-blue-600 dark:text-blue-400">{{ totalCompanies }}</span> Companies Found
           </h2>
         </div>
 
-        <div class="space-y-6">
-          <div
-            *ngFor="let company of paginatedCompanies"
-            (click)="viewCompany(company.id)"
-            class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-          >
-            <div class="flex items-center gap-6 w-full md:w-auto">
-              <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 border border-gray-300 rounded-xl flex items-center justify-center">
-                <img [src]="company.logo" alt="{{company.name}}" class="w-16 h-16 object-contain" />
-              </div>
-
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">{{company.name}}</h3>
-                <p class="text-gray-500 dark:text-gray-400 mb-2 capitalize">{{company.industry}} — {{company.location}}</p>
-                <p class="text-gray-600 dark:text-gray-400">{{company.description}}</p>
-              </div>
+        <!-- Loading State -->
+        <div *ngIf="loading" class="space-y-6">
+          <div *ngFor="let i of [1,2,3]" class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 animate-pulse">
+            <div class="flex-shrink-0 w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-xl mb-4 md:mb-0"></div>
+            <div class="flex-1 min-w-0 ml-0 md:ml-6">
+              <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
             </div>
-
-            <div class="mt-4 md:mt-0">
-              <span class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded-full text-sm">{{company.jobsCount}} jobs</span>
+            <div class="flex-shrink-0 ml-0 md:ml-6 mt-4 md:mt-0">
+              <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-20 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
             </div>
           </div>
         </div>
 
-        <div *ngIf="filteredCompanies.length === 0" class="text-center py-12">
-          <p class="text-xl text-gray-500 dark:text-gray-400">No companies found matching your filters.</p>
+        <!-- Companies Cards -->
+        <div *ngIf="!loading" class="space-y-6">
+          <div *ngFor="let company of paginatedCompanies" (click)="viewCompany(company.id)"
+            class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+            <!-- Logo -->
+            <div
+              class="flex-shrink-0 w-24 h-24 bg-gray-100 dark:bg-gray-700 border border-gray-300 rounded-xl flex items-center justify-center mr-6">
+              <img *ngIf="company.logo_url" [src]="company.logo_url" [alt]="company.company_name"
+                class="w-16 h-16 object-contain" />
+              <span *ngIf="!company.logo_url" class="text-2xl font-bold text-gray-400">{{company.company_name.charAt(0)}}</span>
+            </div>
+
+            <!-- Middle content -->
+            <div class="flex-1 min-w-0">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">{{company.company_name}}</h3>
+              <p class="text-gray-500 dark:text-gray-400 mb-2">
+                <span *ngIf="company.industry">{{company.industry}}</span>
+                <span *ngIf="company.location?.city || company.location?.country"> — </span>
+                <span *ngIf="company.location?.city">{{company.location?.city?.name}}</span>
+                <span *ngIf="company.location?.city && company.location?.country">, </span>
+                <span *ngIf="company.location?.country">{{company.location?.country?.name}}</span>
+              </p>
+              <p *ngIf="company.about" class="text-gray-600 dark:text-gray-400 line-clamp-2 truncate">{{company.about}}</p>
+            </div>
+
+            <!-- Right info: Jobs + Rating -->
+            <div class="flex-shrink-0 flex flex-col items-end gap-2 ml-6">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded-full text-sm">
+                {{company.jobs_count || 0}} jobs
+              </span>
+              <div *ngIf="company.average_rating" class="flex items-center gap-1">
+                <i class="fas fa-star text-yellow-400"></i>
+                <span class="text-sm text-gray-600 dark:text-gray-400">{{company.average_rating}}</span>
+                <span class="text-sm text-gray-500 dark:text-gray-500">({{company.total_reviews || 0}})</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="flex justify-center items-center mt-8 gap-2">
+        <!-- Empty State -->
+        <div *ngIf="!loading && filteredCompanies.length === 0" class="text-center py-16">
+          <div class="max-w-md mx-auto">
+            <div class="mb-6">
+              <i class="fas fa-building text-6xl text-gray-300 dark:text-gray-600"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">No Companies Found</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6">
+              We couldn't find any companies matching your criteria. Try adjusting your filters or search terms.
+            </p>
+            <button (click)="resetFilters()" pButton type="button" label="Reset Filters" 
+              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all">
+            </button>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="!loading && totalPages > 1" class="flex justify-center items-center mt-8 gap-2">
           <button (click)="previousPage()" [disabled]="currentPage === 1"
-            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50">
+            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">
             Previous
           </button>
 
           <span class="text-gray-700 dark:text-gray-300 font-medium">Page {{ currentPage }} of {{ totalPages }}</span>
 
           <button (click)="nextPage()" [disabled]="currentPage === totalPages"
-            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50">
+            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">
             Next
           </button>
         </div>
