@@ -27,7 +27,7 @@ class EmployerInfo extends Model
 
     public function reviews()
     {
-        return $this->hasMany(CompanyReview::class, 'company_id');
+        return $this->hasMany(CompanyReview::class, 'company_id','user_id');
     }
 
     /**

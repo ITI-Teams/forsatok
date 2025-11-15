@@ -22,6 +22,11 @@ class JobController extends Controller
             ->where('is_active', true)
             ->latest();
 
+       // Filter by employer_id if provided
+        if ($employerId = $request->input('employer_id')) {
+            $query->where('employer_id', $employerId);
+        }
+
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -109,7 +114,7 @@ class JobController extends Controller
             'employer:id,name,email',
             'locationable.city:id,name,country_id',
             'locationable.city.country:id,name,code',
-            'locationable.country:id,name,code'
+            'locationable.country:id,name,code',
         ])
             ->where('is_active', true)
             ->findOrFail($id);

@@ -4,6 +4,8 @@ namespace App\Domains\Employers\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
+
 
 class EmployerInfoResource extends JsonResource
 {
@@ -25,7 +27,7 @@ class EmployerInfoResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 
-             // Location information
+            // Location information
             'location' => $this->when($this->location, function () {
                 return [
                     'country' => $this->location->country ? [
@@ -48,6 +50,23 @@ class EmployerInfoResource extends JsonResource
                 'email' => $this->user->email ?? null,
             ],
 
+            'average_rating' => $this->average_rating,
+            'total_reviews' => $this->total_reviews,
+            'reviews' => $this->whenLoaded('reviews', function () {
+                return $this->reviews->map(function ($review) {
+                    return [
+                        'id' => $review->id,
+                        'rating' => $review->rating,
+                        'review' => $review->review,
+                        'created_at' => $review->created_at->format('Y-m-d H:i:s'),
+                        'candidate' => [
+                            'id' => $review->candidate->id,
+                            'name' => $review->candidate->name,
+                        ],
+                    ];
+                });
+            }),
+
             'jobs' => $this->whenLoaded('jobs', function () {
                 return $this->jobs->map(function ($job) {
                     return [
@@ -57,9 +76,11 @@ class EmployerInfoResource extends JsonResource
                         'description' => $job->description,
                         'salary_min' => $job->salary_min,
                         'salary_max' => $job->salary_max,
-                        'deadline' => $job->deadline?->format('Y-m-d H:i:s'),
+                        'deadline' => $this->formatDate($job->deadline),
                         'is_active' => (bool) $job->is_active,
-                        'created_at' => $job->created_at?->format('Y-m-d H:i:s'),
+                        'created_at' => $this->formatDate($job->created_at),
+                        'work_type' => $job->work_type,
+                        'work_place' => $job->work_place,
                     ];
                 });
             }),
@@ -70,7 +91,37 @@ class EmployerInfoResource extends JsonResource
         ];
     }
 
-    // Get full location 
+
+//  Safely format a date - handles both Carbon instances and strings
+
+    private function formatDate($date): ?string
+    {
+        if (!$date) {
+            return null;
+        }
+
+        // If it's already a string, return it as is
+        if (is_string($date)) {
+            return $date;
+        }
+
+        // If it's a Carbon instance, format it
+        if ($date instanceof \Carbon\Carbon || $date instanceof \DateTime) {
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        // Try to parse as Carbon if it's something else
+        try {
+            return Carbon::parse($date)->format('Y-m-d H:i:s');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+
+
+
+    // Get full location
     private function getFullLocation(): string
     {
         if (!$this->location) {
@@ -94,4 +145,3 @@ class EmployerInfoResource extends JsonResource
         return !empty($parts) ? implode(', ', $parts) : 'Location not specified';
     }
 }
-

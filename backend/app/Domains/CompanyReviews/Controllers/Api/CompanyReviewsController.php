@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Domains\CompanyReviews\Models\CompanyReview;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 Class CompanyReviewsController extends Controller
 {
@@ -15,7 +17,7 @@ Class CompanyReviewsController extends Controller
      public function showCompanyReviews($companyId)
     {
         $reviews = CompanyReview::where('company_id', $companyId)
-                    ->with('candidate') 
+                    ->with('candidate')
                     ->get();
 
         return response()->json([
@@ -34,15 +36,42 @@ Class CompanyReviewsController extends Controller
             'review' => 'nullable|string',
         ]);
 
-        $review = CompanyReview::create($validated);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $review
-        ], 201);
+
+          // Check if the user has already make review for this company
+        $existingReview = CompanyReview::where('company_id', $validated['company_id'])
+            ->where('candidate_id', $validated['candidate_id'])
+            ->first();
+
+        if ($existingReview) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You have already reviewed this company. Only one review per company is allowed.'
+            ], 409); // 409 Conflict
+        }
+
+        try {
+            // Create the review if not exist
+            $review = CompanyReview::create($validated);
+            $review->load('candidate');
+            return response()->json([
+                'status' => 'success',
+                'data' => $review,
+                'message' => 'Review submitted successfully'
+            ], 201);
+
+        } catch (\Exception $e) {
+            Log::error('Error creating review: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to submit review. Please try again.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 
-    
+
     public function update(Request $request, $id)
     {
         $review = CompanyReview::findOrFail($id);
@@ -60,7 +89,7 @@ Class CompanyReviewsController extends Controller
         ]);
     }
 
-  
+
     public function destroy($id)
     {
         $review = CompanyReview::findOrFail($id);

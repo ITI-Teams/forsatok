@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CandidateProfileService, Candidate, Education, Experience, Skill } from '../../core/services/candidate-profile.service';
+import { CandidateProfileService, Candidate, Education, Experience, Skill , ContactMessage } from '../../core/services/candidate-profile.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-candidate-profile',
@@ -21,7 +22,7 @@ export class CandidateProfile implements OnInit {
     id: 0,
     name: '',
     title: '',
-    location: '',
+    location: null,
     email: '',
     phone: '',
     image: 'https://i.pravatar.cc/300',
@@ -46,18 +47,31 @@ export class CandidateProfile implements OnInit {
   skills: Skill[] = [];
 
   // Contact form model
-  contactModel = { name: '', email: '', message: '' };
+  contactModel = {
+    full_name: '',
+    email: '',
+    subject: '',
+    message: ''
+  };
   isSubmittingContact = false;
   contactSuccess = false;
   contactError = '';
+  currentUserId: number = 0;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private candidateService: CandidateProfileService
+    private candidateService: CandidateProfileService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+
+    // Get current user ID
+    const user = this.authService.getUser();
+    if (user) {
+      this.currentUserId = user.id;
+    }
     // Get candidate ID from route params
     this.route.params.subscribe(params => {
       this.candidateId = +params['id'];
@@ -99,42 +113,47 @@ export class CandidateProfile implements OnInit {
     if (el) (el as HTMLElement).scrollTop = 0;
   }
 
+
   submitContact() {
-    if (!this.contactModel.name || !this.contactModel.email || !this.contactModel.message) {
-      this.contactError = 'Please fill all fields';
-      return;
+      if (!this.contactModel.full_name || !this.contactModel.email || !this.contactModel.message) {
+        this.contactError = 'Please fill all required fields';
+        return;
+      }
+
+      this.isSubmittingContact = true;
+      this.contactSuccess = false;
+      this.contactError = '';
+
+      const contactData: ContactMessage = {
+        full_name: this.contactModel.full_name,
+        email: this.contactModel.email,
+        subject: this.contactModel.subject,
+        message: this.contactModel.message,
+        contactable_id: this.candidateId,
+        contactable_type: 'App\\Domains\\Employers\\Models\\EmployerInfo',
+         user_id: this.currentUserId
+      };
+
+      this.candidateService.sendContactMessage(contactData).subscribe({
+        next: (response) => {
+          console.log('Contact message sent:', response);
+          this.contactSuccess = true;
+          this.contactModel = { full_name: '', email: '', subject: '', message: '' };
+          this.isSubmittingContact = false;
+
+          // Hide success message after 3 seconds
+          setTimeout(() => {
+            this.contactSuccess = false;
+          }, 3000);
+        },
+        error: (err) => {
+          console.error('Error sending contact message:', err);
+          this.contactError = err.error?.message || 'Failed to send message. Please try again.';
+          this.isSubmittingContact = false;
+        }
+      });
     }
 
-    this.isSubmittingContact = true;
-    this.contactSuccess = false;
-    this.contactError = '';
-
-    const contactData = {
-      name: this.contactModel.name,
-      email: this.contactModel.email,
-      message: this.contactModel.message,
-      candidate_id: this.candidateId
-    };
-
-    this.candidateService.sendContactMessage(contactData).subscribe({
-      next: (response) => {
-        console.log('Contact message sent:', response);
-        this.contactSuccess = true;
-        this.contactModel = { name: '', email: '', message: '' };
-        this.isSubmittingContact = false;
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          this.contactSuccess = false;
-        }, 3000);
-      },
-      error: (err) => {
-        console.error('Error sending contact message:', err);
-        this.contactError = err.error?.message || 'Failed to send message. Please try again.';
-        this.isSubmittingContact = false;
-      }
-    });
-  }
 
   downloadCV() {
     if (this.candidate.resume) {
@@ -146,9 +165,9 @@ export class CandidateProfile implements OnInit {
     }
   }
 
-  shortlistCandidate() {
-    // TODO: Implement shortlist functionality
-    console.log('Shortlist candidate:', this.candidateId);
-    alert('Candidate shortlisted!');
+
+  // Get location string
+    getLocationString(): string {
+    return this.candidateService.getLocationString(this.candidate.location);
   }
 }
