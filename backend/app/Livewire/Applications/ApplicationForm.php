@@ -43,7 +43,7 @@ class ApplicationForm extends Component
         $this->candidates = User::where('type', 'candidate')->get();
 
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
-            $this->jobPosts = JobPost::where('user_id', $user->id)->get();
+            $this->jobPosts = JobPost::where('employer_id', $user->id)->get();
         } else {
             $this->jobPosts = JobPost::all();
         }

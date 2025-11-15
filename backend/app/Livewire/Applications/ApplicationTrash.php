@@ -28,7 +28,7 @@ class ApplicationTrash extends Component
 
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
             $query->whereHas('jobPost', function($q) use ($user) {
-                $q->where('user_id', $user->id);
+                $q->where('employer_id', $user->id);
             });
         }
 
@@ -41,7 +41,7 @@ class ApplicationTrash extends Component
 
         $user = Auth::user();
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
-            if ($application->jobPost->user_id !== $user->id) {
+            if ($application->jobPost->employer_id !== $user->id) {
                 session()->flash('error', 'You are not authorized to restore this application.');
                 return;
             }
@@ -58,7 +58,7 @@ class ApplicationTrash extends Component
 
         $user = Auth::user();
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
-            if ($application->jobPost->user_id !== $user->id) {
+            if ($application->jobPost->employer_id !== $user->id) {
                 session()->flash('error', 'You are not authorized to delete this application.');
                 return;
             }
@@ -79,7 +79,7 @@ class ApplicationTrash extends Component
 
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
             $query->whereHas('jobPost', function($q) use ($user) {
-                $q->where('user_id', $user->id);
+                $q->where('employer_id', $user->id);
             });
         }
 

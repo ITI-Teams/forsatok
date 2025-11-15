@@ -29,6 +29,7 @@ class EmployerDashboard extends Component
     {
         $this->loadStats();
         $this->loadChartsData();
+        $this->loadRecentApplications();
         $this->loadRecentActivities();
         $this->loadTopPerformingJobs();
     }
@@ -43,21 +44,25 @@ class EmployerDashboard extends Component
         $jobIds = $jobsQuery->pluck('id');
 
         $this->myJobsCount = $jobsQuery->count();
+
         $this->activeApplications = JobApplication::whereIn('job_post_id', $jobIds)
             ->where('status', 'pending')
             ->count();
+
         $this->hiredCandidates = JobApplication::whereIn('job_post_id', $jobIds)
-            ->where('status', 'hired')
+            ->where('status', 'accepted')
             ->count();
+
         $this->pendingReviews = CompanyReview::where('company_id', $employerId)
             ->where('status', 'pending')
             ->count();
+
         $this->totalViews = $jobsQuery->sum('views') ?? 0;
 
-        // Calculate response rate
+        //Calculate response rate
         $totalApplications = JobApplication::whereIn('job_post_id', $jobIds)->count();
         $respondedApplications = JobApplication::whereIn('job_post_id', $jobIds)
-            ->whereIn('status', ['reviewed', 'interview', 'hired', 'rejected'])
+            ->whereIn('status', ['accepted', 'rejected', 'pending'])
             ->count();
 
         $this->responseRate = $totalApplications > 0
@@ -74,25 +79,55 @@ class EmployerDashboard extends Component
         // Monthly applications for employer (last 6 months)
         $labels = [];
         $data = [];
+
         for ($i = 5; $i >= 0; $i--) {
-            $m = Carbon::now()->subMonths($i);
-            $labels[] = $m->format('M');
-            $data[] = JobApplication::whereYear('created_at', $m->year)
-                ->whereMonth('created_at', $m->month)
-                ->whereIn('job_post_id', $jobIds)
+            $startOfMonth = Carbon::now()->subMonths($i)->startOfMonth();
+            $endOfMonth = Carbon::now()->subMonths($i)->endOfMonth();
+
+            $labels[] = $startOfMonth->format('M Y');
+
+            $monthlyCount = JobApplication::whereIn('job_post_id', $jobIds)
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
                 ->count();
+
+            $data[] = $monthlyCount;
         }
+
         $this->monthlyLabels = $labels;
         $this->monthlyData = $data;
 
-        // Application status distribution
+        // Application status distribution -
         $this->applicationStatusData = [
-            'pending' => JobApplication::whereIn('job_post_id', $jobIds)->where('status', 'pending')->count(),
-            'reviewed' => JobApplication::whereIn('job_post_id', $jobIds)->where('status', 'reviewed')->count(),
-            'interview' => JobApplication::whereIn('job_post_id', $jobIds)->where('status', 'interview')->count(),
-            'hired' => JobApplication::whereIn('job_post_id', $jobIds)->where('status', 'hired')->count(),
-            'rejected' => JobApplication::whereIn('job_post_id', $jobIds)->where('status', 'rejected')->count(),
+            'pending' => JobApplication::whereIn('job_post_id', $jobIds)
+                ->where('status', 'pending')->count(),
+            'accepted' => JobApplication::whereIn('job_post_id', $jobIds)
+                ->where('status', 'accepted')->count(),
+            'rejected' => JobApplication::whereIn('job_post_id', $jobIds)
+                ->where('status', 'rejected')->count(),
         ];
+    }
+
+    public function loadRecentApplications()
+    {
+        $employer = auth()->user();
+        $jobIds = JobPost::where('employer_id', $employer->id)->pluck('id');
+
+        $applications = JobApplication::whereIn('job_post_id', $jobIds)
+            ->with(['jobPost', 'candidate'])
+            ->latest()
+            ->take(6)
+            ->get();
+
+        $this->recentApplications = $applications->map(function($application) {
+            return [
+                'id' => $application->id,
+                'applicant' => $application->user->name ?? 'Unknown',
+                'job' => $application->jobPost->title ?? 'Deleted Job',
+                'applied_date' => $application->created_at->format('M d, Y'),
+                'status' => $application->status,
+                'email' => $application->user->email ?? 'N/A',
+            ];
+        })->toArray();
     }
 
     public function loadRecentActivities()
@@ -100,14 +135,14 @@ class EmployerDashboard extends Component
         $employer = auth()->user();
         $jobIds = JobPost::where('employer_id', $employer->id)->pluck('id');
 
-        // Get real recent activities from applications
+        $activities = [];
+
+        // Recent applications
         $recentApps = JobApplication::whereIn('job_post_id', $jobIds)
             ->with('jobPost')
             ->latest()
-            ->take(4)
+            ->take(3)
             ->get();
-
-        $activities = [];
 
         foreach ($recentApps as $application) {
             $activities[] = [
@@ -118,25 +153,40 @@ class EmployerDashboard extends Component
             ];
         }
 
-        // If no recent applications, show default activities
-        if (empty($activities)) {
-            $activities = [
+        // Recent job posts
+        $recentJobs = JobPost::where('employer_id', $employer->id)
+            ->latest()
+            ->take(2)
+            ->get();
+
+        foreach ($recentJobs as $job) {
+            $activities[] = [
+                'icon' => 'briefcase',
+                'color' => 'primary',
+                'description' => "New job posted: {$job->title}",
+                'time' => $job->created_at->diffForHumans()
+            ];
+        }
+
+        // Sort activities by time
+        usort($activities, function($a, $b) {
+            return strtotime($b['time']) - strtotime($a['time']);
+        });
+
+        // Take only 4 most recent
+        $this->recentActivities = array_slice($activities, 0, 4);
+
+        // If no activities, show default
+        if (empty($this->recentActivities)) {
+            $this->recentActivities = [
                 [
                     'icon' => 'briefcase',
                     'color' => 'primary',
                     'description' => 'Welcome to your employer dashboard!',
                     'time' => 'Just now'
-                ],
-                [
-                    'icon' => 'plus',
-                    'color' => 'info',
-                    'description' => 'Start by posting your first job',
-                    'time' => '1 minute ago'
                 ]
             ];
         }
-
-        $this->recentActivities = $activities;
     }
 
     public function loadTopPerformingJobs()
@@ -144,18 +194,19 @@ class EmployerDashboard extends Component
         $employer = auth()->user();
 
         $jobs = JobPost::where('employer_id', $employer->id)
-            ->withCount('applications')
-            ->orderBy('applications_count', 'desc')
+            ->withCount(['applications'])
             ->take(5)
             ->get();
 
         $this->topPerformingJobs = $jobs->map(function($job) {
             return [
+                'id' => $job->id,
                 'title' => $job->title,
                 'applications' => $job->applications_count,
                 'views' => $job->views ?? 0,
-                'status' => $job->status,
-                'status_color' => $this->getStatusColor($job->status)
+                'is_active' => $job->is_active,
+                'status_color' => $this->getStatusColor($job->is_active),
+                'created_at' => $job->created_at->format('M d, Y')
             ];
         })->toArray();
     }
@@ -163,10 +214,8 @@ class EmployerDashboard extends Component
     private function getStatusColor($status)
     {
         return match($status) {
-            'active' => 'success',
-            'pending' => 'warning',
-            'expired' => 'secondary',
-            'draft' => 'info',
+            1 => 'success',
+            0 => 'warning',
             default => 'secondary'
         };
     }
@@ -175,9 +224,7 @@ class EmployerDashboard extends Component
     {
         return match($status) {
             'pending' => 'warning',
-            'reviewed' => 'info',
-            'interview' => 'primary',
-            'hired' => 'success',
+            'accepted' => 'success',
             'rejected' => 'danger',
             default => 'secondary'
         };
@@ -185,8 +232,21 @@ class EmployerDashboard extends Component
 
     public function changeTimeRange($range)
     {
-        // Implement time range change logic if needed
         $this->loadChartsData();
+        $this->dispatch('updateCharts', [
+            'labels' => $this->monthlyLabels,
+            'data' => $this->monthlyData,
+            'status' => $this->applicationStatusData
+        ]);
+    }
+
+    public function refreshData()
+    {
+        $this->loadStats();
+        $this->loadChartsData();
+        $this->loadRecentApplications();
+        $this->loadRecentActivities();
+        $this->loadTopPerformingJobs();
     }
 
     public function render()
