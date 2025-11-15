@@ -18,6 +18,9 @@ class StoreContactMessageRequest extends FormRequest
             'email'     => ['required', 'email', 'max:255'],
             'subject'   => ['nullable', 'string', 'max:255'],
             'message'   => ['required', 'string'],
+            'contactable_type' => 'nullable|string',
+            'contactable_id' => 'nullable|integer',
+            'user_id' => 'nullable|integer|exists:users,id',
         ];
     }
 }

@@ -35,7 +35,12 @@ class EmployerController extends Controller
 
     public function show(string $id)
     {
-        $employer=EmployerInfo::with(['user','jobs', 'location.country', 'location.city'])
+        $employer=EmployerInfo::with([
+            'user',
+            'jobs',
+            'location.country',
+            'location.city'])
+        ->withcount('jobs')
         ->find($id);
 
         if(!$employer){

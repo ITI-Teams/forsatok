@@ -29,6 +29,7 @@ class EmployerInfo extends Model
 
     public function reviews()
     {
+
         // company_id in CompanyReview refers to user_id (employer user), not employer_info id
         return $this->hasMany(CompanyReview::class, 'company_id', 'user_id');
     }
