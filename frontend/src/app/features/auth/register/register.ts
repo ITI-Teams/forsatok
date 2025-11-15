@@ -53,6 +53,7 @@ export class Register {
       next: (res: any) => {
         this.loading = false;
         this.showToast('success', 'Success', 'Account created successfully!');
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         this.loading = false;

@@ -50,11 +50,12 @@ export class Login {
       next: (res: any) => {
         this.loading = false;
         this.showToast('success', 'Welcome!', 'Login successful.');
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         this.loading = false;
         const errorMessage = this.auth.getErrorMessage(err);
-        
+
         if (err.status === 401) {
           this.showToast('error', 'Unauthorized', errorMessage || 'Invalid email or password.');
         } else if (err.status === 0) {

@@ -23,7 +23,7 @@
                         <h6>Job Information</h6>
                         <p><strong>Job Title:</strong> {{ $application->jobPost->title ?? 'N/A' }}</p>
                         <p><strong>Company:</strong> {{ $application->jobPost->employer->name ?? 'N/A' }}</p>
-                        <p><strong>Location:</strong> {{ $application->jobPost->location ?? 'N/A' }}</p>
+                        <p><strong>Location:</strong> {{ $application->jobPost->location->country->name ?? 'N/A' }}</p>
                     </div>
                 </div>
 
@@ -105,31 +105,10 @@
                     <div class="col-12">
                         <h6>Application Actions</h6>
                         <div class="d-flex gap-2 flex-wrap">
-                            @if($application->status != 'accepted')
-                                <button type="button"
-                                        class="btn btn-success btn-lg"
-                                        onclick="confirmAccept()">
-                                    <i class="fa-solid fa-check-circle"></i> Accept Application
-                                </button>
-                            @endif
-
-                            @if($application->status != 'rejected')
-                                <button type="button"
-                                        class="btn btn-danger btn-lg"
-                                        onclick="confirmReject()">
-                                    <i class="fa-solid fa-times-circle"></i> Reject Application
-                                </button>
-                            @endif
-
                             <a wire:navigate href="{{ route('job.app.edit', $application->id) }}"
                                class="btn btn-primary btn-lg">
                                 <i class="fa-solid fa-edit"></i> Edit Application
                             </a>
-
-                            <button onclick="confirmDelete({{ $application->id }})"
-                                    class="btn btn-outline-danger btn-lg">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -142,65 +121,8 @@
         </div>
     @endif
 
-    <!-- SweetAlert for Accept -->
-    <script>
-        function confirmAccept() {
-            Swal.fire({
-                title: "Accept Application?",
-                text: "Are you sure you want to accept this application?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#28a745",
-                cancelButtonColor: "#6c757d",
-                confirmButtonText: "Yes, accept it!",
-                cancelButtonText: "Cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                @this.call('accept');
-                }
-            });
-        }
-    </script>
 
-    <!-- SweetAlert for Reject -->
-    <script>
-        function confirmReject() {
-            Swal.fire({
-                title: "Reject Application?",
-                text: "Are you sure you want to reject this application?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#dc3545",
-                cancelButtonColor: "#6c757d",
-                confirmButtonText: "Yes, reject it!",
-                cancelButtonText: "Cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                @this.call('reject');
-                }
-            });
-        }
-    </script>
 
-    <!-- SweetAlert for Delete -->
-    <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "This application will be moved to trash.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#6c757d",
-                confirmButtonText: "Yes, delete it!",
-                cancelButtonText: "Cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                @this.call('delete', id);
-                }
-            });
-        }
-    </script>
 
     <!-- Display flash messages -->
     @if (session()->has('message'))

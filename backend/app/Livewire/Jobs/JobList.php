@@ -77,7 +77,13 @@ class JobList extends Component
 
     public function render()
     {
+        $user = auth()->user();
+
         $query = JobPost::with(['category', 'employer', 'location.country', 'location.city'])->latest();
+
+        if ($user->type === 'employer') {
+            $query->where('employer_id', $user->id);
+        }
 
         if ($this->search && count($this->searchFields) > 0) {
             $query->where(function ($q) {
