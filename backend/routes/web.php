@@ -159,6 +159,7 @@ Route::middleware(['auth', 'role:employer'])->group(function () {
         Route::get('/', ListCompanyReviews::class)->name('index');
         Route::get('/trash', TrashCompanyReview::class)->name('trash');
     });
+    Route::get('/contact-messages', ListContactMessages::class)->name('employer.contact-messages');
 
     // Employer Profile
     Route::prefix('employer')->name('employer.')->group(function () {

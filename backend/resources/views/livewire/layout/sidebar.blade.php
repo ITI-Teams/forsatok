@@ -133,6 +133,13 @@
                     <i class="fa-solid fa-building-shield"></i><span>Company Reviews</span>
                 </a>
             </li>
+            {{-- Contact Messages --}}
+            <li>
+                <a wire:navigate href="{{ route('employer.contact-messages') }}"
+                   class="nav-link {{ request()->routeIs('employer.contact-messages') ? 'active' : '' }}">
+                    <i class="fa-solid fa-envelope"></i><span>Contact Messages</span>
+                </a>
+            </li>
             <li>
                 <a wire:navigate href="{{ route('employer.profile') }}"
                    class="nav-link {{ request()->routeIs('employer.profile') ? 'active' : '' }}">
