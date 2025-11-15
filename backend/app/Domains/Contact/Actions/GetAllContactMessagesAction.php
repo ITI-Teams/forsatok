@@ -17,11 +17,17 @@ class GetAllContactMessagesAction
     {
         $query = ContactMessage::query()->orderBy('created_at', 'desc');
 
+        if (auth()->user()->hasRole('admin')) {
+            $query->whereNull('user_id');
+        } elseif (auth()->user()->hasRole('employer')) {
+            $query->where('user_id', auth()->id());
+        }
+
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('subject', 'like', "%{$search}%");
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('subject', 'like', "%{$search}%");
             });
         }
 
