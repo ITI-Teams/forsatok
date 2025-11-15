@@ -1,5 +1,7 @@
 import { NgClass, NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HomeService } from '../../core/services/home.service';
+import { ContactService } from '../../core/services/main-contact.service';
 
 @Component({
   selector: 'app-candidate-dashboard',
@@ -7,38 +9,85 @@ import { Component } from '@angular/core';
   imports: [NgClass, NgFor, NgIf],
   templateUrl: './candidate-dashboard.html'
 })
-export class CandidateDashboard {
-  activeTab = 'description';
+export class CandidateDashboard implements OnInit {
+  activeTab: string = 'messages';
 
-  candidateData = {
-    description: {
-      name: 'Hagar Elhalfawy',
-      email: 'hagar@example.com',
-      bio: 'Full Stack Developer with experience in Laravel, PHP, Angular, and MySQL.',
-    },
-    messages: [
-      { from: 'Recruiter A', text: 'Please review your application.' },
-      { from: 'HR B', text: 'Interview scheduled for next week.' }
-    ],
-    applications: [
-      { jobTitle: 'Frontend Developer', status: 'Pending' },
-      { jobTitle: 'Backend Developer', status: 'Accepted' }
-    ],
-    notifications: [
-      { text: 'Your profile has been viewed 10 times today.' },
-      { text: 'New job matching your skills has been posted.' }
-    ],
-    saved: [
-      { jobTitle: 'Angular Developer' },
-      { jobTitle: 'Full Stack Engineer' }
-    ],
-    reviews: [
-      { reviewer: 'Manager X', comment: 'Great performance!' },
-      { reviewer: 'Team Lead Y', comment: 'Excellent teamwork.' }
-    ]
+  candidateData: any = {
+    messages: [],
+    // notifications: [],
+    savedJobs: []
   };
+
+  currentPageMessages: number = 1;
+  currentPageSaved: number = 1;
+  itemsPerPage: number = 5;
+
+  constructor(private homeService: HomeService, private contactService: ContactService) { }
+
+  ngOnInit() {
+    this.loadMessages();
+  }
 
   setTab(tab: string) {
     this.activeTab = tab;
+
+    if (tab === 'messages') {
+      this.loadMessages();
+    } else if (tab === 'savedJobs') {
+      this.loadSavedJobs();
+    }
+
   }
+  loadMessages() {
+    this.contactService.getMessages().subscribe(
+      (res: any) => {
+        this.candidateData.messages = res.data || [];
+        this.currentPageMessages = 1;
+      },
+      (error) => {
+        console.error('Error fetching messages:', error);
+      }
+    );
+  }
+
+
+  loadSavedJobs() {
+    this.homeService.getHomeData().subscribe(
+      (data: any) => {
+        this.candidateData.savedJobs = data.savedJobs || [];
+        this.currentPageSaved = 1;
+      },
+      (error) => {
+        console.error('Error fetching saved jobs:', error);
+      }
+    );
+  }
+
+  get paginationMessages() {
+    const start = (this.currentPageMessages - 1) * this.itemsPerPage;
+    return this.candidateData.messages.slice(start, start + this.itemsPerPage);
+  }
+
+  get paginationSavedJobs() {
+    const start = (this.currentPageSaved - 1) * this.itemsPerPage;
+    return this.candidateData.savedJobs.slice(start, start + this.itemsPerPage);
+  }
+
+  nextPage(tab: string) {
+    if(tab === 'messages' && this.currentPageMessages < this.totalPages('messages')) this.currentPageMessages++;
+    else if(tab === 'savedJobs' && this.currentPageSaved < this.totalPages('savedJobs')) this.currentPageSaved++;
+  }
+
+  prevPage(tab: string) {
+    if(tab === 'messages' && this.currentPageMessages > 1) this.currentPageMessages--;
+    else if(tab === 'savedJobs' && this.currentPageSaved > 1) this.currentPageSaved--;
+  }
+
+  totalPages(tab: string) {
+    if(tab === 'messages') return Math.ceil(this.candidateData.messages.length / this.itemsPerPage);
+    if(tab === 'savedJobs') return Math.ceil(this.candidateData.savedJobs.length / this.itemsPerPage);
+    return 1;
+  }
+
+  
 }
