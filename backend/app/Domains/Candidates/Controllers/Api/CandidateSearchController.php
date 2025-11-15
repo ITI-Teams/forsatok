@@ -246,32 +246,16 @@ class CandidateSearchController extends Controller
             ->whereNotNull('experience')
             ->select('experience', DB::raw('COUNT(*) as total'))
             ->groupBy('experience')
+            ->orderBy('experience')
             ->pluck('total', 'experience');
 
-        $experienceLevels = collect([
-            'Entry Level',
-            '1-3 years',
-            '3-5 years',
-            '5+ years',
-            'Senior'
-        ])->map(function ($level) use ($experienceCounts) {
+        // Get experience levels directly from database (no hardcoded values)
+        $experienceLevels = $experienceCounts->map(function ($count, $label) {
             return [
-                'value' => $level,
-                'name' => $level,
-                'count' => (int) ($experienceCounts[$level] ?? 0),
+                'value' => $label,
+                'name' => $label,
+                'count' => (int) $count,
             ];
-        })->merge(
-            $experienceCounts->keys()->filter(function ($key) {
-                return !in_array($key, ['Entry Level', '1-3 years', '3-5 years', '5+ years', 'Senior']);
-            })->map(function ($level) use ($experienceCounts) {
-                return [
-                    'value' => $level,
-                    'name' => $level,
-                    'count' => (int) ($experienceCounts[$level] ?? 0),
-                ];
-            })
-        )->filter(function ($item) {
-            return $item['count'] > 0;
         })->values();
 
         // Map experience levels to min/max years for filtering

@@ -205,10 +205,19 @@ export class Candidates implements OnInit {
       },
       error: (err) => {
         console.error('Error loading candidates:', err);
-        console.error('Error details:', err.error);
-        this.loading = false;
         this.candidates = [];
         this.filteredCandidates = [];
+        this.totalCandidates = 0;
+        this.totalPages = 1;
+        this.loading = false;
+        // Show user-friendly error message
+        if (err.status === 0) {
+          console.error('Network error: Please check your internet connection');
+        } else if (err.status >= 500) {
+          console.error('Server error: Please try again later');
+        } else {
+          console.error('Error loading candidates: Please try again');
+        }
       }
     });
   }

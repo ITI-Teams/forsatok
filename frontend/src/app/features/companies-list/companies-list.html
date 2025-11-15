@@ -103,8 +103,19 @@
         </div>
 
         <!-- Loading State -->
-        <div *ngIf="loading" class="text-center py-12">
-          <p class="text-xl text-gray-500 dark:text-gray-400">Loading companies...</p>
+        <div *ngIf="loading" class="space-y-6">
+          <div *ngFor="let i of [1,2,3]" class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 animate-pulse">
+            <div class="flex-shrink-0 w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-xl mb-4 md:mb-0"></div>
+            <div class="flex-1 min-w-0 ml-0 md:ml-6">
+              <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+            </div>
+            <div class="flex-shrink-0 ml-0 md:ml-6 mt-4 md:mt-0">
+              <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-20 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+            </div>
+          </div>
         </div>
 
         <!-- Companies Cards -->
@@ -146,8 +157,20 @@
           </div>
         </div>
 
-        <div *ngIf="!loading && filteredCompanies.length === 0" class="text-center py-12">
-          <p class="text-xl text-gray-500 dark:text-gray-400">No companies found matching your filters.</p>
+        <!-- Empty State -->
+        <div *ngIf="!loading && filteredCompanies.length === 0" class="text-center py-16">
+          <div class="max-w-md mx-auto">
+            <div class="mb-6">
+              <i class="fas fa-building text-6xl text-gray-300 dark:text-gray-600"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">No Companies Found</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6">
+              We couldn't find any companies matching your criteria. Try adjusting your filters or search terms.
+            </p>
+            <button (click)="resetFilters()" pButton type="button" label="Reset Filters" 
+              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all">
+            </button>
+          </div>
         </div>
 
         <!-- Pagination -->
