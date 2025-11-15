@@ -7,7 +7,7 @@
       class="absolute inset-0 w-full h-full object-cover opacity-25" />
     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
 
-    <div class="relative z-10 max-w-2xl mx-auto">
+    <div class="relative z-10 max-w-4xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-xl">
         Find Your <span class="text-yellow-400">Perfect Candidate</span>
       </h1>
@@ -23,19 +23,19 @@
           class="flex-1 p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
 
         <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-          <select [(ngModel)]="selectedLocation" (change)="applyFilters()"
+          <select [(ngModel)]="selectedCountry" (change)="onCountryChange(selectedCountry)"
             class="p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-            <option value="">All Locations</option>
-            <option *ngFor="let location of locations" [value]="location.value">
-              {{location.name}}
+            <option [ngValue]="null">All Countries</option>
+            <option *ngFor="let country of countries" [ngValue]="country.id">
+              {{country.name}}<span *ngIf="country.candidates_count !== undefined"> ({{country.candidates_count}})</span>
             </option>
           </select>
 
-          <select [(ngModel)]="selectedEducation" (change)="applyFilters()"
+          <select [(ngModel)]="selectedEducation" (change)="onEducationChange()"
             class="p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             <option value="">All Education Levels</option>
             <option *ngFor="let education of educationLevels" [value]="education.value">
-              {{education.name}}
+              {{ education.name }} ({{ education.count }})
             </option>
           </select>
         </div>
@@ -43,7 +43,7 @@
 
       <!-- Quick Skills -->
       <div class="flex flex-wrap justify-center gap-3 mt-8">
-        <button *ngFor="let skill of popularSkills" (click)="selectQuickSkill(skill.value)"
+        <button *ngFor="let skill of popularSkills" (click)="selectQuickSkill(skill.id)"
           class="px-5 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30 hover:border-white/50 shadow-sm">
           {{skill.name}}
         </button>
@@ -68,7 +68,7 @@
 
     <div class="flex flex-col lg:flex-row gap-8 relative">
       <!-- Sidebar Filters -->
-      <aside 
+      <aside
         [ngClass]="{
           'fixed inset-0 z-50 mobile-filter-overlay': isFilterOpen
         }"
@@ -90,9 +90,12 @@
           <div class="space-y-3 max-h-60 overflow-y-auto">
             <div *ngFor="let skill of skills"
               class="flex items-center p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-              <p-checkbox [(ngModel)]="skill.selected" (onChange)="applyFilters()" [binary]="true"
-                inputId="{{ skill.name }}"></p-checkbox>
-              <label for="{{ skill.name }}" class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer">
+              <p-checkbox
+                [ngModel]="selectedSkills.includes(skill.id)"
+                (onChange)="onSkillToggle(skill.id)"
+                [binary]="true"
+                inputId="skill-{{ skill.id }}"></p-checkbox>
+              <label for="skill-{{ skill.id }}" class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer">
                 {{ skill.name }}
                 <span class="text-gray-500 dark:text-gray-400">({{ skill.count }})</span>
               </label>
@@ -103,11 +106,19 @@
         <!-- Location Filter -->
         <div class="mb-6">
           <h3 class="font-semibold text-lg mb-3 text-gray-700 dark:text-gray-300">Location</h3>
-          <select [(ngModel)]="selectedLocation" (change)="applyFilters()"
+          <select [(ngModel)]="selectedCountry" (change)="onCountryChange(selectedCountry)"
+            class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+            <option [ngValue]="null">All Countries</option>
+            <option *ngFor="let country of countries" [ngValue]="country.id">
+              {{ country.name }}<span *ngIf="country.candidates_count !== undefined"> ({{country.candidates_count}})</span>
+            </option>
+          </select>
+          <select [(ngModel)]="selectedCity" (change)="onCityChange()"
+            [disabled]="!selectedCountry"
             class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">All Locations</option>
-            <option *ngFor="let location of locations" [value]="location.value">
-              {{ location.name }}
+            <option [ngValue]="null">All Cities</option>
+            <option *ngFor="let city of cities" [ngValue]="city.id">
+              {{ city.name }}<span *ngIf="city.candidates_count !== undefined"> ({{city.candidates_count}})</span>
             </option>
           </select>
         </div>
@@ -115,23 +126,30 @@
         <!-- Education Filter -->
         <div class="mb-6">
           <h3 class="font-semibold text-lg mb-3 text-gray-700 dark:text-gray-300">Education Level</h3>
-          <select [(ngModel)]="selectedEducation" (change)="applyFilters()"
+          <select [(ngModel)]="selectedEducation" (change)="onEducationChange()"
             class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">All Education Levels</option>
             <option *ngFor="let education of educationLevels" [value]="education.value">
-              {{ education.name }}
+              {{ education.name }} ({{ education.count }})
             </option>
           </select>
         </div>
 
-        <!-- Experience Range -->
+        <!-- Experience Levels -->
         <div class="mb-8">
-          <h3 class="font-semibold text-lg mb-4 text-gray-700 dark:text-gray-300">Experience (Years)</h3>
-          <p-slider [(ngModel)]="experienceRange" (onSlideEnd)="applyFilters()" [range]="true" [min]="0" [max]="20"
-            styleClass="mb-2"></p-slider>
-          <div class="flex justify-between text-gray-600 dark:text-gray-400">
-            <span>{{ experienceRange[0] }} years</span>
-            <span>{{ experienceRange[1] }} years</span>
+          <h3 class="font-semibold text-lg mb-4 text-gray-700 dark:text-gray-300">Experience</h3>
+          <div class="space-y-2">
+            <div *ngFor="let exp of experienceLevels" class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <p-checkbox
+                [ngModel]="selectedExperience.includes(exp.value)"
+                (onChange)="onExperienceToggle(exp.value)"
+                [binary]="true"
+                [inputId]="'exp-' + exp.value"></p-checkbox>
+              <label [for]="'exp-' + exp.value" class="ml-2 text-gray-700 dark:text-gray-300 cursor-pointer flex-1">
+                {{ exp.name }}
+                <span class="text-gray-500 dark:text-gray-400">({{ exp.count }})</span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -147,12 +165,17 @@
       <section class="lg:w-3/4">
         <div class="mb-8">
           <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
-            <span class="text-blue-600 dark:text-blue-400">{{ filteredCandidates.length }}</span> Candidates Found
+            <span class="text-blue-600 dark:text-blue-400">{{ totalCandidates }}</span> Candidates Found
           </h2>
         </div>
 
+        <!-- Loading State -->
+        <div *ngIf="loading" class="text-center py-12">
+          <p class="text-xl text-gray-500 dark:text-gray-400">Loading candidates...</p>
+        </div>
+
         <!-- Candidate Cards -->
-        <div class="grid gap-6">
+        <div *ngIf="!loading" class="grid gap-6">
           <div *ngFor="let candidate of paginatedCandidates"
             class="flex flex-col md:flex-row bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-2 overflow-hidden">
             <div
@@ -162,8 +185,11 @@
 
             <div class="flex-1 p-6 flex flex-col justify-between gap-4">
               <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ candidate.name }}</h3>
-                <p class="text-gray-600 dark:text-gray-400">{{ candidate.email }}</p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ candidate.user?.name || 'Unknown' }}</h3>
+                <p class="text-gray-600 dark:text-gray-400">{{ candidate.user?.email || '' }}</p>
+                <p *ngIf="candidate.job_title" class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                  {{ candidate.job_title }}
+                </p>
                 <p class="text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">{{ candidate.bio || 'No bio available' }}
                 </p>
 
@@ -174,16 +200,16 @@
                   </span>
                   <span *ngIf="candidate.experience"
                     class="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 rounded-full text-sm">
-                    <i class="fas fa-briefcase mr-1"></i>{{ candidate.experience }} yrs
+                    <i class="fas fa-briefcase mr-1"></i>{{ candidate.experience }}
                   </span>
-                  <span *ngIf="candidate.location"
+                  <span *ngIf="getCandidateLocation(candidate) !== 'Not specified'"
                     class="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 rounded-full text-sm">
-                    <i class="fas fa-map-marker-alt mr-1"></i>{{ candidate.location }}
+                    <i class="fas fa-map-marker-alt mr-1"></i>{{ getCandidateLocation(candidate) }}
                   </span>
                 </div>
 
                 <div class="flex flex-wrap gap-2 mt-3">
-                  <span *ngFor="let skill of candidate.skills"
+                  <span *ngFor="let skill of getCandidateSkills(candidate)"
                     class="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 rounded-full text-sm">
                     {{ skill }}
                   </span>
@@ -194,21 +220,44 @@
                 <button pButton type="button" label="View Profile"
                   (click)="viewProfile(candidate.id)"
                   class="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 text-white rounded-xl shadow-md transition-all duration-300"></button>
-                <button *ngIf="candidate.email" pButton type="button"
-                  (click)="contactCandidate(candidate.email)"
+                <button *ngIf="candidate.user?.email" pButton type="button"
+                  (click)="contactCandidate(candidate.user!.email)"
                   class="flex-1 p-button-outlined border rounded-xl flex items-center justify-center gap-2">
                   <i class="fas fa-envelope mr-1"></i>
-                  <span class="truncate">{{ candidate.email }}</span>
+                  <span class="truncate">{{ candidate.user?.email }}</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div *ngIf="filteredCandidates.length === 0" class="text-center py-12">
-          <p class="text-xl text-gray-500 dark:text-gray-400">
-            No candidates found matching your criteria. Try adjusting your filters.
-          </p>
+        <!-- Loading State -->
+        <div *ngIf="loading" class="grid gap-6">
+          <div *ngFor="let i of [1,2,3]" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 animate-pulse">
+            <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
+            <div class="flex gap-2">
+              <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-20"></div>
+              <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-20"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && filteredCandidates.length === 0" class="text-center py-16">
+          <div class="max-w-md mx-auto">
+            <div class="mb-6">
+              <i class="fas fa-user-tie text-6xl text-gray-300 dark:text-gray-600"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">No Candidates Found</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6">
+              We couldn't find any candidates matching your criteria. Try adjusting your filters or search terms.
+            </p>
+            <button (click)="resetFilters()" pButton type="button" label="Reset Filters" 
+              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all">
+            </button>
+          </div>
         </div>
 
         <div class="mt-12 text-center text-gray-500 dark:text-gray-400">

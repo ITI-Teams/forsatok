@@ -23,6 +23,7 @@ import {Jobs} from './features/jobs/jobs';
 import { JobDetails } from './features/job-details/job-details';
 import { Profile } from './features/profile/profile';
 import {JobApplication} from './features/job-application/job-application';
+import { CandidateDashboard } from './features/candidate-dashboard/candidate-dashboard';
 
 // ============ Routes ============
 export const routes: Routes = [
@@ -38,11 +39,12 @@ export const routes: Routes = [
       { path: 'candidates', component: Candidates },
       { path: 'candidate/:id', component: CandidateProfile },
       { path: 'contact', component: ContactUs },
-      { path:'profile', component :Profile ,canActivate: [authGuard]},
+      { path:'profile', component :Profile},
       { path:'company/:id',component:Company},
       { path:'company',component:CompaniesList},
       { path: 'apply/:id', component: JobApplication,canActivate: [authGuard] },
       { path: 'apply', component: JobApplication, canActivate: [authGuard]},
+      {path:'candidate-dashboard',component:CandidateDashboard, canActivate: [authGuard]}
 
     ]
   },

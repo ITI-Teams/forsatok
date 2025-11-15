@@ -202,7 +202,20 @@ export class Jobs implements OnInit {
       },
       error: (err) => {
         console.error('Error loading jobs:', err);
+        this.jobs = [];
+        this.filteredJobs = [];
+        this.paginatedJobs = [];
+        this.totalJobs = 0;
+        this.totalPages = 1;
         this.loading = false;
+        // Show user-friendly error message
+        if (err.status === 0) {
+          console.error('Network error: Please check your internet connection');
+        } else if (err.status >= 500) {
+          console.error('Server error: Please try again later');
+        } else {
+          console.error('Error loading jobs: Please try again');
+        }
       },
     });
   }
@@ -410,20 +423,12 @@ export class Jobs implements OnInit {
   }
 
   private withFallbackExperience(levels: ExperienceLevel[] = []): ExperienceLevel[] {
-    const fallback: ExperienceLevel[] = [
-      { value: 'Entry Level', name: 'Entry Level', count: 0 },
-      { value: '1-3 years', name: '1-3 years', count: 0 },
-      { value: '3-5 years', name: '3-5 years', count: 0 },
-      { value: '5+ years', name: '5+ years', count: 0 },
-    ];
-
-    const merged = (levels?.length ? levels : fallback).map((level) => ({
+    // Use only values from API (database), no hardcoded fallback
+    return (levels || []).map((level) => ({
       ...level,
       name: level.name || level.value,
       selected: level.selected ?? false,
       count: level.count ?? 0,
     }));
-
-    return merged;
   }
 }

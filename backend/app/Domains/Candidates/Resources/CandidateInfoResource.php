@@ -37,6 +37,8 @@ class CandidateInfoResource extends JsonResource
                     return [
                         'id' => $skill->id,
                         'name' => $skill->name,
+                        'slug' => $skill->slug ?? null,
+                        'category_id' => $skill->category_id ?? null,
                     ];
                 });
             }),

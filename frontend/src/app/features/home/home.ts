@@ -7,7 +7,7 @@ import { FindYourDreamJob } from "../home-parts/find-your-dream-job/find-your-dr
 import { FeaturedCandidates } from "../home-parts/featured-candidates/featured-candidates";
 import { HomeService } from '../../core/services/home.service';
 import { CommonModule } from '@angular/common';
-import { ToastService, Toast } from '../../core/services/toast.service';
+// import { ToastService, Toast } from '../../core/services/toast.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -21,7 +21,7 @@ export class Home implements OnInit {
   candidatesCarousel: any[] = [];
   loading = true;
 
-  protected toastService = inject(ToastService);
+  // protected toastService = inject(ToastService);
   constructor(private homeService: HomeService) {}
 
   ngOnInit() {
@@ -41,6 +41,6 @@ export class Home implements OnInit {
 
 
   ngAfterViewInit() {
-    console.log('ToastService injected:', this.toastService);
+    // console.log('ToastService injected:', this.toastService);
   }
 }

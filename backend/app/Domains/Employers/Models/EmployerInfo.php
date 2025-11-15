@@ -3,6 +3,7 @@
 namespace App\Domains\Employers\Models;
 
 use App\Domains\Jobs\Models\JobPost;
+use App\Domains\CompanyReviews\Models\CompanyReview;
 use App\Domains\Location\Models\Locationable;
 use App\Domains\Users\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -22,12 +23,15 @@ class EmployerInfo extends Model
 
     public function jobs()
     {
-        return $this->hasMany(JobPost::class, 'employer_id');
+        // employer_id in JobPost refers to user_id (employer user), not employer_info id
+        return $this->hasMany(JobPost::class, 'employer_id', 'user_id');
     }
 
     public function reviews()
     {
-        return $this->hasMany(CompanyReview::class, 'company_id','user_id');
+
+        // company_id in CompanyReview refers to user_id (employer user), not employer_info id
+        return $this->hasMany(CompanyReview::class, 'company_id', 'user_id');
     }
 
     /**

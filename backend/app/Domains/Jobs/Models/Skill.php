@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Domains\Candidates\Models\CandidateInfo;
 
 class Skill extends Model
 {
@@ -21,6 +22,11 @@ class Skill extends Model
     public function jobs()
     {
         return $this->belongsToMany(JobPost::class, 'job_skills','job_id','skill_id');
+    }
+
+    public function candidates()
+    {
+        return $this->belongsToMany(CandidateInfo::class, 'candidate_skill');
     }
 
     protected static function boot()

@@ -14,6 +14,8 @@ use App\Domains\Contact\controllers\Api\ContactMessageController;
 use App\Domains\Jobs\Controllers\Api\CategoryController;
 use App\Domains\Jobs\Controllers\Api\JobFilterController;
 use App\Domains\Location\Controllers\Api\LocationController;
+use App\Domains\Candidates\Controllers\Api\CandidateSearchController;
+use App\Domains\Employers\Controllers\Api\CompanySearchController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -25,13 +27,13 @@ Route::prefix('auth')->group(function () {
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
     Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
     Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
+
     // cadidate api routes
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
         Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
-        Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
-        Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
     });
+
 
     // employer api routes
     Route::middleware(['auth:sanctum'])->group(function () {
@@ -39,6 +41,18 @@ Route::prefix('auth')->group(function () {
         Route::get('/employerinfo/{id}', [EmployerController::class, 'show']);
     });
 });
+
+// Public candidates routes
+Route::get('/candidates/search', [CandidateSearchController::class, 'search']);
+Route::get('/candidates/filter-options', [CandidateSearchController::class, 'getFilterOptions']);
+// Public candidate profile routes
+Route::get('/candidates', [CandidateInfoController::class, 'index']);
+Route::get('/candidates/{id}', [CandidateInfoController::class, 'show']);
+
+// Public companies routes
+Route::get('/companies/search', [CompanySearchController::class, 'search']);
+Route::get('/companies/filter-options', [CompanySearchController::class, 'getFilterOptions']);
+
 // Protected (requires token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('candidate/logout', [CandidateAuthController::class, 'logout']);
@@ -95,5 +109,4 @@ Route::get('/skills', [SkillController::class, 'index']);
 
 // Home Route
 Route::get('/home', [HomeController::class, 'index']);
-
 
