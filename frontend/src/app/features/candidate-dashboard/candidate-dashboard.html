@@ -5,17 +5,17 @@
     <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Candidate Dashboard</h2>
 
     <ul class="space-y-3">
-      <li (click)="setTab('description')" 
+      <!-- <li (click)="setTab('description')" 
           [ngClass]="activeTab==='description' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'" 
-          class="cursor-pointer px-4 py-2 rounded-lg transition">Description</li>
+          class="cursor-pointer px-4 py-2 rounded-lg transition">Description</li> -->
 
       <li (click)="setTab('messages')" 
           [ngClass]="activeTab==='messages' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'" 
           class="cursor-pointer px-4 py-2 rounded-lg transition">Messages</li>
 
-      <li (click)="setTab('applications')" 
+      <!-- <li (click)="setTab('applications')" 
           [ngClass]="activeTab==='applications' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'" 
-          class="cursor-pointer px-4 py-2 rounded-lg transition">Applications</li>
+          class="cursor-pointer px-4 py-2 rounded-lg transition">Applications</li> -->
 
       <li (click)="setTab('notifications')" 
           [ngClass]="activeTab==='notifications' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'" 
@@ -25,24 +25,14 @@
           [ngClass]="activeTab==='saved' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'" 
           class="cursor-pointer px-4 py-2 rounded-lg transition">Saved Jobs</li>
 
-      <li (click)="setTab('reviews')" 
+      <!-- <li (click)="setTab('reviews')" 
           [ngClass]="activeTab==='reviews' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'" 
-          class="cursor-pointer px-4 py-2 rounded-lg transition">Reviews</li>
+          class="cursor-pointer px-4 py-2 rounded-lg transition">Reviews</li> -->
     </ul>
   </aside>
 
   <!-- Content Area -->
   <main class="flex-1 p-10 overflow-y-auto text-gray-800 dark:text-gray-200">
-
-    <!-- Description -->
-    <section *ngIf="activeTab==='description'" class="space-y-4">
-      <h1 class="text-3xl font-semibold">Profile Description</h1>
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow space-y-2">
-        <p><strong>Name:</strong> {{ candidateData.description.name }}</p>
-        <p><strong>Email:</strong> {{ candidateData.description.email }}</p>
-        <p><strong>Bio:</strong> {{ candidateData.description.bio }}</p>
-      </div>
-    </section>
 
     <!-- Messages -->
     <section *ngIf="activeTab==='messages'" class="space-y-4">
@@ -52,29 +42,6 @@
           <p class="font-semibold text-indigo-600">{{ msg.from }}</p>
           <p class="text-gray-600 dark:text-gray-300">{{ msg.text }}</p>
         </div>
-      </div>
-    </section>
-
-    <!-- Applications -->
-    <section *ngIf="activeTab==='applications'" class="space-y-4">
-      <h1 class="text-3xl font-semibold">Applications</h1>
-      <div class="overflow-x-auto">
-        <table class="min-w-full bg-white dark:bg-gray-800 rounded-xl shadow">
-          <thead>
-            <tr class="bg-gray-50 dark:bg-gray-700">
-              <th class="py-3 px-6 text-left">Job Title</th>
-              <th class="py-3 px-6 text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let app of candidateData.applications" class="border-b border-gray-200 dark:border-gray-700">
-              <td class="py-3 px-6">{{ app.jobTitle }}</td>
-              <td class="py-3 px-6">
-                <span [ngClass]="app.status==='Accepted' ? 'text-green-600' : 'text-yellow-600'">{{ app.status }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
@@ -94,17 +61,6 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div *ngFor="let job of candidateData.saved" class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
           <p class="font-semibold">{{ job.jobTitle }}</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Reviews -->
-    <section *ngIf="activeTab==='reviews'" class="space-y-4">
-      <h1 class="text-3xl font-semibold">Reviews</h1>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div *ngFor="let review of candidateData.reviews" class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-          <p class="font-semibold text-indigo-600">{{ review.reviewer }}</p>
-          <p class="text-gray-600 dark:text-gray-300">{{ review.comment }}</p>
         </div>
       </div>
     </section>
