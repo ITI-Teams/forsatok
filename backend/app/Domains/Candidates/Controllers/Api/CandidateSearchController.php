@@ -30,6 +30,11 @@ class CandidateSearchController extends Controller
         ->whereHas('user')
         ->latest();
 
+        // Exclude logged-in user if authenticated
+        if ($user = $request->user('sanctum')) {
+            $query->where('user_id', '!=', $user->id);
+        }
+
         // Search filter
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
@@ -113,6 +118,11 @@ class CandidateSearchController extends Controller
         
         // Base query for candidates with users (same as search method)
         $baseQuery = CandidateInfo::query()->whereHas('user');
+
+        // Exclude logged-in user if authenticated
+        if ($user = $request->user('sanctum')) {
+            $baseQuery->where('user_id', '!=', $user->id);
+        }
         
         // Apply selected filters to base query (same logic as search method)
         // Skills filter
@@ -200,6 +210,11 @@ class CandidateSearchController extends Controller
         // For experience counts, we need to exclude the experience filter from baseQuery
         // so that all experience levels are shown with correct counts
         $experienceBaseQuery = CandidateInfo::query()->whereHas('user');
+
+        // Exclude logged-in user if authenticated
+        if ($user = $request->user('sanctum')) {
+            $experienceBaseQuery->where('user_id', '!=', $user->id);
+        }
         
         // Apply all filters except experience to experienceBaseQuery
         $selectedSkillIds = $this->normalizeFilterValues($request->input('selected_skill_ids'));

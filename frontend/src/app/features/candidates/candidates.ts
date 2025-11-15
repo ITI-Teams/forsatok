@@ -84,7 +84,6 @@ export class Candidates implements OnInit {
             ? params['experience'] 
             : params['experience'].split(',').filter((exp: string) => exp.trim() !== '');
         }
-        this.isInitialLoad = false;
       }
     });
 
@@ -150,6 +149,7 @@ export class Candidates implements OnInit {
         // Load candidates after filter options are loaded (only on initial load)
         if (this.isInitialLoad) {
           this.loadCandidates();
+          this.isInitialLoad = false;
         }
       },
       error: (err) => {
@@ -161,6 +161,7 @@ export class Candidates implements OnInit {
         // Still try to load candidates even if filter options fail
         if (this.isInitialLoad) {
           this.loadCandidates();
+          this.isInitialLoad = false;
         }
       }
     });

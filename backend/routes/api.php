@@ -14,6 +14,7 @@ use App\Domains\Jobs\Controllers\Api\JobFilterController;
 use App\Domains\Jobs\Controllers\Api\SkillController;
 use App\Domains\Location\Controllers\Api\LocationController;
 use App\Domains\Candidates\Controllers\Api\CandidateSearchController;
+use App\Domains\Employers\Controllers\Api\CompanySearchController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -38,6 +39,10 @@ Route::get('/candidates/filter-options', [CandidateSearchController::class, 'get
 // Public candidate profile routes
 Route::get('/candidates', [CandidateInfoController::class, 'index']);
 Route::get('/candidates/{id}', [CandidateInfoController::class, 'show']);
+
+// Public companies routes
+Route::get('/companies/search', [CompanySearchController::class, 'search']);
+Route::get('/companies/filter-options', [CompanySearchController::class, 'getFilterOptions']);
 
 // Protected (requires token)
 Route::middleware('auth:sanctum')->group(function () {
