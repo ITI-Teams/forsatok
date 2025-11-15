@@ -21,11 +21,10 @@ class ApplicationShow extends Component
     {
         $query = JobApplication::with(['candidate', 'jobPost.employer']);
 
-        // إذا كان employer وليس admin، نتحقق من أن الوظيفة تابعة له
         $user = Auth::user();
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
             $query->whereHas('jobPost', function($q) use ($user) {
-                $q->where('user_id', $user->id);
+                $q->where('employer_id', $user->id);
             });
         }
 
@@ -60,7 +59,7 @@ class ApplicationShow extends Component
     {
         $user = Auth::user();
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
-            if ($this->application->jobPost->user_id !== $user->id) {
+            if ($this->application->jobPost->employer_id !== $user->id) {
                 session()->flash('error', 'You are not authorized to perform this action.');
                 return false;
             }
