@@ -12,7 +12,7 @@ class Skill extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['name', 'category_id'];
+    protected $fillable = ['name', 'category_id','slug'];
 
     public function category()
     {
@@ -21,7 +21,7 @@ class Skill extends Model
 
     public function jobs()
     {
-        return $this->belongsToMany(JobPost::class, 'job_skill');
+        return $this->belongsToMany(JobPost::class, 'job_skills','job_id','skill_id');
     }
 
     public function candidates()

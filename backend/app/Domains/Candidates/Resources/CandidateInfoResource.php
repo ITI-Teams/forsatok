@@ -22,21 +22,37 @@ class CandidateInfoResource extends JsonResource
             'resume_url' => $this->resume ? Storage::url($this->resume) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'category_id' => $this->category_id,
             'user' => [
                 'id' => $this->user->id ?? null,
                 'name' => $this->user->name ?? null,
                 'email' => $this->user->email ?? null,
+                'avatar' => $this->user->avatar ?? null,
             ],
             'skills' => $this->whenLoaded('skills', function () {
+                return $this->skills->pluck('id')->toArray();
+            }),
+            'skills_details' => $this->whenLoaded('skills', function () {
                 return $this->skills->map(function ($skill) {
                     return [
                         'id' => $skill->id,
                         'name' => $skill->name,
-                        'slug' => $skill->slug,
-                        'category_id' => $skill->category_id,
                     ];
                 });
             }),
+            'location' => $this->location ? [
+                'country_id' => $this->location->country_id,
+                'city_id' => $this->location->city_id,
+                'address' => $this->location->address,
+                'country' => $this->location->country ? [
+                    'id' => $this->location->country->id,
+                    'name' => $this->location->country->name,
+                ] : null,
+                'city' => $this->location->city ? [
+                    'id' => $this->location->city->id,
+                    'name' => $this->location->city->name,
+                ] : null,
+            ] : null,
             'applications' => $this->whenLoaded('applications', function () {
                 return $this->applications->map(function ($application) {
                     return [

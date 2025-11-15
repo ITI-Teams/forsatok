@@ -15,7 +15,7 @@ class HomeController extends Controller
 
         $jobs = JobPost::select([
                 'id', 'title', 'experience', 'description',
-                'salary_min', 'salary_max', 'type', 'deadline', 'is_active'
+                'salary_min', 'salary_max', 'work_type', 'deadline', 'is_active'
             ])
             ->where('is_active', true)
             ->latest()
@@ -40,7 +40,7 @@ class HomeController extends Controller
             });
 
 
-        $candidates = CandidateInfo::with(['user:id,name','location'])
+        $candidates = CandidateInfo::with(['user:id,name,avatar','location.city:id,name', 'location.country:id,name'])
             ->latest()
             ->take(32)
             ->get([
@@ -50,9 +50,10 @@ class HomeController extends Controller
                 'phone',
                 'experience',
                 'education',
+                'job_title'
             ]);
 
-        $carouselCandidates = $candidates->chunk(4)->values();
+        $carouselCandidates = $candidates;
 
         return response()->json([
             'status' => true,

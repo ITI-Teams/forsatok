@@ -70,9 +70,9 @@
 
             <!-- Badges -->
             <div class="flex flex-wrap gap-2 mt-2 md:mt-3">
-              <span *ngIf="job?.type"
+              <span *ngIf="job?.work_type"
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-                <i class="fa-regular fa-clock mr-1.5"></i> {{ job.type }}
+                <i class="fa-regular fa-clock mr-1.5"></i> {{ job.work_type }}
               </span>
               <span
                 *ngIf="isUrgent(job)"

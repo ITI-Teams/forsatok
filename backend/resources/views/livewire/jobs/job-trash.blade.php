@@ -75,7 +75,6 @@
                                     <td>
                                         @if ($job->location)
                                             <div class="small">
-                                                <i class="fa-solid fa-location-dot text-danger me-1"></i>
                                                 @if ($job->location->city && $job->location->country)
                                                     {{ $job->location->city->name }}, {{ $job->location->country->name }}
                                                 @elseif ($job->location->country)

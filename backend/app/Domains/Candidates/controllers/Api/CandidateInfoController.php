@@ -23,7 +23,7 @@ class CandidateInfoController extends Controller
             ], 403);
         }
 
-        $candidateInfo = CandidateInfo::with(['user', 'skills', 'applications'])
+        $candidateInfo = CandidateInfo::with(['user', 'skills', 'applications', 'location.country', 'location.city'])
             ->where('user_id', $user->id)
             ->first();
 
@@ -63,6 +63,7 @@ class CandidateInfoController extends Controller
         if (isset($validated['password'])) {
             $userData['password'] = bcrypt($validated['password']);
         }
+
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $userData['avatar'] = $avatarPath;
@@ -73,21 +74,39 @@ class CandidateInfoController extends Controller
         }
 
         // Remove user fields from validated array
-        unset($validated['name'], $validated['email'], $validated['password'],$validated['avatar']);
+        unset($validated['name'], $validated['email'], $validated['password'], $validated['avatar']);
 
         if ($request->hasFile('resume')) {
             $path = $request->file('resume')->store('resumes', 'public');
             $validated['resume'] = $path;
         }
+        if ($request->has('category_id')) {
+            $validated['category_id'] = $request->category_id;
+        }
 
         $candidateInfo->update($validated);
+
+        if (
+            $request->has('country_id') ||
+            $request->has('city_id') ||
+            $request->has('address')
+        ) {
+            $candidateInfo->location()->updateOrCreate(
+                [],
+                [
+                    'country_id' => $request->country_id,
+                    'city_id' => $request->city_id,
+                    'address' => $request->address,
+                ]
+            );
+        }
 
         // Sync skills if provided
         if ($request->has('skills')) {
             $candidateInfo->skills()->sync($request->skills);
         }
 
-        $candidateInfo->load(['user', 'skills', 'applications']);
+        $candidateInfo->load(['user', 'skills', 'applications', 'location.country', 'location.city', 'category']);
 
         return response()->json([
             'success' => true,
@@ -121,7 +140,7 @@ class CandidateInfoController extends Controller
 
 
     // show single candidate info
-     public function show($id)
+    public function show($id)
     {
         $candidate = CandidateInfo::with(['user', 'applications', 'skills'])
             ->find($id);

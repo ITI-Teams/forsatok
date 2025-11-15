@@ -198,8 +198,8 @@
                         <div class="text-purple mb-2">
                             <i class="fa fa-comments fa-2x" aria-hidden="true"></i>
                         </div>
-                        <div class="h5 mb-1 fw-bold">{{ $totalReviews ?? 0 }}</div>
-                        <small class="text-muted">Reviews</small>
+                        <div class="h5 mb-1 fw-bold">{{ $totalMessages ?? 0 }}</div>
+                        <small class="text-muted">Messages</small>
                     </div>
                 </div>
             </div>
@@ -239,19 +239,8 @@
                     <div class="card-header bg-transparent border-0">
                         <h6 class="mb-0 fw-semibold">Users by Location</h6>
                     </div>
-                    <div class="card-body">
-                        <div id="mapContainer" style="height: 200px;" class="rounded bg-light-subtle p-3">
-                            <div class="d-flex align-items-center justify-content-center h-100 flex-column">
-                                <i class="fa fa-map fa-3x mb-2 text-muted" aria-hidden="true"></i>
-                                <p class="small text-muted mb-2">Interactive Map</p>
-                                <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                    <span class="badge bg-primary">USA: 45%</span>
-                                    <span class="badge bg-success">Europe: 30%</span>
-                                    <span class="badge bg-warning">Asia: 20%</span>
-                                    <span class="badge bg-info">Other: 5%</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="card-body p-0">
+                        <div id="mapContainer" style="height: 300px;"></div>
                     </div>
                 </div>
             </div>
@@ -278,7 +267,9 @@
                         <h6 class="mb-0 fw-semibold">Application Status</h6>
                     </div>
                     <div class="card-body">
-                        <canvas id="applicationStatusChart" height="250" aria-label="Application status chart"></canvas>
+                        <div class="card-body">
+                            <canvas id="applicationStatusChart" height="250" aria-label="Application status chart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -934,21 +925,28 @@
             background-color:rgb(202 202 202 / 36%) !important;
         }
 
+        #applicationStatusChart {
+            width: 100% !important;
+            height: 250px !important;
+            display: block;
+        }
+
     </style>
 @endpush
 @push('scripts')
     {{-- CDN dependencies (Chart.js, html2canvas, jsPDF) --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
-        document.addEventListener('livewire:load', function () {
+        document.addEventListener('livewire:init', function () {
 
-            // Chart instances
-            let analyticsChart, categoryChart, statusChart;
+            // ======================= Charts =======================
+            let analyticsChart, categoryChart, applicationStatusChart;
 
-            // Get computed style for chart colors
             function getChartColors() {
                 const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
                 return {
@@ -957,83 +955,214 @@
                 };
             }
 
-            // Utility to build analytics chart
-            function initAnalyticsChart(labels, datasets) {
-                const ctx = document.getElementById('analyticsChart').getContext('2d');
+            function initAnalyticsChart() {
+                const ctx = document.getElementById('analyticsChart');
+                if (!ctx) return;
                 const colors = getChartColors();
-
                 if (analyticsChart) analyticsChart.destroy();
 
                 analyticsChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: labels,
-                        datasets: datasets
+                        labels: @json($monthlyLabels),
+                        datasets: [
+                            {
+                                label: 'Platform Activity',
+                                data: @json($monthlyData),
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 3,
+                                backgroundColor: 'rgba(13,110,253,0.08)',
+                                borderColor: 'rgba(13,110,253,0.95)',
+                                pointBackgroundColor: 'rgba(13,110,253,1)',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                            },
+                            {
+                                label: 'User Registrations',
+                                data: @json($userRegistrations),
+                                tension: 0.4,
+                                borderWidth: 2,
+                                borderColor: 'rgba(40,167,69,0.95)',
+                                pointBackgroundColor: 'rgba(40,167,69,1)',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                borderDash: [5, 5],
+                            }
+                        ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         interaction: { mode: 'index', intersect: false },
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: { color: colors.textColor }
-                            },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false,
-                                backgroundColor: colors.gridColor === 'rgba(255,255,255,0.1)' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
-                                titleColor: colors.textColor,
-                                bodyColor: colors.textColor
-                            }
+                            legend: { display: true, position: 'top', labels: { color: colors.textColor } },
+                            tooltip: { mode: 'index', intersect: false, backgroundColor: colors.gridColor === 'rgba(255,255,255,0.1)' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)', titleColor: colors.textColor, bodyColor: colors.textColor }
                         },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: colors.gridColor },
-                                ticks: { color: colors.textColor }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: colors.textColor }
-                            }
+                            y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { color: colors.textColor } },
+                            x: { grid: { display: false }, ticks: { color: colors.textColor } }
                         }
                     }
                 });
             }
 
-            // Initialize charts with server data
-            initAnalyticsChart(@json($monthlyLabels), [
-                {
-                    label: 'Job Posts',
-                    data: @json($monthlyData),
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 3,
-                    backgroundColor: 'rgba(13,110,253,0.08)',
-                    borderColor: 'rgba(13,110,253,0.95)',
-                    pointBackgroundColor: 'rgba(13,110,253,1)',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                },
-                {
-                    label: 'User Registrations',
-                    data: @json($userRegistrations ?? $monthlyData),
-                    tension: 0.4,
-                    borderWidth: 2,
-                    borderColor: 'rgba(40,167,69,0.95)',
-                    pointBackgroundColor: 'rgba(40,167,69,1)',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    borderDash: [5, 5],
-                }
-            ]);
+            function initApplicationStatusChart() {
+                const ctx = document.getElementById('applicationStatusChart');
+                if (!ctx) return;
+                if (applicationStatusChart) applicationStatusChart.destroy();
 
-            // Rest of the JavaScript code remains the same as your original...
-            // (Category chart, status chart, PDF export, CSV export, etc.)
+                applicationStatusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: @json($applicationStatusLabels),
+                        datasets: [{
+                            data: @json($applicationStatusData),
+                            backgroundColor: ['rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(255, 99, 132, 0.7)'],
+                            borderColor: ['rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: getChartColors().textColor, font: { size: 12 } } }
+                        },
+                        cutout: '60%'
+                    }
+                });
+            }
+
+            function initCategoryChart() {
+                const ctx = document.getElementById('categoryChart');
+                if (!ctx) return;
+
+                const labels = @json($jobCategoriesLabels ?? []);
+                const data = @json($jobCategoriesData ?? []);
+                const backgroundColor = @json($jobCategoriesColors ?? []);
+                const borderColor = @json($jobCategoriesBorderColors ?? []);
+
+                if (categoryChart) categoryChart.destroy();
+
+                categoryChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Number of Jobs',
+                            data: data,
+                            backgroundColor: backgroundColor,
+                            borderColor: borderColor,
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'top', labels: { color: getChartColors().textColor, usePointStyle: true, padding: 20 } },
+                            tooltip: { backgroundColor: 'rgba(255,255,255,0.9)', titleColor: getChartColors().textColor, bodyColor: getChartColors().textColor }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: getChartColors().gridColor, drawBorder: false }, ticks: { color: getChartColors().textColor, stepSize: 20 } },
+                            x: { grid: { display: false, drawBorder: false }, ticks: { color: getChartColors().textColor, maxRotation: 45 } }
+                        }
+                    }
+                });
+            }
+
+            // ======================= Initialize Charts =======================
+            initAnalyticsChart();
+            initApplicationStatusChart();
+            initCategoryChart();
+
+            // ======================= PDF & CSV Export =======================
+            document.getElementById('downloadPdfBtn')?.addEventListener('click', function() {
+                const { jsPDF } = window.jspdf;
+                html2canvas(document.getElementById('reportArea')).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save('dashboard-report.pdf');
+                });
+            });
+
+            document.getElementById('downloadCsvBtn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                const csvContent = "data:text/csv;charset=utf-8," +
+                    "Metric,Value\n" +
+                    "Total Users,{{ $totalUsers }}\n" +
+                    "Total Jobs,{{ $totalJobs }}\n" +
+                    "Active Employers,{{ $activeEmployers }}\n" +
+                    "Pending Jobs,{{ $pendingJobs }}\n" +
+                    "Total Applications,{{ $totalApplications }}";
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "dashboard_data.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // ======================= Users by Location Map =======================
+            let map = L.map('mapContainer').setView([20, 0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+
+            let markers = [];
+
+            function renderUserLocations() {
+                // Clear existing markers
+                markers.forEach(m => map.removeLayer(m));
+                markers = [];
+
+                const locations = @json($usersByLocation ?? []);
+
+                locations.forEach(loc => {
+                    fetch(`https://nominatim.openstreetmap.org/search?country=${loc.country}&format=json&limit=1`)
+                        .then(resp => resp.json())
+                        .then(data => {
+                            if (data[0]) {
+                                const lat = parseFloat(data[0].lat);
+                                const lon = parseFloat(data[0].lon);
+                                const count = loc.count;
+
+                                const color = count > 50 ? '#ff0000' : count > 20 ? '#ff9900' : '#00ccff';
+
+                                const marker = L.circleMarker([lat, lon], {
+                                    radius: 5 + Math.sqrt(count),
+                                    color: '#000',
+                                    fillColor: color,
+                                    fillOpacity: 0.6,
+                                    weight: 1
+                                }).addTo(map)
+                                    .bindPopup(`<strong>${loc.country}</strong><br>Users: ${count}`);
+
+                                markers.push(marker);
+                            }
+                        });
+                });
+            }
+
+            renderUserLocations();
+
+            document.addEventListener('livewire:update', function () {
+                setTimeout(() => {
+                    initAnalyticsChart();
+                    initApplicationStatusChart();
+                    initCategoryChart();
+                    renderUserLocations();
+                }, 100);
+            });
+
         });
     </script>
 @endpush
