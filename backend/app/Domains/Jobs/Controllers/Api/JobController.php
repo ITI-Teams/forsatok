@@ -2,9 +2,11 @@
 
 namespace App\Domains\Jobs\Controllers\Api ;
 
+use App\Domains\Applications\Models\JobApplication;
 use App\Http\Controllers\Controller;
 use App\Domains\Jobs\Models\JobPost;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class JobController extends Controller
@@ -96,6 +98,13 @@ class JobController extends Controller
                     }
                 });
             });
+        }
+
+        if(auth()->id()){
+            $candidateId = auth()->id();
+            $appliedJobsIds = JobApplication::where('candidate_id', $candidateId)->pluck('job_post_id')->toArray();
+
+            $query->whereNotIn('id', $appliedJobsIds);
         }
 
         $perPage = $request->input('per_page', 10);

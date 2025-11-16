@@ -2,6 +2,7 @@
 
 namespace App\Domains\Jobs\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class JobPostResource extends JsonResource
@@ -36,7 +37,8 @@ class JobPostResource extends JsonResource
             ],
             'work_type' => $this->work_type,
             'work_place' => $this->work_place,
-            'deadline' => $this->deadline ? $this->deadline->toDateTimeString() : null,
+            'deadline' => $this->deadline ? Carbon::parse($this->deadline)->toDateTimeString() : null,
+            'days_remaining' => $this->deadline ? now()->diffInDays(Carbon::parse($this->deadline), false) : null,
             'is_active' => $this->is_active,
             'employer' => $this->employer ? [
                 'id' => $this->employer->id,
@@ -51,7 +53,6 @@ class JobPostResource extends JsonResource
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
             'human_readable_posted_date' => $this->created_at->diffForHumans(),
-            'days_remaining' => $this->deadline ? now()->diffInDays($this->deadline, false) : null,
         ];
     }
 }

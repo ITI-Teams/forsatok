@@ -25,6 +25,10 @@ export class HomeService {
     return this.http.post(`${this.baseUrl}/jobs/save`, { job_post_id: jobId });
   }
 
+  getSavedJobs(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/jobs/saved`);
+  }
+
   unsaveJob(jobId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/jobs/unsave/${jobId}`);
   }

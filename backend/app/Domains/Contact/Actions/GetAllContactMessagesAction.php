@@ -21,6 +21,8 @@ class GetAllContactMessagesAction
             $query->whereNull('contactable_id');
         } elseif (auth()->user()->hasRole('employer')) {
             $query->where('contactable_id', auth()->id());
+        }elseif (auth()->user()->hasRole('candidate')) {
+            $query->where('contactable_id', auth()->id());
         }
 
         if ($search) {

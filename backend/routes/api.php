@@ -4,10 +4,12 @@ use App\Domains\Home\Controllers\Api\HomeController;
 use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Jobs\Controllers\Api\SkillController;
+use App\Domains\Notification\Controllers\Api\NotificationController;
 use App\Domains\Users\Controllers\api\CandidateAuthController;
 use App\Domains\Candidates\controllers\Api\CandidateInfoController;
 use App\Domains\Employers\controllers\Api\EmployerController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
 use App\Domains\Contact\controllers\Api\ContactMessageController;
@@ -69,6 +71,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/unsave/{id}', [SaveJobController::class, 'destroy']);
     });
 
+    // All notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    // Unread notifications
+    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
+    // Mark one notification as read
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    // Mark all notifications as read
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    // Delete one notification
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+    // Delete all notifications
+    Route::delete('/notifications', [NotificationController::class, 'clearAll']);
 
 });
 
@@ -82,7 +96,7 @@ Route::prefix('company-reviews')->group(function () {
 
 // Jobs Routes
 Route::get('/jobs/filter-options', [JobFilterController::class, 'getFilterOptions']);
-Route::get('/jobs', [JobController::class, 'index']);
+Route::get('/jobs', [JobController::class, 'index'])->middleware('auth:sanctum');
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
 // Categories
@@ -100,8 +114,7 @@ Route::prefix('locations')->group(function () {
 // Contact Message Routs
 Route::prefix('contact')->group(function () {
     Route::post('/', [ContactMessageController::class, 'store']);
-    Route::get('/', [ContactMessageController::class, 'index'])
-        ->middleware('auth:sanctum');
+    Route::get('/', [ContactMessageController::class, 'index'])->middleware('auth:sanctum');
 });
 // Skills Routs
 Route::get('/skills', [SkillController::class, 'index']);
@@ -115,3 +128,4 @@ Route::prefix('auth')->group(function () {
     Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
     Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
 });
+Broadcast::routes(['middleware' => ['auth:sanctum']]);

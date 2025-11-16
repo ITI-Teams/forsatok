@@ -12,21 +12,29 @@ use App\Domains\Location\Models\Locationable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class EditEmployerInfo extends Component
 {
+    use WithFileUploads;
+
     public $company_name, $industry, $about, $website, $email, $phone;
     public $current_password, $password, $password_confirmation;
     public $showPasswordSection = false;
-    
+
     // Location fields
     public $country_id;
     public $city_id;
     public $address;
     public $countries;
     public $cities = [];
+
+    // Avatar fields
+    public $avatar;
+    public $current_avatar;
 
     private function domainRules(): array
     {
@@ -36,6 +44,13 @@ class EditEmployerInfo extends Component
     private function emailRules(): array
     {
         return ['email' => ['required', 'email', 'max:255']];
+    }
+
+    private function avatarRules(): array
+    {
+        return [
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:2048'], // 2MB max
+        ];
     }
 
     private function domainMessages(): array
@@ -52,17 +67,34 @@ class EditEmployerInfo extends Component
         ];
     }
 
+    private function avatarMessages(): array
+    {
+        return [
+            'avatar.image' => 'The file must be an image.',
+            'avatar.mimes' => 'The image must be a file of type: jpeg, png,webp ,jpg, gif.',
+            'avatar.max' => 'The image must not be larger than 2MB.',
+        ];
+    }
+
     public function updated($propertyName): void
     {
-        $rules = array_merge($this->domainRules(), $this->emailRules());
-        $messages = array_merge($this->domainMessages(), $this->emailMessages());
+        $rules = array_merge(
+            $this->domainRules(),
+            $this->emailRules(),
+            $this->avatarRules()
+        );
+        $messages = array_merge(
+            $this->domainMessages(),
+            $this->emailMessages(),
+            $this->avatarMessages()
+        );
         $this->validateOnly($propertyName, $rules, $messages);
     }
 
     public function mount(GetCurrentEmployerInfoAction $getInfo): void
     {
         $this->countries = Country::orderBy('name')->get();
-        
+
         $info = $getInfo->execute(Auth::id());
         $user = Auth::user();
 
@@ -71,30 +103,31 @@ class EditEmployerInfo extends Component
             $this->industry = $info->industry ?? null;
             $this->about = $info->about ?? null;
             $this->website = $info->website ?? null;
-            
+
             // Load location data
             $locationable = $info->location;
             if ($locationable) {
                 $this->country_id = $locationable->country_id;
                 $this->city_id = $locationable->city_id;
                 $this->address = $locationable->address;
-                
+
                 if ($this->country_id) {
                     $this->loadCities();
                 }
             }
         }
-        
-        $this->phone = null; // Phone not stored in employer_infos table
+
+        $this->phone = null;
         $this->email = $user->email ?? '';
+        $this->current_avatar = $user->avatar ?? null;
     }
-    
+
     public function updatedCountryId()
     {
         $this->city_id = null;
         $this->loadCities();
     }
-    
+
     public function loadCities()
     {
         if ($this->country_id) {
@@ -112,8 +145,16 @@ class EditEmployerInfo extends Component
             return $this->redirectRoute('login');
         }
 
-        $rules = array_merge($this->domainRules(), $this->emailRules());
-        $messages = array_merge($this->domainMessages(), $this->emailMessages());
+        $rules = array_merge(
+            $this->domainRules(),
+            $this->emailRules(),
+            $this->avatarRules()
+        );
+        $messages = array_merge(
+            $this->domainMessages(),
+            $this->emailMessages(),
+            $this->avatarMessages()
+        );
         $validated = $this->validate($rules, $messages);
 
         $info = EmployerInfo::firstOrNew(['user_id' => Auth::id()]);
@@ -121,38 +162,79 @@ class EditEmployerInfo extends Component
             $info->user_id = Auth::id();
         }
         $info = $action->execute($info, $validated);
-        
+
         // Refresh to ensure we have the ID
         $info->refresh();
 
-        // Update user email if changed
+        // Update user email and avatar if changed
         $user = Auth::user();
+        $userChanged = false;
+
         if ($user->email !== $this->email) {
             $user->email = $this->email;
             $user->email_verified_at = null;
+            $userChanged = true;
+        }
+
+        // Handle avatar upload
+        if ($this->avatar) {
+            // Delete old avatar if exists
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            // Store new avatar
+            $avatarPath = $this->avatar->store('avatars/employers', 'public');
+            $user->avatar = $avatarPath;
+            $userChanged = true;
+
+            // Update current_avatar for preview
+            $this->current_avatar = $avatarPath;
+        }
+
+        if ($userChanged) {
             $user->save();
         }
-        
+
         // Save location
         $this->saveLocation($info);
+
+        // Reset avatar property
+        $this->avatar = null;
 
         session()->flash('message', 'Profile updated successfully!');
 
         return $this->redirectRoute('employer.profile', navigate: true);
     }
-    
+
+    public function removeAvatar()
+    {
+        $user = Auth::user();
+
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+            $user->avatar = null;
+            $user->save();
+
+            $this->current_avatar = null;
+            $this->avatar = null;
+
+            session()->flash('message', 'Avatar removed successfully!');
+        }
+    }
+
     protected function saveLocation(EmployerInfo $employerInfo)
     {
         // Ensure the employer info has an ID
         if (!$employerInfo->id) {
             return;
         }
-        
+
         // Convert empty strings to null
         $countryId = !empty($this->country_id) ? $this->country_id : null;
         $cityId = !empty($this->city_id) ? $this->city_id : null;
         $address = !empty(trim($this->address ?? '')) ? trim($this->address) : null;
-        
+
         if ($countryId || $cityId || $address) {
             Locationable::updateOrCreate(
                 [

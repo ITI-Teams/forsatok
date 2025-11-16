@@ -80,8 +80,8 @@ export class Candidates implements OnInit {
           this.selectedSkills = params['skill_ids'].split(',').map((id: string) => parseInt(id));
         }
         if (params['experience']) {
-          this.selectedExperience = Array.isArray(params['experience']) 
-            ? params['experience'] 
+          this.selectedExperience = Array.isArray(params['experience'])
+            ? params['experience']
             : params['experience'].split(',').filter((exp: string) => exp.trim() !== '');
         }
       }
@@ -105,7 +105,7 @@ export class Candidates implements OnInit {
       education?: string;
       experience?: string;
     } = {};
-    
+
     if (this.selectedSkills.length > 0) {
       filters.skill_ids = this.selectedSkills;
     }
@@ -121,7 +121,7 @@ export class Candidates implements OnInit {
     if (this.selectedExperience.length > 0) {
       filters.experience = this.selectedExperience.join(',');
     }
-    
+
     this.searchService.getFilterOptions(Object.keys(filters).length > 0 ? filters : undefined).subscribe({
       next: (options) => {
         // Load skills with counts
@@ -196,7 +196,6 @@ export class Candidates implements OnInit {
 
     this.searchService.searchCandidates(filters).subscribe({
       next: (response) => {
-        console.log('Candidates API Response:', response);
         this.candidates = response.data || [];
         this.filteredCandidates = [...this.candidates];
         this.totalCandidates = response.meta?.total ?? this.candidates.length;

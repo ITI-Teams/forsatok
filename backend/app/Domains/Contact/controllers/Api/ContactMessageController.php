@@ -31,6 +31,7 @@ class ContactMessageController extends Controller
 
     public function index(GetAllContactMessagesAction $getAllMessagesAction)
     {
+
         $messages = $getAllMessagesAction->execute(15);
 
         return response()->json([
