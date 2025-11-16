@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import {environment} from '../../environments/environment';
 
 export interface CompanyReview {
   id: number;
@@ -29,7 +30,7 @@ export interface ReviewSubmit {
   providedIn: 'root'
 })
 export class CompanyReviewService {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,

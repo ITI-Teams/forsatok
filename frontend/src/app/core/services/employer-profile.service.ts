@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders ,HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import {environment} from '../../environments/environment';
 
 export interface Employer {
   id: number;
@@ -76,7 +77,7 @@ export interface ContactMessage {
   providedIn: 'root'
 })
 export class EmployerProfileService {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,

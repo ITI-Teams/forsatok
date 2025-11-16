@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EmployerProfileService, Employer, ContactMessage, Job } from '../../core/services/employer-profile.service';
 import { CompanyReviewService, CompanyReview, ReviewSubmit } from '../../core/services/employer-review.service';
 import { AuthService } from '../../core/services/auth.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-company',
@@ -258,9 +259,9 @@ export class Company implements OnInit {
 
   getLogoUrl(): string {
     if (this.employer.user?.avatar) {
-      return `http://localhost:8000/storage/${this.employer.user.avatar}`;
+      return `${environment.imageUrl}/storage/${this.employer.user.avatar}`;
     }
-    return 'http://localhost:8000/storage/avatars/avatar.svg';
+    return `${environment.imageUrl}/storage/avatars/avatar.svg`;
   }
 
   formatSalary(min: number, max: number): string {

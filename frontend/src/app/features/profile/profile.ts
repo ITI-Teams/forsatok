@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CandidateService, CandidateInfo, Application, GRADIENT_PRESETS } from '../../core/services/candidate.service';
 import { AuthService } from '../../core/services/auth.service';
+import {environment} from '../../environments/environment';
 
 interface EditCandidateData {
   name?: string;
@@ -326,14 +327,14 @@ export class Profile implements OnInit {
       if (this.candidate.user.avatar.startsWith('http')) {
         return this.candidate.user.avatar;
       } else {
-        return `http://localhost:8000/storage/${this.candidate.user.avatar}`;
+        return `${environment.imageUrl}/storage/${this.candidate.user.avatar}`;
       }
     }
     if (this.candidate?.profile_image) {
       if (this.candidate.profile_image.startsWith('http')) {
         return this.candidate.profile_image;
       } else {
-        return `http://localhost:8000/storage/${this.candidate.profile_image}`;
+        return `${environment.imageUrl}/storage/${this.candidate.profile_image}`;
       }
     }
     return null;

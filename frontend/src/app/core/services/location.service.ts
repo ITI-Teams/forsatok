@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 export interface Country {
   id: number;
@@ -29,7 +30,7 @@ export interface LocationResponse {
   providedIn: 'root'
 })
 export class LocationService {
-  private apiUrl = 'http://127.0.0.1:8000/api/locations';
+  private apiUrl = `${environment.apiUrl}/locations`;
 
   constructor(private http: HttpClient) {}
 

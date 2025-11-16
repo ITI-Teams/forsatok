@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import {environment} from '../../environments/environment';
 
 export interface CandidateInfo {
   resume?: string | File | null;
@@ -89,8 +90,8 @@ export interface UpdateCandidateInfoRequest {
   providedIn: 'root'
 })
 export class CandidateService {
-  private apiUrl = 'http://localhost:8000/api/auth/candidate/info';
-  private applicationsApiUrl = 'http://localhost:8000/api/applications';
+  private apiUrl = `${environment.apiUrl}/auth/candidate/info`;
+  private applicationsApiUrl = `${environment.apiUrl}/applications`;
 
   constructor(
     private http: HttpClient,
@@ -126,40 +127,6 @@ export class CandidateService {
       })
     );
   }
-
-  /**
-   * Update current candidate profile
-   */
-  // updateProfile(data: UpdateCandidateInfoRequest): Observable<CandidateInfo> {
-  //   const formData = new FormData();
-  //
-  //   if (data.name) formData.append('name', data.name);
-  //   if (data.email) formData.append('email', data.email);
-  //   if (data.password) formData.append('password', data.password);
-  //   if (data.phone) formData.append('phone', data.phone);
-  //   if (data.education) formData.append('education', data.education);
-  //   if (data.experience) formData.append('experience', data.experience);
-  //   if (data.bio) formData.append('bio', data.bio);
-  //   if (data.cover_gradient) formData.append('cover_gradient', data.cover_gradient);
-  //   if (data.profile_image) formData.append('profile_image', data.profile_image);
-  //   if (data.resume) formData.append('resume', data.resume);
-  //
-  //   formData.append('_method', 'POST');
-  //
-  //   const headers = new HttpHeaders({
-  //     'Authorization': `Bearer ${this.authService.getToken()}`
-  //   });
-  //
-  //   return this.http.post<CandidateInfoResponse>(this.apiUrl, formData, { headers }).pipe(
-  //     map(response => {
-  //       if (response.success && response.data) {
-  //         return response.data;
-  //       }
-  //       throw new Error(response.message || 'Failed to update profile');
-  //     })
-  //   );
-  // }
-
   /**
    * Get candidate applications
    */
@@ -172,30 +139,30 @@ export class CandidateService {
   }
 
   updateProfile(data: FormData) {
-    return this.http.post('http://localhost:8000/api/auth/candidate/info', data);
+    return this.http.post(`${environment.apiUrl}/auth/candidate/info`, data);
   }
 
   getSkills() {
     return this.http.get<{ data: { id: number; name: string }[] }>(
-      'http://localhost:8000/api/skills'
+      `${environment.apiUrl}/skills`
     );
   }
   getCategories() {
-    return this.http.get('http://localhost:8000/api/categories');
+    return this.http.get(`${environment.apiUrl}/categories`);
   }
 
   getSkillsByCategory(categoryId: number) {
-    return this.http.get(`http://localhost:8000/api/skills`, {
+    return this.http.get(`${environment.apiUrl}/skills`, {
       params: { category_id: categoryId }
     });
   }
 
   getCountries() {
-    return this.http.get('http://localhost:8000/api/locations/countries');
+    return this.http.get(`${environment.apiUrl}/locations/countries`);
   }
 
   getCities(countryId: number) {
-    return this.http.get(`http://localhost:8000/api/locations/cities`, {
+    return this.http.get(`${environment.apiUrl}/locations/cities`, {
       params: { country_id: countryId }
     });
   }
