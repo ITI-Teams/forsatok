@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 export interface JobType {
   value: string;
@@ -38,7 +39,7 @@ export interface FilterOptionsResponse {
   providedIn: 'root'
 })
 export class JobFilterService {
-  private apiUrl = 'http://127.0.0.1:8000/api/jobs/filter-options';
+  private apiUrl = `${environment.apiUrl}/jobs/filter-options`;
 
   constructor(private http: HttpClient) {}
 

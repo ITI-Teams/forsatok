@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink,Router } from '@angular/router';
 import {HomeService} from '../../../core/services/home.service';
 import {ToastService} from '../../../core/services/toast.service';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-featured-candidates',
@@ -86,7 +87,7 @@ export class FeaturedCandidates implements OnInit{
       return candidate.user.avatar;
     }
 
-    return `http://localhost:8000/storage/${candidate.user?.avatar}`;
+    return `${environment.imageUrl}/storage/${candidate.user?.avatar}`;
   }
 
 }

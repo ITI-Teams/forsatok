@@ -1,1 +1,18 @@
-<p>not-found works!</p>
+<div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white relative overflow-hidden">
+
+  <!-- Animated circles -->
+  <div class="absolute w-96 h-96 bg-white/10 rounded-full top-[-50px] left-[-50px] animate-bounce-slow"></div>
+  <div class="absolute w-72 h-72 bg-white/10 rounded-full bottom-[-40px] right-[-40px] animate-pulse-slow"></div>
+
+  <!-- 404 Text -->
+  <div class="z-10 text-center space-y-6">
+    <h1 class="text-[10rem] font-extrabold animate-bounce">404</h1>
+    <h2 class="text-4xl font-bold">Oops! Page Not Found</h2>
+    <p class="text-lg text-white/80">The page you are looking for might have been removed or is temporarily unavailable.</p>
+
+    <a routerLink="/home">
+      <button pButton type="button" label="Go Back Home" class="mt-6 px-6 py-3 text-lg font-semibold rounded-full bg-white text-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-500 shadow-lg"></button>
+    </a>
+  </div>
+
+</div>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import {environment} from '../../environments/environment';
 
 export interface JobLocation {
   city?: {
@@ -102,7 +103,7 @@ export interface SavedJob {
   providedIn: 'root'
 })
 export class JobService {
-  private apiUrl = 'http://127.0.0.1:8000/api/jobs';
+  private apiUrl = `${environment.apiUrl}/jobs`;
 
   constructor(private http: HttpClient) {}
 
@@ -111,7 +112,7 @@ export class JobService {
    */
   getJobs(filters?: JobFilters): Observable<JobsResponse> {
     let params = new HttpParams();
-    
+
     if (filters) {
       // Only add params that have actual values (not null/undefined/empty)
       if (filters.search) params = params.set('search', filters.search);

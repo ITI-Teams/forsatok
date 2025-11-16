@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 export interface CompanySearchResult {
   id: number;
@@ -98,8 +99,8 @@ export interface CompanyFilterOptionsResponse {
   providedIn: 'root'
 })
 export class CompanySearchService {
-  private searchApiUrl = 'http://127.0.0.1:8000/api/companies/search';
-  private filterOptionsApiUrl = 'http://127.0.0.1:8000/api/companies/filter-options';
+  private searchApiUrl = `${environment.apiUrl}/companies/search`;
+  private filterOptionsApiUrl = `${environment.apiUrl}/companies/filter-options`;
 
   constructor(private http: HttpClient) {}
 
