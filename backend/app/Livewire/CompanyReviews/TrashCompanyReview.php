@@ -15,15 +15,15 @@ class TrashCompanyReview extends Component
 
     public $perPage = 10;
 
-    public function restore($id, RestoreCompanyReviewAction $restore)
+    public function restore($id, RestoreCompanyReview $restore)
     {
         $restore->execute($id);
 
         session()->flash('message', 'Review restored successfully!');
-        $this->resetPage(); 
+        $this->resetPage();
     }
 
-    public function forceDelete($id, DeleteCompanyReviewAction $forceDelete)
+    public function forceDelete($id, RestoreCompanyReview $forceDelete)
     {
         $forceDelete->execute($id);
 

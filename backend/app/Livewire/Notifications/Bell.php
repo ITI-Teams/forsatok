@@ -9,13 +9,13 @@ class Bell extends Component
 {
     public $notifications = [];
     public $unreadCount = 0;
-    public $limit = 10;
+    public $limit = 4;
 
     protected $listeners = [
         'notificationReceived' => 'onNotificationReceived'
     ];
 
-    public function mount(int $limit = 10)
+    public function mount(int $limit = 4)
     {
         $this->limit = $limit;
         $this->loadNotifications();
@@ -53,8 +53,8 @@ class Bell extends Component
         if (!$notification) {
             $notification = [
                 'id' => uniqid(),
-                'type' => 'TestNotification',
-                'data' => ['message' => 'Test notification message'],
+                'type' => class_basename($notification['type'] ?? 'New Notification'),
+                'data' => $notification['data'] ?? $notification,
             ];
         }
 

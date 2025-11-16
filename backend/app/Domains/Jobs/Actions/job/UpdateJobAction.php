@@ -3,6 +3,7 @@
 namespace App\Domains\Jobs\Actions\job;
 
 use App\Domains\Jobs\Models\JobPost;
+use App\Domains\Shared\Models\AuditLog;
 
 class UpdateJobAction
 {
@@ -18,6 +19,15 @@ class UpdateJobAction
 
         $job_post->update($data);
 
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'created_job',
+            'model_type' => JobPost::class,
+            'model_id' => $job_post->id,
+            'changes' => $job_post->title,
+            'ip_address' => request()->ip(),
+        ]);
+
         if ($countryId && $cityId) {
             if ($job_post->location) {
                 $job_post->location->update([
@@ -32,7 +42,7 @@ class UpdateJobAction
                     'address' => $address,
                 ]);
             }
-            return $job_post;
         }
+        return $job_post;
     }
 }

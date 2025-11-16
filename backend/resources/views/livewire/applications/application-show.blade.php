@@ -105,6 +105,24 @@
                     <div class="col-12">
                         <h6>Application Actions</h6>
                         <div class="d-flex gap-2 flex-wrap">
+
+                            <!-- Approve Button -->
+                            @if($application->status !== 'accepted')
+                                <button wire:click="accept"
+                                        class="btn btn-success btn-lg">
+                                    <i class="fa-solid fa-check"></i> Approve
+                                </button>
+                            @endif
+
+                            <!-- Reject Button -->
+                            @if($application->status !== 'rejected')
+                                <button wire:click="reject"
+                                        class="btn btn-danger btn-lg">
+                                    <i class="fa-solid fa-xmark"></i> Reject
+                                </button>
+                            @endif
+
+                            <!-- Edit Button -->
                             <a wire:navigate href="{{ route('job.app.edit', $application->id) }}"
                                class="btn btn-primary btn-lg">
                                 <i class="fa-solid fa-edit"></i> Edit Application

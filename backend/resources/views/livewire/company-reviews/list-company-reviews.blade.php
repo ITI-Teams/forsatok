@@ -35,39 +35,49 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead>
-                        <tr class="border-bottom">
-                            <th>Review</th>
-                            <th>Rating</th>
-                            <th>Candidate</th>
-                            <th>Company</th>
-                            <th>Created At</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
+                    <tr class="border-bottom">
+                        <th>Review</th>
+                        <th>Rating</th>
+                        <th>Candidate</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @forelse($reviews as $review)
-                            <tr>
-                                <td>{{ $review->review ?? '-' }}</td>
-                                <td>{{ $review->rating }}/5</td>
-                                <td>{{ $review->candidate->name ?? '-' }}</td>
-                                <td>{{ $review->company->name ?? '-' }}</td>
-                                <td>{{ $review->created_at->format('Y-m-d') }}</td>
-                                <td class="text-center">
-                                    <button onclick="confirmDelete({{ $review->id }})"
-                                            class="btn btn-sm btn-danger">
-                                        <i class="fa-solid fa-trash"></i>
+                    @forelse($reviews as $review)
+                        <tr class="{{ $review->status == 'pending' ? '' : ($review->status == 'approved' ? 'table-success' : 'table-danger') }}">
+                            <td>{{ $review->review ?? '-' }}</td>
+                            <td>{{ $review->rating }}/5</td>
+                            <td>{{ $review->candidate->name ?? '-' }}</td>
+                            <td>{{ $review->company->name ?? '-' }}</td>
+                            <td>{{ ucfirst($review->status) }}</td>
+                            <td>{{ $review->created_at->format('Y-m-d') }}</td>
+                            <td class="text-center">
+                                @if($review->status == 'pending')
+                                    <button wire:click="approve({{ $review->id }})" class="btn btn-success btn-sm mb-1">
+                                        <i class="fa-solid fa-check"></i> Approve
                                     </button>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    No reviews found.
-                                </td>
-                            </tr>
-                        @endforelse
+                                    <button wire:click="reject({{ $review->id }})" class="btn btn-danger btn-sm">
+                                        <i class="fa-solid fa-xmark"></i> Reject
+                                    </button>
+                                @else
+                                    <button wire:click="delete({{ $review->id }})" class="btn btn-outline-danger btn-sm">
+                                        <i class="fa-solid fa-trash"></i> Trash
+                                    </button>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">No reviews found.</td>
+                        </tr>
+                    @endforelse
                     </tbody>
                 </table>
+
+
             </div>
         </div>
     </div>

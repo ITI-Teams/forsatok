@@ -125,9 +125,9 @@
             <!-- Logo -->
             <div
               class="flex-shrink-0 w-24 h-24 bg-gray-100 dark:bg-gray-700 border border-gray-300 rounded-xl flex items-center justify-center mr-6">
-              <img *ngIf="company.logo_url" [src]="company.logo_url" [alt]="company.company_name"
+              <img *ngIf="company.user" [src]="imageUrl + '/' + company.user.avatar"  [alt]="company.company_name"
                 class="w-16 h-16 object-contain" />
-              <span *ngIf="!company.logo_url" class="text-2xl font-bold text-gray-400">{{company.company_name.charAt(0)}}</span>
+              <span *ngIf="!company.user" class="text-2xl font-bold text-gray-400">{{company.company_name.charAt(0)}}</span>
             </div>
 
             <!-- Middle content -->
@@ -167,7 +167,7 @@
             <p class="text-gray-500 dark:text-gray-400 mb-6">
               We couldn't find any companies matching your criteria. Try adjusting your filters or search terms.
             </p>
-            <button (click)="resetFilters()" pButton type="button" label="Reset Filters" 
+            <button (click)="resetFilters()" pButton type="button" label="Reset Filters"
               class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all">
             </button>
           </div>

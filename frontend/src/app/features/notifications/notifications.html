@@ -1,0 +1,28 @@
+<div class="dropdown">
+  <button class="btn btn-light position-relative" data-bs-toggle="dropdown">
+    <i class="fa fa-bell"></i>
+    <span *ngIf="unreadCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+      {{ unreadCount }}
+    </span>
+  </button>
+
+  <ul class="dropdown-menu dropdown-menu-end p-2" style="width: 360px;">
+    <li class="d-flex justify-content-between align-items-center mb-2">
+      <strong>Notifications</strong>
+      <button class="btn btn-sm btn-outline-secondary" (click)="markAllRead()">Mark all read</button>
+    </li>
+    <hr>
+    <li *ngFor="let n of notifications" class="dropdown-item d-flex justify-content-between align-items-start {{ n.read_at ? 'text-muted' : '' }}">
+      <div>
+        <div class="fw-bold">{{ n.data.title ?? n.type }}</div>
+        <div class="small text-truncate">{{ n.data.message ?? '' }}</div>
+        <small class="text-muted">{{ n.created_at | date:'short' }}</small>
+      </div>
+      <div class="d-flex flex-column gap-1">
+        <button *ngIf="!n.read_at" class="btn btn-sm btn-primary" (click)="markAsRead(n.id)">Mark read</button>
+        <a [href]="n.data.url ?? '#'" class="btn btn-sm btn-outline-secondary">View</a>
+      </div>
+    </li>
+    <li *ngIf="notifications.length === 0" class="text-center text-muted p-2">No notifications</li>
+  </ul>
+</div>

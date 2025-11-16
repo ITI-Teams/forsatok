@@ -3,9 +3,12 @@
 use App\Domains\Employers\Models\EmployerInfo;
 use App\Domains\Shared\Services\Audit\AuditLogger;
 use App\Domains\Users\Models\User;
+use App\Events\UserRegistered;
+use App\Notifications\NewUserRegisteredNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -38,6 +41,12 @@ new #[Layout('layouts.guest')] class extends Component {
 
 
         event(new Registered($user));
+
+
+        event(new UserRegistered($user));
+        $admins = User::role('admin')->get();
+        Notification::send($admins, new NewUserRegisteredNotification($user));
+
         Auth::login($user);
         app(AuditLogger::class)->log([
             'action' => 'Create New account',

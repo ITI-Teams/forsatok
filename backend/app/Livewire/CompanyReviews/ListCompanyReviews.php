@@ -5,7 +5,8 @@ namespace App\Livewire\CompanyReviews;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Domains\CompanyReviews\Models\CompanyReview;
-use App\Domains\CompanyReviews\Actions\SoftDeleteCompanyReviewAction;
+use App\Domains\CompanyReviews\Actions\SoftDeleteCompanyReview;
+use App\Notifications\RatingApprovedNotification;
 use Livewire\Attributes\On;
 
 class ListCompanyReviews extends Component
@@ -25,7 +26,7 @@ class ListCompanyReviews extends Component
         $this->resetPage();
     }
 
-    public function delete($id, SoftDeleteCompanyReviewAction $delete)
+    public function delete($id, SoftDeleteCompanyReview $delete)
     {
         $review = CompanyReview::findOrFail($id);
         $delete->execute($review);
@@ -34,13 +35,35 @@ class ListCompanyReviews extends Component
         $this->resetPage();
     }
 
+    public function approve($id)
+    {
+        $review = CompanyReview::findOrFail($id);
+        $review->update(['status' => 'approved']);
+
+        $review->candidate->notify(new RatingApprovedNotification($review));
+
+        session()->flash('message', 'Review approved successfully!');
+        $this->dispatch('companyReviewUpdated');
+    }
+
+    public function reject($id)
+    {
+        $review = CompanyReview::findOrFail($id);
+        $review->update(['status' => 'rejected']);
+
+        $review->candidate->notify(new RatingApprovedNotification($review));
+
+        session()->flash('message', 'Review rejected successfully!');
+        $this->dispatch('companyReviewUpdated');
+    }
+
     public function render()
     {
         $query = CompanyReview::with(['company', 'candidate'])->latest();
 
         if ($this->search) {
             $query->where(function ($q) {
-                foreach ($this->searchFields as $i => $field) {
+                foreach ($this->searchFields as $field) {
                     if (str_contains($field, '.')) {
                         [$relation, $col] = explode('.', $field);
                         $q->orWhereHas($relation, fn($q2) => $q2->where($col, 'like', "%{$this->search}%"));

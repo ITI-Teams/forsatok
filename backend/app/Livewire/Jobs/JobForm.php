@@ -77,7 +77,7 @@ class JobForm extends Component
             $this->salary_max = $model->salary_max;
             $this->responsibilities = $model->responsibilities;
             $this->benefits = $model->benefits;
-            $this->qualifications = $model->qualification; // Note: DB field is 'qualification'
+            $this->qualifications = $model->qualification;
             $this->work_type = $model->work_type;
             $this->work_place = $model->work_place;
             $this->deadline = $model->deadline ? date('Y-m-d', strtotime($model->deadline)) : null;
@@ -107,6 +107,10 @@ class JobForm extends Component
 
             $job = JobPost::findOrFail($this->jobId);
             $update->execute($job, $validated);
+
+            event(new JobCreated($job));
+            $admins = User::role('admin')->get();
+            Notification::send($admins, new JobCreatedNotification($job));
             session()->flash('message', 'Job updated successfully!');
         } else {
             $request = new StoreJobRequest();

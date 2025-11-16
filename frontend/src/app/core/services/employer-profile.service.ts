@@ -19,6 +19,7 @@ export interface Employer {
     id: number;
     name: string;
     email: string;
+    avatar: string;
   };
   jobs?: Job[];
   jobs_count?: number;
@@ -152,7 +153,7 @@ export class EmployerProfileService {
     sendContactMessage(contactData: ContactMessage): Observable<any> {
     const payload = {
       ...contactData,
-      contactable_type: 'App\\Domains\\Employers\\Models\\EmployerInfo'
+      contactable_type: 'App\\Domains\\Users\\Models\\User'
     };
 
     return this.http.post<any>(`${this.apiUrl}/contact`, payload, {

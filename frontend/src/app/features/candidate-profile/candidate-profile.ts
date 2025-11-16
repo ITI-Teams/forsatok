@@ -20,6 +20,7 @@ export class CandidateProfile implements OnInit {
 
   candidate: Candidate = {
     id: 0,
+    user_id: 0,
     name: '',
     title: '',
     location: null,
@@ -129,8 +130,8 @@ export class CandidateProfile implements OnInit {
         email: this.contactModel.email,
         subject: this.contactModel.subject,
         message: this.contactModel.message,
-        contactable_id: this.candidateId,
-        contactable_type: 'App\\Domains\\Employers\\Models\\EmployerInfo',
+        contactable_id: this.candidate.user_id,
+        contactable_type: 'App\\Domains\\Users\\Models\\User',
          user_id: this.currentUserId
       };
 

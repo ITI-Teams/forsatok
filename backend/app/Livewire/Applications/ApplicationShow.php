@@ -3,6 +3,7 @@
 namespace App\Livewire\Applications;
 
 use App\Domains\Applications\Models\JobApplication;
+use App\Notifications\JobApplicationStatusChanged;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -33,24 +34,25 @@ class ApplicationShow extends Component
 
     public function accept()
     {
-        // التحقق من الصلاحية
-        if (!$this->checkAuthorization()) {
-            return;
-        }
+        if (!$this->checkAuthorization()) return;
 
         $this->application->update(['status' => 'accepted']);
+
+        $candidate = $this->application->candidate;
+        $candidate->notify(new JobApplicationStatusChanged($this->application));
         session()->flash('message', 'Application accepted successfully.');
         $this->dispatch('applicationUpdated');
     }
 
     public function reject()
     {
-        // التحقق من الصلاحية
         if (!$this->checkAuthorization()) {
             return;
         }
 
         $this->application->update(['status' => 'rejected']);
+        $candidate = $this->application->candidate;
+        $candidate->notify(new JobApplicationStatusChanged($this->application));
         session()->flash('message', 'Application rejected successfully.');
         $this->dispatch('applicationUpdated');
     }

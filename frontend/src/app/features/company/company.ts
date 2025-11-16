@@ -257,11 +257,10 @@ export class Company implements OnInit {
   }
 
   getLogoUrl(): string {
-    if (this.employer.logo_path) {
-      return `http://localhost:8000/storage/${this.employer.logo_path}`;
+    if (this.employer.user?.avatar) {
+      return `http://localhost:8000/storage/${this.employer.user.avatar}`;
     }
-    return 'https://via.placeholder.com/128x128/e0f2fe/0284c7?text=' +
-           encodeURIComponent(this.employer.company_name.charAt(0));
+    return 'http://localhost:8000/storage/avatars/avatar.svg';
   }
 
   formatSalary(min: number, max: number): string {
@@ -340,8 +339,8 @@ submitContact() {
     email: this.contactModel.email,
     subject: this.contactModel.subject,
     message: this.contactModel.message,
-    contactable_id: this.employerId,
-    contactable_type: 'App\\Domains\\Employers\\Models\\EmployerInfo',
+    contactable_id: this.employer.user_id,
+    contactable_type: 'App\\Domains\\Users\\Models\\User',
     user_id: this.currentUserId || undefined
   };
 

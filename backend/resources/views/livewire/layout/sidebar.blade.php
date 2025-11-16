@@ -62,6 +62,14 @@
                 </div>
             </li>
 
+            {{-- Notifications --}}
+            <li>
+                <a wire:navigate href="{{ route('notifications.index') }}"
+                   class="nav-link {{ request()->routeIs('notifications.index') ? 'active' : '' }}">
+                    <i class="fas fa-bell"></i><span>Notifications</span>
+                </a>
+            </li>
+
             {{-- Users --}}
             <li>
                 <a wire:navigate href="{{ route('users.index') }}"
@@ -131,6 +139,13 @@
                 <a wire:navigate href="{{ route('company-reviews.index') }}"
                    class="nav-link {{ request()->routeIs('company-reviews.*') ? 'active' : '' }}">
                     <i class="fa-solid fa-building-shield"></i><span>Company Reviews</span>
+                </a>
+            </li>
+            {{-- Notifications --}}
+            <li>
+                <a wire:navigate href="{{ route('notifications.index') }}"
+                   class="nav-link {{ request()->routeIs('notifications.index') ? 'active' : '' }}">
+                    <i class="fas fa-bell"></i><span>Notifications</span>
                 </a>
             </li>
             {{-- Contact Messages --}}

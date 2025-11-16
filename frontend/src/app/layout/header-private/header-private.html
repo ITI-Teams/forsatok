@@ -1,0 +1,203 @@
+<header class="site-header fixed top-0 left-0 right-0 z-50 bg-white dark:bg-[#0f1724] shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      <!-- Logo -->
+      <div class="flex items-center gap-3">
+        <a routerLink="/home" class="flex items-center gap-2">
+          <img [src]="logoSrc" alt="Logo" class="h-10 w-auto" />
+          <!-- <span class="font-semibold text-xl text-gray-800 dark:text-gray-100">JobHub</span> -->
+        </a>
+      </div>
+
+      <!-- Desktop nav -->
+      <nav class="hidden lg:flex items-center gap-6">
+        <a routerLink="/home" [ngClass]="{'!text-[#ff4136]': isActive('/home')}"
+          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Home</a>
+        <a routerLink="/jobs" [ngClass]="{'!text-[#ff4136]': isActive('/jobs')}"
+          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Jobs</a>
+        <a routerLink="/candidates" [ngClass]="{'!text-[#ff4136]': isActive('/candidates')}"
+          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Candidates</a>
+        <a routerLink="/company" [ngClass]="{'!text-[#ff4136]': isActive('/company')}"
+          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Company</a>
+        <a routerLink="/contact" [ngClass]="{'!text-[#ff4136]': isActive('/contact')}"
+          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136]">Contact</a>
+      </nav>
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-3">
+
+        <!-- Theme toggle -->
+        <button (click)="toggleDarkMode()" class="p-2 rounded border border-gray-200 dark:border-gray-700">
+          @if (!isDark) {
+          <svg class="w-5 h-5 text-gray-700" viewBox="0 0 24 24">
+            <path
+              d="M12 3v1.5M12 19.5V21M4.22 4.22l1.06 1.06M18.72 18.72l1.06 1.06M3 12h1.5M19.5 12H21M4.22 19.78l1.06-1.06M18.72 5.28l1.06-1.06M12 6a6 6 0 0 1 0 12 6 6 0 0 1 0-12Z"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          } @else {
+          <svg class="w-5 h-5 text-gray-200" viewBox="0 0 24 24">
+            <path d="M21.752 15.002A9.72 9.72 0 0 1 12 21.75 9.75 9.75 0 0 1 9.51 2.31a9.75 9.75 0 0 0 12.24 12.69Z"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          }
+        </button>
+
+        <!-- Notifications -->
+        <div class="relative" *ngIf="isLoggedIn">
+          <button (click)="toggleDropdown('notifications')"
+                  class="relative inline-flex items-center p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 14 20">
+              <path
+                d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57V1.1a1 1 0 0 0-2 0v2.364a5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175Z" />
+            </svg>
+
+            <!-- Red dot -->
+            <div *ngIf="hasNotifications"
+                 class="absolute block w-3 h-3 bg-red-500 border-2 border-white dark:border-gray-900 rounded-full top-1.5 end-1.5">
+            </div>
+          </button>
+
+          <div *ngIf="openDropdown === 'notifications'"
+               class="absolute right-0 mt-3 z-50 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+
+            <div class="px-4 py-2 font-medium text-center bg-gray-50 dark:bg-gray-700 dark:text-white">
+              Notifications
+            </div>
+
+            <div class="max-h-72 overflow-auto divide-y divide-gray-200 dark:divide-gray-700">
+
+              <!-- Loop notifications -->
+              <div *ngFor="let n of notifications"
+                   class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                   (click)="markAsRead(n.id)">
+
+                <div>
+                  <div class="text-sm text-gray-700 dark:text-gray-300">
+                    {{ n.data?.message || 'New Notification' }}
+                  </div>
+
+                  <div class="text-xs text-blue-600 dark:text-blue-400">
+                    {{ n.created_at | date:'short' }}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <button (click)="markAllAsRead()"
+                    class="block w-full py-2 text-sm font-medium text-center bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
+              Mark all as read
+            </button>
+          </div>
+        </div>
+
+        <!-- User avatar / login -->
+        <div class="relative">
+          @if (isLoggedIn) {
+          <button (click)="toggleDropdown('user')"
+            class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
+            <img class="w-8 h-8 rounded-full" [src]="getUserAvatar()" [alt]="getUserName()"
+                onerror="this.src='/assets/images/default-avatar.png'">
+          </button>
+
+          @if (openDropdown === 'user') {
+          <div
+            class="absolute right-0 mt-3 z-50 w-44 bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-lg shadow-lg">
+            <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+              <div>{{ getUserName() }}</div>
+              <div class="font-medium truncate">{{ getUserEmail() }}</div>
+            </div>
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+              <li>
+                <a routerLink="/profile"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Profile
+                </a>
+              </li>
+              <li>
+                <a routerLink="/dashboard"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Dashboard
+                </a>
+              </li>
+            </ul>
+            <div class="py-2">
+              <a (click)="logout()"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white cursor-pointer">
+                Sign out
+              </a>
+            </div>
+          </div>
+          }
+          } @else {
+          <div class="flex items-center gap-2">
+            <a routerLink="/login"
+              class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#ff4136] transition">
+              Login
+            </a>
+            <a routerLink="/register"
+              class="px-4 py-2 text-sm font-medium bg-[#ff4136] text-white rounded-lg hover:bg-[#e53935] transition">
+              Register
+            </a>
+          </div>
+          }
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button (click)="toggleMobileMenu()" class="lg:hidden p-2">
+          @if (!mobileMenuOpen) {
+          <svg class="w-6 h-6" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          } @else {
+          <svg class="w-6 h-6" viewBox="0 0 24 24">
+            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Mobile Menu -->
+  @if (mobileMenuOpen) {
+  <div
+    class="fixed inset-x-0 top-20 bottom-0 bg-white dark:bg-[#0b1220] z-40 overflow-auto transition-all duration-300">
+    <ul class="p-6 space-y-2 text-gray-800 dark:text-gray-200">
+      <li><a routerLink="/home" [ngClass]="{'!text-[#ff4136]': isActive('/home')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Home</a></li>
+      <li><a routerLink="/jobs" [ngClass]="{'!text-[#ff4136]': isActive('/jobs')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Jobs</a></li>
+      <li><a routerLink="/candidates" [ngClass]="{'!text-[#ff4136]': isActive('/candidates')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Candidates</a></li>
+      <li><a routerLink="/company" [ngClass]="{'!text-[#ff4136]': isActive('/company')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Company</a></li>
+      <li><a routerLink="/contact" [ngClass]="{'!text-[#ff4136]': isActive('/contact')}" class="block py-3 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Contact</a></li>
+
+      @if (!isLoggedIn) {
+      <li class="mt-4 space-y-2">
+        <a routerLink="/login" class="block w-full text-center py-3 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          Login
+        </a>
+        <a routerLink="/register" class="block w-full text-center py-3 rounded bg-[#ff4136] text-white hover:bg-[#e53935] transition">
+          Register
+        </a>
+      </li>
+      } @else {
+      <li class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center gap-3 px-2 py-3">
+          <img class="w-10 h-10 rounded-full" [src]="getUserAvatar()" [alt]="getUserName()"
+              onerror="this.src='/assets/images/default-avatar.png'">
+          <div>
+            <div class="font-medium text-gray-900 dark:text-white">{{ getUserName() }}</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">{{ getUserEmail() }}</div>
+          </div>
+        </div>
+        <div class="mt-2 space-y-1">
+          <a routerLink="/profile" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Profile</a>
+          <a (click)="logout()" class="block py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">Sign out</a>
+        </div>
+      </li>
+      }
+    </ul>
+  </div>
+  }
+</header>
