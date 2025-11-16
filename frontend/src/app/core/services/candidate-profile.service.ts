@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import {environment} from '../../environments/environment';
 
 export interface Candidate {
   id: number;
@@ -76,7 +77,7 @@ export interface ContactMessage {
   providedIn: 'root'
 })
 export class CandidateProfileService {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -109,7 +110,7 @@ export class CandidateProfileService {
             imageUrl = data.user.avatar;
           } else {
             // If avatar is a relative path, prepend your storage URL
-            imageUrl = `http://localhost:8000/storage/${data.user.avatar}`;
+            imageUrl = `${environment.imageUrl}/storage/${data.user.avatar}`;
           }
         }
 
@@ -139,35 +140,6 @@ export class CandidateProfileService {
       })
     );
   }
-
-  // Get all candidates with pagination
-  // getCandidates(page: number = 1, perPage: number = 10): Observable<any> {
-  //   return this.http.get<any>(`${this.apiUrl}/auth/candidatelist?page=${page}&per_page=${perPage}`, {
-  //     headers: this.getHeaders()
-  //   }).pipe(
-  //     map(response => {
-  //       if (response.success) {
-  //         return {
-  //           candidates: response.data.map((data: any) => ({
-  //             id: data.id,
-  //             name: data.user?.name || 'Unknown',
-  //             email: data.user?.email || '',
-  //             phone: data.phone || '',
-  //             title: data.job_title || 'Candidate',
-  //             location: data.location || null,
-  //             image: data.user?.avatar || 'https://i.pravatar.cc/300',
-  //             experience: data.experience || 'Not specified',
-  //             bio: data.bio || '',
-  //             skills: data.skills_details || []
-  //           })),
-  //           meta: response.meta
-  //         };
-  //       }
-  //       throw new Error(response.message || 'Failed to load candidates');
-  //     })
-  //   );
-  // }
-
 
    // Get candidate's skills
   getCandidateSkills(candidateId: number): Observable<Skill[]> {

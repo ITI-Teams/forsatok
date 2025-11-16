@@ -4,6 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { ThemeService } from '../../core/services/theme-service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationsService } from '../../core/services/notifications.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-header-private',
@@ -76,7 +77,7 @@ export class HeaderPrivate implements OnInit {
       return this.currentUser.avatar;
     }
 
-    return `http://localhost:8000/storage/${this.currentUser.avatar}`;
+    return `${environment.imageUrl}/storage/${this.currentUser.avatar}`;
   }
   getUserName(): string {
     return this.currentUser?.name || 'User';

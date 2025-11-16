@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CandidateProfileService, Candidate, Education, Experience, Skill , ContactMessage } from '../../core/services/candidate-profile.service';
 import { AuthService } from '../../core/services/auth.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-candidate-profile',
@@ -159,7 +160,7 @@ export class CandidateProfile implements OnInit {
   downloadCV() {
     if (this.candidate.resume) {
       // Assuming resume is stored in Laravel public storage
-      const resumeUrl = `http://localhost:8000/storage/${this.candidate.resume}`;
+      const resumeUrl = `${environment.imageUrl}/storage/${this.candidate.resume}`;
       window.open(resumeUrl, '_blank');
     } else {
       alert('No resume available for this candidate.');

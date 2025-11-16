@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 export interface CandidateSearchResult {
   id: number;
@@ -119,8 +120,8 @@ export interface CandidateFilterOptionsResponse {
   providedIn: 'root'
 })
 export class CandidateSearchService {
-  private searchApiUrl = 'http://127.0.0.1:8000/api/candidates/search';
-  private filterOptionsApiUrl = 'http://127.0.0.1:8000/api/candidates/filter-options';
+  private searchApiUrl = `${environment.apiUrl}/candidates/search`;
+  private filterOptionsApiUrl = `${environment.apiUrl}/candidates/filter-options`;
 
   constructor(private http: HttpClient) {}
 

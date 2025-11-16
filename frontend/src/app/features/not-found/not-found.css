@@ -1,0 +1,22 @@
+/* Slow bounce animation */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 6s infinite ease-in-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s infinite ease-in-out;
+}
+
+h1 {
+  text-shadow: 2px 2px 15px rgba(0,0,0,0.3);
+}

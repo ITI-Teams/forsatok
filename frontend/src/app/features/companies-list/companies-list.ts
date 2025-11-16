@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { CompanySearchService, CompanySearchResult, CompanySearchFilters, Industry, Country, City } from '../../core/services/company-search.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-companies',
@@ -14,7 +15,7 @@ import { CompanySearchService, CompanySearchResult, CompanySearchFilters, Indust
   styleUrls: ['./companies-list.css']
 })
 export class CompaniesList implements OnInit {
-  public imageUrl = 'http://localhost:8000/storage';
+  public imageUrl = `${environment.imageUrl}/storage`;
   companies: CompanySearchResult[] = [];
   filteredCompanies: CompanySearchResult[] = [];
 
