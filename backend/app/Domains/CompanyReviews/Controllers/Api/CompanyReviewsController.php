@@ -2,6 +2,9 @@
 
 namespace App\Domains\CompanyReviews\Controllers\Api;
 
+use App\Domains\Users\Models\User;
+use App\Events\CompanyRated;
+use App\Notifications\CompanyRatedNotification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Domains\CompanyReviews\Models\CompanyReview;
@@ -53,7 +56,13 @@ Class CompanyReviewsController extends Controller
         try {
             // Create the review if not exist
             $review = CompanyReview::create($validated);
-            $review->load('candidate');
+            $review->load('candidate','employerInfo');
+
+            event(new CompanyRated($review));
+
+            // Notify employer
+            $employer = User::find($review->employerInfo->user_id);
+            $employer->notify(new CompanyRatedNotification($review));
             return response()->json([
                 'status' => 'success',
                 'data' => $review,

@@ -340,8 +340,8 @@ submitContact() {
     email: this.contactModel.email,
     subject: this.contactModel.subject,
     message: this.contactModel.message,
-    contactable_id: this.employerId,
-    contactable_type: 'App\\Domains\\Employers\\Models\\EmployerInfo',
+    contactable_id: this.employer.user_id,
+    contactable_type: 'App\\Domains\\Users\\Models\\User',
     user_id: this.currentUserId || undefined
   };
 

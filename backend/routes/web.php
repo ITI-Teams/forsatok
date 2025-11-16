@@ -30,6 +30,7 @@ use App\Livewire\Location\CityTrash;
 use App\Livewire\Location\CountryForm;
 use App\Livewire\Location\CountryList;
 use App\Livewire\Location\CountryTrash;
+use App\Livewire\Notifications\Notifications;
 use App\Livewire\Skills\SkillForm;
 use App\Livewire\Skills\SkillList;
 use App\Livewire\Skills\SkillTrash;
@@ -50,9 +51,7 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::get('/notifications', function () {
-    return view('notifications.index');
-})->middleware('auth')->name('notifications.index');
+Route::get('/show-all/notifications',Notifications::class )->middleware('auth')->name('notifications.index');
 
 Route::middleware(['web'])->group(function () {
     Route::get('/api/auth/linkedin/redirect', [LinkedinController::class, 'redirect']);
