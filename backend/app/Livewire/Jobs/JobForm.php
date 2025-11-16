@@ -2,11 +2,15 @@
 
 namespace App\Livewire\Jobs;
 
+use App\Domains\Users\Models\User;
+use App\Events\JobCreated;
+use App\Notifications\JobCreatedNotification;
 use App\Domains\Jobs\Actions\Job\{
     CreateJobAction,
     UpdateJobAction
 };
 
+use Illuminate\Support\Facades\Notification;
 use App\Domains\Jobs\Requests\Job\{
     StoreJobRequest,
     UpdateJobRequest
@@ -109,7 +113,10 @@ class JobForm extends Component
             $request->merge($this->getJobData());
             $validated = Validator::make($request->all(), $request->rules())->validate();
 
-            $create->execute($validated);
+            $myJob = $create->execute($validated);
+            event(new JobCreated($myJob));
+            $admins = User::role('admin')->get();
+            Notification::send($admins, new JobCreatedNotification($myJob));
             session()->flash('message', 'Job created successfully!');
         }
 
@@ -156,7 +163,7 @@ class JobForm extends Component
 			: [];
 	}
 
-    
+
 	//handler for country change from the select element.
 	public function onCountryChange($value)
 	{

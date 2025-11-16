@@ -110,3 +110,8 @@ Route::get('/skills', [SkillController::class, 'index']);
 // Home Route
 Route::get('/home', [HomeController::class, 'index']);
 
+// cadidate api routes
+Route::prefix('auth')->group(function () {
+    Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
+    Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
+});
