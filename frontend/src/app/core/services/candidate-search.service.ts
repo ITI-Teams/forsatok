@@ -16,7 +16,8 @@ export interface CandidateSearchResult {
     name: string;
     email: string;
   };
-  skills?: Array<{
+  skills?: number[]; // Array of skill IDs
+  skills_details?: Array<{
     id: number;
     name: string;
     slug?: string;

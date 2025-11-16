@@ -423,8 +423,8 @@ export class Candidates implements OnInit {
   }
 
   getCandidateSkills(candidate: CandidateSearchResult): string[] {
-    if (candidate.skills && candidate.skills.length > 0) {
-      return candidate.skills.map(skill => skill.name);
+    if (candidate.skills_details && candidate.skills_details.length > 0) {
+      return candidate.skills_details.map(skill => skill.name);
     }
     return [];
   }
