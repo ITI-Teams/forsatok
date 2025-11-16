@@ -16,14 +16,15 @@ window.Echo = new Echo({
     forceTLS: true
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('livewire:init', () => {
     const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
-    if (!userId) return;
+    if (!userId) {
+        return;
+    }
 
     window.Echo.private(`App.Domains.Users.Models.User.${userId}`)
-    .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', (e) => {
-        if (window.livewire) {
-            window.livewire.emit('notificationReceived', e.notification);
-        }
-    });
+        .notification((notification) => {
+            Livewire.dispatch('notificationReceived', notification);
+        });
 });
+

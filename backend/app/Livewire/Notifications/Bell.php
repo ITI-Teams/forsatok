@@ -12,8 +12,7 @@ class Bell extends Component
     public $limit = 10;
 
     protected $listeners = [
-        'notificationReceived' => 'onNotificationReceived',
-        'refreshNotifications' => '$refresh'
+        'notificationReceived' => 'onNotificationReceived'
     ];
 
     public function mount(int $limit = 10)
@@ -31,7 +30,6 @@ class Bell extends Component
             return;
         }
 
-
         $all = $user->notifications()->latest()->take($this->limit)->get();
         $this->notifications = $all->map(function (DatabaseNotification $n) {
             return [
@@ -46,31 +44,63 @@ class Bell extends Component
         $this->unreadCount = $user->unreadNotifications()->count();
     }
 
-    public function onNotificationReceived($payload)
+    public function onNotificationReceived($notification = null)
     {
-        // payload from Echo listener (notification object)
-        array_unshift($this->notifications, [
-            'id' => $payload['id'] ?? ($payload['notification']['id'] ?? null),
-            'type' => $payload['type'] ?? ($payload['notification']['type'] ?? null),
-            'data' => $payload['data'] ?? ($payload['notification']['data'] ?? []),
+        if (is_array($notification) && isset($notification['notification'])) {
+            $notification = $notification['notification'];
+        }
+
+        if (!$notification) {
+            $notification = [
+                'id' => uniqid(),
+                'type' => 'TestNotification',
+                'data' => ['message' => 'Test notification message'],
+            ];
+        }
+
+        $notificationData = [
+            'id' => $notification['id'] ?? uniqid(),
+            'type' => class_basename($notification['type'] ?? 'JobCreatedNotification'),
+            'data' => $notification['data'] ?? $notification,
             'read_at' => null,
             'created_at' => now()->diffForHumans(),
-        ]);
+        ];
+
+        array_unshift($this->notifications, $notificationData);
+
+        if (count($this->notifications) > $this->limit) {
+            $this->notifications = array_slice($this->notifications, 0, $this->limit);
+        }
+
         $this->unreadCount++;
-        $this->notifications = array_slice($this->notifications, 0, $this->limit);
-        $this->emitSelf('refreshNotifications');
     }
 
     public function markAsRead($id)
     {
         $user = auth()->user();
-        if (! $user) return;
+        if (!$user) {
+            return;
+        }
+        try {
+            $updated = $user->notifications()
+                ->where('id', $id)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
 
-        $notif = $user->unreadNotifications()->find($id);
-        if ($notif) {
-            $notif->markAsRead();
-            $this->unreadCount = $user->unreadNotifications()->count();
-            $this->loadNotifications();
+            if ($updated) {
+                $this->unreadCount = $user->unreadNotifications()->count();
+
+                foreach ($this->notifications as &$item) {
+                    if ($item['id'] === $id) {
+                        $item['read_at'] = now()->toDateTimeString();
+                        break;
+                    }
+                }
+
+                $this->dispatch('notification-marked-read');
+            }
+        } catch (\Exception $e) {
+            $this->loadNotifications(); // Fallback
         }
     }
 
@@ -81,7 +111,22 @@ class Bell extends Component
 
         $user->unreadNotifications->markAsRead();
         $this->unreadCount = 0;
-        $this->loadNotifications();
+
+        foreach ($this->notifications as &$notif) {
+            $notif['read_at'] = now();
+        }
+    }
+
+    public function testNotification()
+    {
+        $this->onNotificationReceived([
+            'id' => 'test-' . uniqid(),
+            'type' => 'TestNotification',
+            'data' => [
+                'message' => 'This is a test notification from Livewire',
+                'title' => 'Test Title'
+            ]
+        ]);
     }
 
     public function render()

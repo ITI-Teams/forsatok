@@ -4,17 +4,7 @@
 
         <!-- Notifications -->
         <div class="dropdown position-relative">
-            <button class="btn-icon position-relative" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-bell fs-5"></i>
-                <span class="notif-badge position-absolute translate-middle badge rounded-pill bg-danger">3</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-sm animate-dropdown" aria-labelledby="notifDropdown">
-                <li><h6 class="dropdown-header">Notifications</h6></li>
-                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info me-2 text-primary"></i> New order received</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user-plus me-2 text-success"></i> New user registered</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-center small text-muted" href="#">View all</a></li>
-            </ul>
+            @livewire('notifications.bell')
         </div>
 
         <!-- Theme toggle -->
