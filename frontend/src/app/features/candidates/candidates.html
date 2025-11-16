@@ -183,7 +183,7 @@
               <img src="/images/default-avatar.png" alt="" class="w-full h-full object-cover" />
             </div>
 
-            <div class="flex-1 p-6 flex flex-col justify-between gap-4">
+            <div class="flex-1 p-6 flex flex-col justify-between">
               <div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ candidate.user?.name || 'Unknown' }}</h3>
                 <p class="text-gray-600 dark:text-gray-400">{{ candidate.user?.email || '' }}</p>
@@ -254,7 +254,7 @@
             <p class="text-gray-500 dark:text-gray-400 mb-6">
               We couldn't find any candidates matching your criteria. Try adjusting your filters or search terms.
             </p>
-            <button (click)="resetFilters()" pButton type="button" label="Reset Filters" 
+            <button (click)="resetFilters()" pButton type="button" label="Reset Filters"
               class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all">
             </button>
           </div>
