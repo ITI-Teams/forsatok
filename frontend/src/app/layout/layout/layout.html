@@ -1,5 +1,9 @@
 <div id="container" class="bg-white dark:bg-black">
-  <app-header></app-header>
+  @if (isLoggedIn) {
+    <app-header-private></app-header-private>
+  } @else {
+    <app-header></app-header>
+  }
   <div>
     <router-outlet></router-outlet>
   </div>

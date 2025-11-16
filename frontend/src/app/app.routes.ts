@@ -44,7 +44,7 @@ export const routes: Routes = [
       { path:'company',component:CompaniesList},
       { path: 'apply/:id', component: JobApplication,canActivate: [authGuard] },
       { path: 'apply', component: JobApplication, canActivate: [authGuard]},
-      {path:'candidate-dashboard',component:CandidateDashboard, canActivate: [authGuard]}
+      {path:'dashboard',component:CandidateDashboard, canActivate: [authGuard]}
 
     ]
   },

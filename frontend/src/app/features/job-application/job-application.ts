@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { SelectModule } from 'primeng/select'; // بديل DropdownModule في v20
+import { SelectModule } from 'primeng/select';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
@@ -183,25 +183,24 @@ export class JobApplication implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        const errorMessage = error.error?.message || 'Failed to submit application';
 
-        if (error.status === 422 && errorMessage.includes('already applied')) {
+        if (error.status === 403) {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Already Applied',
-            detail: 'You have already applied to this job position.'
+            summary: 'Access Denied',
+            detail: 'You are not allowed to see these jobs yet.'
           });
-        } else if (error.status === 403) {
+        } else if (error.status === 404) {
           this.messageService.add({
-            severity: 'error',
-            summary: 'Permission Denied',
-            detail: 'Only candidates can submit applications.'
+            severity: 'info',
+            summary: 'No jobs found',
+            detail: 'No available jobs at the moment.'
           });
         } else {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: errorMessage
+            detail: 'Failed to load available jobs'
           });
         }
       }

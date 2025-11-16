@@ -2,8 +2,6 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ThemeService } from '../../core/services/theme-service';
-import { AuthService } from '../../core/services/auth.service';
-import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -18,63 +16,19 @@ export class Header implements OnInit {
   openMegaId: string | null = null;
   openDropdown: string | null = null;
   isLoggedIn = false;
-  hasNotifications = false;
   currentUser: any = null;
+  notifications: any[] = [];
+  hasNotifications = false;
 
   constructor(
     private themeService: ThemeService,
     private router: Router,
-    private auth: AuthService
   ) { }
 
   ngOnInit() {
-    this.checkAuthStatus();
-    this.auth.isLoggedIn$().subscribe(status => {
-      this.isLoggedIn = status;
-      if (status) {
-        this.loadUserData();
-      } else {
-        this.currentUser = null;
-      }
-    });
-  }
-  private checkAuthStatus() {
-    this.isLoggedIn = this.auth.hasToken();
-    if (this.isLoggedIn) {
-      this.loadUserData();
-    }
-  }
-  private loadUserData() {
-    const userData = this.auth.getUser();
-    if (userData) {
-      this.currentUser = userData;
-    }
+
   }
 
-  getUserAvatar(): string {
-    if (!this.currentUser?.avatar) {
-      return '/images/avatars/avatar.svg';
-    }
-
-    if (this.currentUser.avatar.startsWith('http')) {
-      return this.currentUser.avatar;
-    }
-
-    return `http://localhost:8000/storage/${this.currentUser.avatar}`;
-  }
-  getUserName(): string {
-    return this.currentUser?.name || 'User';
-  }
-  getUserEmail(): string {
-    return this.currentUser?.email || 'user@example.com';
-  }
-
-  logout() {
-    this.auth.logout();
-    this.isLoggedIn = false;
-    this.currentUser = null;
-    this.router.navigate(['/login']);
-  }
 
   isActive(route: string): boolean {
     return this.router.url === route || this.router.url === route + '/' || this.router.url.startsWith(route + '/');
