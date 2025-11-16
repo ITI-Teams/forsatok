@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Jobs\Actions\Job;
+namespace App\Domains\Jobs\Actions\job;
 
 use App\Domains\Jobs\Models\JobPost;
 

@@ -18,9 +18,9 @@ class GetAllContactMessagesAction
         $query = ContactMessage::query()->orderBy('created_at', 'desc');
 
         if (auth()->user()->hasRole('admin')) {
-            $query->whereNull('user_id');
+            $query->whereNull('contactable_id');
         } elseif (auth()->user()->hasRole('employer')) {
-            $query->where('user_id', auth()->id());
+            $query->where('contactable_id', auth()->id());
         }
 
         if ($search) {

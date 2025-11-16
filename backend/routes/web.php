@@ -50,6 +50,10 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+Route::get('/notifications', function () {
+    return view('notifications.index');
+})->middleware('auth')->name('notifications.index');
+
 Route::middleware(['web'])->group(function () {
     Route::get('/api/auth/linkedin/redirect', [LinkedinController::class, 'redirect']);
     Route::get('/api/auth/linkedin/callback', [LinkedinController::class, 'callback']);
