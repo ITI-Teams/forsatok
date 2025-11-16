@@ -5,19 +5,17 @@
     <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Candidate Dashboard</h2>
 
     <ul class="space-y-3">
-
       <li (click)="setTab('messages')"
-        [ngClass]="activeTab==='messages' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'"
-        class="cursor-pointer px-4 py-2 rounded-lg transition">Messages</li>
+          [ngClass]="activeTab==='messages' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'"
+          class="cursor-pointer px-4 py-2 rounded-lg transition">Messages</li>
 
       <li (click)="setTab('notifications')"
-        [ngClass]="activeTab==='notifications' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'"
-        class="cursor-pointer px-4 py-2 rounded-lg transition">Notifications</li>
+          [ngClass]="activeTab==='notifications' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'"
+          class="cursor-pointer px-4 py-2 rounded-lg transition">Notifications</li>
 
-      <li (click)="setTab('saved')"
-        [ngClass]="activeTab==='saved' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'"
-        class="cursor-pointer px-4 py-2 rounded-lg transition">Saved Jobs</li>
-
+      <li (click)="setTab('savedJobs')"
+          [ngClass]="activeTab==='savedJobs' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'"
+          class="cursor-pointer px-4 py-2 rounded-lg transition">Saved Jobs</li>
     </ul>
   </aside>
 
@@ -30,16 +28,20 @@
 
       <table class="min-w-full bg-white dark:bg-gray-800 rounded-xl shadow">
         <thead>
-          <tr class="bg-gray-50 dark:bg-gray-700">
-            <th class="py-3 px-6 text-left">From</th>
-            <th class="py-3 px-6 text-left">Message</th>
-          </tr>
+        <tr class="bg-gray-50 dark:bg-gray-700">
+          <th class="py-3 px-6 text-left">From</th>
+          <th class="py-3 px-6 text-left">Subject</th>
+          <th class="py-3 px-6 text-left">Message</th>
+          <th class="py-3 px-6 text-left">Date</th>
+        </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let msg of candidateData.messages" class="border-b border-gray-200 dark:border-gray-700">
-            <td class="py-3 px-6 font-semibold text-indigo-600">{{ msg.from }}</td>
-            <td class="py-3 px-6 text-gray-600 dark:text-gray-300">{{ msg.text }}</td>
-          </tr>
+        <tr *ngFor="let msg of paginationMessages" class="border-b border-gray-200 dark:border-gray-700">
+          <td class="py-3 px-6 font-semibold text-indigo-600">{{ msg.full_name }}</td>
+          <td class="py-3 px-6 text-gray-600 dark:text-gray-300">{{ msg.subject }}</td>
+          <td class="py-3 px-6 text-gray-600 dark:text-gray-300">{{ msg.message }}</td>
+          <td class="py-3 px-6 text-gray-500 dark:text-gray-400">{{ msg.created_at | date:'short' }}</td>
+        </tr>
         </tbody>
       </table>
 
@@ -51,43 +53,52 @@
       </div>
     </section>
 
-
     <!-- Notifications -->
     <section *ngIf="activeTab==='notifications'" class="space-y-4">
       <h1 class="text-3xl font-semibold">Notifications</h1>
 
       <table class="min-w-full bg-white dark:bg-gray-800 rounded-xl shadow">
         <thead>
-          <tr class="bg-gray-50 dark:bg-gray-700">
-            <th class="py-3 px-6 text-left">Notification</th>
-          </tr>
+        <tr class="bg-gray-50 dark:bg-gray-700">
+          <th class="py-3 px-6 text-left">Notification</th>
+          <th class="py-3 px-6 text-left">Date</th>
+        </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let note of candidateData.notifications" class="border-b border-gray-200 dark:border-gray-700">
-            <td class="py-3 px-6">{{ note.text }}</td>
-          </tr>
+        <tr *ngFor="let note of paginationNotifications" class="border-b border-gray-200 dark:border-gray-700">
+          <td class="py-3 px-6">{{ note.data.title || note.type }}</td>
+          <td class="py-3 px-6 text-gray-500 dark:text-gray-400">{{ note.created_at | date:'short' }}</td>
+        </tr>
         </tbody>
       </table>
+
+      <!-- Pagination -->
+      <div class="flex justify-between mt-4">
+        <button (click)="prevPage('notifications')" [disabled]="currentPageNotifications === 1" class="px-3 py-1 bg-gray-200 rounded">Previous</button>
+        <span>Page {{currentPageNotifications}} of {{totalPages('notifications')}}</span>
+        <button (click)="nextPage('notifications')" [disabled]="currentPageNotifications === totalPages('notifications')" class="px-3 py-1 bg-gray-200 rounded">Next</button>
+      </div>
     </section>
 
-
     <!-- Saved Jobs -->
-    <section *ngIf="activeTab==='saved'" class="space-y-4">
+    <section *ngIf="activeTab==='savedJobs'" class="space-y-4">
       <h1 class="text-3xl font-semibold">Saved Jobs</h1>
 
       <table class="min-w-full bg-white dark:bg-gray-800 rounded-xl shadow">
         <thead>
-          <tr class="bg-gray-50 dark:bg-gray-700">
-            <th class="py-3 px-6 text-left">Job Title</th>
-          </tr>
+        <tr class="bg-gray-50 dark:bg-gray-700">
+          <th class="py-3 px-6 text-left">Job Title</th>
+          <th class="py-3 px-6 text-left">Work Type</th>
+        </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let job of candidateData.saved" class="border-b border-gray-200 dark:border-gray-700">
-            <td class="py-3 px-6">{{ job.jobTitle }}</td>
-          </tr>
+        <tr *ngFor="let job of paginationSavedJobs" class="border-b border-gray-200 dark:border-gray-700">
+          <td class="py-3 px-6">{{ job.job.title }}</td>
+          <td class="py-3 px-6">{{ job.job.work_type }}</td>
+        </tr>
         </tbody>
       </table>
-      
+
       <!-- Pagination -->
       <div class="flex justify-between mt-4">
         <button (click)="prevPage('savedJobs')" [disabled]="currentPageSaved === 1" class="px-3 py-1 bg-gray-200 rounded">Previous</button>

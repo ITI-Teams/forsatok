@@ -2,6 +2,7 @@
 
 namespace App\Domains\CompanyReviews\Controllers\Api;
 
+use App\Domains\Employers\Models\EmployerInfo;
 use App\Domains\Users\Models\User;
 use App\Events\CompanyRated;
 use App\Notifications\CompanyRatedNotification;
@@ -17,9 +18,11 @@ Class CompanyReviewsController extends Controller
     /**
      * Get all company reviews.
      */
-     public function showCompanyReviews($companyId)
+     public function showCompanyReviews($employerId)
     {
-        $reviews = CompanyReview::where('company_id', $companyId)
+        $company_id = EmployerInfo::where('id',$employerId)->first()->user_id;;
+        $reviews = CompanyReview::where('company_id', $company_id)
+                    ->where('status','approved')
                     ->with('candidate')
                     ->get();
 

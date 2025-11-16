@@ -15,6 +15,7 @@ export interface CompanySearchResult {
     id: number;
     name: string;
     email: string;
+    avatar: string;
   };
   jobs_count?: number;
   average_rating?: number;

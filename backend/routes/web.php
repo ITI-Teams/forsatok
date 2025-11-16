@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // Public routes
-Route::view('/', 'welcome');
+
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
@@ -76,6 +76,12 @@ Route::middleware(['auth'])->group(function () {
         if($user->hasRole('employer')) return to_route('employer.dashboard');
         return view('dashboard.general');
     })->name('dashboard');
+    Route::get('/', function() {
+        $user = auth()->user();
+        if($user->hasRole('admin')) return to_route('admin.dashboard');
+        if($user->hasRole('employer')) return to_route('employer.dashboard');
+        return view('dashboard.general');
+    });
 });
 
 

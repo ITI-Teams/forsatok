@@ -14,9 +14,10 @@ import { CompanySearchService, CompanySearchResult, CompanySearchFilters, Indust
   styleUrls: ['./companies-list.css']
 })
 export class CompaniesList implements OnInit {
+  public imageUrl = 'http://localhost:8000/storage';
   companies: CompanySearchResult[] = [];
   filteredCompanies: CompanySearchResult[] = [];
-  
+
   // Filters
   searchTerm = '';
   selectedCountry: number | null = null;
@@ -84,7 +85,7 @@ export class CompaniesList implements OnInit {
       city_id?: number;
       industry?: string;
     } = {};
-    
+
     if (this.selectedCountry) {
       filters.country_id = this.selectedCountry;
     }
@@ -94,7 +95,7 @@ export class CompaniesList implements OnInit {
     if (this.selectedIndustry) {
       filters.industry = this.selectedIndustry;
     }
-    
+
     this.searchService.getFilterOptions(Object.keys(filters).length > 0 ? filters : undefined).subscribe({
       next: (options) => {
         // Load industries with counts
@@ -148,7 +149,6 @@ export class CompaniesList implements OnInit {
 
     this.searchService.searchCompanies(filters).subscribe({
       next: (response) => {
-        console.log('Companies API Response:', response);
         this.companies = response.data || [];
         this.filteredCompanies = [...this.companies];
         this.totalCompanies = response.meta?.total ?? this.companies.length;

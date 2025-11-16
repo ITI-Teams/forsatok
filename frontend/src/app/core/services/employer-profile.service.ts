@@ -19,6 +19,7 @@ export interface Employer {
     id: number;
     name: string;
     email: string;
+    avatar: string;
   };
   jobs?: Job[];
   jobs_count?: number;

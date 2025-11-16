@@ -23,6 +23,7 @@ class CompanySearchResource extends JsonResource
                 'id' => $this->user->id ?? null,
                 'name' => $this->user->name ?? null,
                 'email' => $this->user->email ?? null,
+                'avatar' => $this->user->avatar ?? null,
             ],
             'jobs_count' => $this->when(isset($this->jobs_count), function () {
                 return $this->jobs_count;
