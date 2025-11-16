@@ -23,7 +23,7 @@
 
     {{-- Header --}}
     @include('livewire.layout.header')
-    @livewire('notifications.bell')
+
 
     {{-- Main Content --}}
     <main class="content">

@@ -6,8 +6,8 @@
         @endif
     </button>
 
-    <div class="dropdown-menu dropdown-menu-end p-0 shadow-lg" style="width: 360px;">
-        <div class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom bg-body">
+    <div class="dropdown-menu dropdown-menu-end p-0 shadow-lg bg-dark text-white" style="width: 360px;">
+        <div class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom bg-body dark:bg-gray-800">
             <strong>Notifications</strong>
             <div>
                 <button wire:click.prevent="markAllRead" class="btn btn-sm btn-outline-secondary">Mark all read</button>
@@ -16,7 +16,7 @@
 
         <div style="max-height: 420px; overflow:auto;">
             @forelse($notifications as $n)
-                <div class="dropdown-item d-flex align-items-start gap-2 {{ $n['read_at'] ? 'text-muted' : '' }}">
+                <div class="dropdown-item d-flex align-items-start gap-2 {{ $n['read_at'] ? 'text-muted' : 'text-white' }}">
                     <div class="flex-fill">
                         <div class="d-flex justify-content-between">
                             <div>
@@ -43,7 +43,7 @@
         </div>
 
         <div class="px-3 py-2 border-top text-center">
-            <a href="{{ route('notifications.index') }}" class="text-decoration-none">View all</a>
+            <a href="{{ route('notifications.index') }}" class="text-decoration-none text-light">View all</a>
         </div>
     </div>
 </div>
