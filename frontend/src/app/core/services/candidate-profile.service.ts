@@ -22,6 +22,7 @@ export interface Candidate {
   skills?: Skill[];
   resume?: string;
   category_id?: number;
+  user_id?: number;
 }
 
 export interface Location {
@@ -115,6 +116,7 @@ export class CandidateProfileService {
           // Transform API data to match frontend interface
           return {
             id: data.id,
+            user_id: data.user_id,
             name: data.user?.name || 'Unknown',
             email: data.user?.email || '',
             phone: data.phone || '',
@@ -185,7 +187,7 @@ export class CandidateProfileService {
   sendContactMessage(contactData: ContactMessage): Observable<any> {
     const payload = {
       ...contactData,
-      contactable_type: 'App\\Domains\\Candidates\\Models\\CandidateInfo'
+      contactable_type: 'App\\Domains\\Users\\Models\\User'
     };
 
     return this.http.post<any>(`${this.apiUrl}/contact`, payload, {

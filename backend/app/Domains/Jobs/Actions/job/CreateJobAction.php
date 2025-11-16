@@ -3,6 +3,7 @@
 namespace App\Domains\Jobs\Actions\job;
 
 use App\Domains\Jobs\Models\JobPost;
+use App\Domains\Shared\Models\AuditLog;
 use Illuminate\Support\Facades\Auth;
 
 class CreateJobAction
@@ -24,6 +25,15 @@ class CreateJobAction
                 'address' => $address,
             ]);
         }
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'created_job',
+            'model_type' => JobPost::class,
+            'model_id' => $job->id,
+            'changes' => $job->title,
+            'ip_address' => request()->ip(),
+        ]);
 
         return $job;
     }

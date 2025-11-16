@@ -46,7 +46,7 @@ export class CompanyReviewService {
 
   // Get all reviews for a company
   getCompanyReviews(companyId: number): Observable<CompanyReview[]> {
-    return this.http.get<any>(`${this.apiUrl}/company-reviews/${companyId}`, {
+    return this.http.get<any>(`${this.apiUrl}/company-reviews/company/${companyId}`, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {

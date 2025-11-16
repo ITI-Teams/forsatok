@@ -4,6 +4,10 @@ namespace App\Livewire\Jobs;
 
 use App\Domains\Jobs\Actions\Job\SoftDeleteJobAction;
 use App\Domains\Jobs\Models\JobPost;
+use App\Events\JobApproved;
+use App\Events\JobRejected;
+use App\Notifications\JobApprovedNotification;
+use App\Notifications\JobRejectedNotification;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
@@ -53,6 +57,12 @@ class JobList extends Component
         $job = JobPost::findOrFail($jobId);
         $job->update(['is_active' => 1]);
 
+
+        event(new JobApproved($job));
+        $employer = $job->employer;
+        $employer->notify(new JobApprovedNotification($job));
+
+
         $this->dispatch('toast', [
             'type' => 'success',
             'message' => 'Job approved successfully!'
@@ -65,6 +75,10 @@ class JobList extends Component
     {
         $job = JobPost::findOrFail($jobId);
         $job->update(['is_active' => 0]);
+
+        event(new JobRejected($job));
+        $employer = $job->employer;
+        $employer->notify(new JobRejectedNotification($job));
 
         $this->dispatch('toast', [
             'type' => 'error',

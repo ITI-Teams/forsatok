@@ -7,12 +7,15 @@ use App\Domains\Applications\Requests\Api\ApplayApplicationRequest;
 use App\Domains\Applications\Resources\ApplicationResource;
 use App\Domains\Jobs\Models\JobPost;
 use App\Domains\Jobs\Resources\JobPostResource;
+use App\Domains\Users\Models\User;
+use App\Events\JobApplied;
 use App\Http\Controllers\Controller;
 use App\Domains\Jobs\Models\SavedJob;
 use App\Domains\Jobs\Requests\Api\SaveJobRequest;
-use Illuminate\Http\JsonResponse;
+use App\Notifications\JobApplicationReceived;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class ApplicationController extends Controller
@@ -105,6 +108,12 @@ class ApplicationController extends Controller
         ]);
 
         $application->load(['candidate', 'jobPost.employer', 'jobPost.category']);
+
+
+        event(new JobApplied($application));
+        // Notify employer
+        $employer = User::where('id', $application->jobPost->employer_id)->get();
+        Notification::send($employer, new JobApplicationReceived($application));
 
         return response()->json([
             'success' => true,

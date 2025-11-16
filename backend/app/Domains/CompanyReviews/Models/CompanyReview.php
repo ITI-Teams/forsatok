@@ -26,6 +26,10 @@ class CompanyReview extends Model
     {
         return $this->belongsTo(User::class, 'company_id');
     }
+    public function employerInfo()
+    {
+        return $this->belongsTo(EmployerInfo::class, 'company_id');
+    }
 
     public function candidate()
     {
