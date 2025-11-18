@@ -22,6 +22,7 @@
 - [Features](#-features)
 - [Technology Stack](#-technology-stack)
 - [Architecture](#-architecture)
+- [Workflows & Process Flows](#-workflows--process-flows)
 - [Project Structure](#-project-structure)
 - [Installation](#-installation)
 - [Configuration](#-configuration)
@@ -257,6 +258,34 @@ frontend/
 - **Service Pattern**: Business logic services
 - **Observer Pattern**: Event-driven architecture
 - **Guard Pattern**: Route protection
+
+---
+
+## 🔄 Workflows & Process Flows
+
+### 1. Candidate Workflow
+
+<div align="center">
+
+![Candidate Flowchart](./candidateFlowChart.png)
+
+</div>
+
+### 2. Employer Workflow
+
+<div align="center">
+
+![Employer Flowchart](./employerFlowChart.png)
+
+</div>
+
+### 3. Admin Workflow
+
+<div align="center">
+
+![Admin Flowchart](./adminFlowChart.png)
+
+</div>
 
 ---
 
@@ -683,14 +712,6 @@ npm run test:coverage
 3. **Configure environment variables**
 4. **Set up CDN** (optional)
 
-### Docker Deployment (Optional)
-
-```dockerfile
-# Example Dockerfile structure
-FROM php:8.2-fpm
-# ... configuration
-```
-
 ---
 
 ## 🤝 Contributing
@@ -764,3 +785,4 @@ For support, email support@JobHub.com or open an issue in the repository.
 ⭐ Star this repo if you find it helpful!
 
 </div>
+
