@@ -30,7 +30,7 @@ class DashboardApplicationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = JobApplication::with(['candidate', 'jobPost.employer'])
+        $query = JobApplication::with(['candidate', 'jobPost.employer', 'jobPost.skills'])
             ->latest();
 
         $query->whereHas('jobPost', function ($q) use ($user) {
@@ -78,7 +78,7 @@ class DashboardApplicationController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $application->load(['candidate', 'jobPost']),
+            'data' => $application->load(['candidate', 'jobPost.skills']),
         ]);
     }
 
@@ -115,7 +115,7 @@ class DashboardApplicationController extends Controller
             ], 422);
         }
 
-        $application = $create->execute($validated)->load(['candidate', 'jobPost']);
+        $application = $create->execute($validated)->load(['candidate', 'jobPost.skills']);
 
         return response()->json([
             'status' => true,
@@ -154,7 +154,7 @@ class DashboardApplicationController extends Controller
             $form->rules()
         )->validate();
 
-        $updated = $update->execute($application, $validated)->load(['candidate', 'jobPost']);
+        $updated = $update->execute($application, $validated)->load(['candidate', 'jobPost.skills']);
 
         return response()->json([
             'status' => true,
@@ -187,7 +187,7 @@ class DashboardApplicationController extends Controller
     {
         $user = $request->user();
         $applications = JobApplication::onlyTrashed()
-            ->with(['candidate', 'jobPost'])
+            ->with(['candidate', 'jobPost.skills'])
             ->whereHas('jobPost', function ($q) use ($user) {
                 $q->where('employer_id', $user->id);
             })

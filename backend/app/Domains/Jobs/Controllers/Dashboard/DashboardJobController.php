@@ -36,7 +36,7 @@ class DashboardJobController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = JobPost::with(['category', 'employer', 'location.country', 'location.city'])
+        $query = JobPost::with(['category', 'employer', 'location.country', 'location.city', 'skills'])
             ->latest();
 
         if ($user->hasRole('employer') && !$user->hasRole('admin')) {
@@ -93,7 +93,7 @@ class DashboardJobController extends Controller
             $form->rules()
         )->validate();
 
-        $job = $create->execute($validated)->load(['category', 'employer', 'location.country', 'location.city']);
+        $job = $create->execute($validated)->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
 
         event(new JobCreated($job));
         $admins = User::role('admin')->get();
@@ -121,7 +121,7 @@ class DashboardJobController extends Controller
             $form->rules()
         )->validate();
 
-        $updated = $update->execute($job, $validated)->load(['category', 'employer', 'location.country', 'location.city']);
+        $updated = $update->execute($job, $validated)->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
 
         event(new JobCreated($updated));
         $admins = User::role('admin')->get();
@@ -153,7 +153,7 @@ class DashboardJobController extends Controller
     {
         $perPage = min(100, max(1, (int) $request->input('per_page', 10)));
         $jobs = JobPost::onlyTrashed()
-            ->with(['category', 'employer', 'location.country', 'location.city'])
+            ->with(['category', 'employer', 'location.country', 'location.city', 'skills'])
             ->latest()
             ->paginate($perPage);
 

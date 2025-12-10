@@ -35,6 +35,13 @@ class ApplicationResource extends JsonResource
                     'id' => $this->jobPost->category->id,
                     'name' => $this->jobPost->category->name,
                 ] : null,
+                'skills' => $this->jobPost->skills->map(function ($skill) {
+                    return [
+                        'id' => $skill->id,
+                        'name' => $skill->name,
+                        'slug' => $skill->slug,
+                    ];
+                }),
             ] : null,
             'cover_letter' => $this->cover_letter,
             'resume_url' => $this->resume_path ? Storage::url($this->resume_path) : null,

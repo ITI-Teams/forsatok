@@ -19,7 +19,8 @@ class JobController extends Controller
                 'employer:id,name,email',
                 'locationable.city:id,name,country_id',
                 'locationable.city.country:id,name,code',
-                'locationable.country:id,name,code'
+                'locationable.country:id,name,code',
+                'skills'
             ])
             ->where('is_active', true)
             ->latest();
@@ -124,6 +125,7 @@ class JobController extends Controller
             'locationable.city:id,name,country_id',
             'locationable.city.country:id,name,code',
             'locationable.country:id,name,code',
+            'skills'
         ])
             ->where('is_active', true)
             ->findOrFail($id);
