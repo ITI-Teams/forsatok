@@ -128,4 +128,6 @@ Route::prefix('auth')->group(function () {
     Route::get('/candidatelist', [CandidateInfoController::class, 'index']);
     Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
 });
+
+require __DIR__.'/dashboardApi.php';
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
