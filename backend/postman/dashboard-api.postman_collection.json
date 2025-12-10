@@ -2480,6 +2480,58 @@
       "name": "Applications",
       "item": [
         {
+          "name": "Filter Applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/applications/filter?status=pending&job_title=Developer",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "applications",
+                "filter"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Filter by status (pending, accepted, rejected)"
+                },
+                {
+                  "key": "accepted",
+                  "value": "1",
+                  "description": "Filter by accepted status (boolean)"
+                },
+                {
+                  "key": "job_title",
+                  "value": "Developer",
+                  "description": "Filter by job title"
+                },
+                 {
+                  "key": "job_id",
+                  "value": "1",
+                  "description": "Filter by job ID"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "description": "Filter applications by various criteria."
+        },
+        {
           "name": "List Applications",
           "request": {
             "method": "GET",

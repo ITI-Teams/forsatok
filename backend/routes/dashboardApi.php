@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Applications\Controllers\Dashboard\DashboardApplicationController;
+use App\Domains\Applications\Controllers\Dashboard\FilterController;
 use App\Domains\CompanyReviews\Controllers\Dashboard\DashboardCompanyReviewController;
 use App\Domains\Contact\Controllers\Dashboard\DashboardContactMessageController;
 use App\Domains\Employers\Controllers\Dashboard\EmployerProfileController;
@@ -199,6 +200,7 @@ Route::prefix('dashboard')
 
                 // Applications
                 Route::prefix('applications')->name('applications.')->group(function () {
+                    Route::get('/filter', FilterController::class)->name('filter');
                     Route::get('/', [DashboardApplicationController::class, 'index'])->name('index');
                     Route::post('/', [DashboardApplicationController::class, 'store'])->name('store');
                     Route::get('/trashed', [DashboardApplicationController::class, 'trashed'])->name('trashed');
