@@ -1,4 +1,4 @@
-# 🚀 Forsatok - Modern Job Board Platform
+# 🚀 JobHub - Modern Job Board Platform
 
 <div align="center">
 
@@ -39,7 +39,7 @@
 
 ## 🎯 Overview
 
-**Forsatok** is a modern, feature-rich job board platform designed to streamline the recruitment process. Built with cutting-edge technologies, it provides a seamless experience for employers to post jobs, candidates to discover opportunities, and administrators to manage the platform efficiently.
+**JobHub** is a modern, feature-rich job board platform designed to streamline the recruitment process. Built with cutting-edge technologies, it provides a seamless experience for employers to post jobs, candidates to discover opportunities, and administrators to manage the platform efficiently.
 
 ### Key Highlights
 
@@ -377,7 +377,7 @@ frontend/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd forsatok/backend
+   cd JobHub/backend
    ```
 
 2. **Install dependencies**
@@ -397,7 +397,7 @@ frontend/
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
-   DB_DATABASE=forsatok
+   DB_DATABASE=JobHub
    DB_USERNAME=root
    DB_PASSWORD=
    ```
@@ -470,7 +470,7 @@ npm start
 #### Backend (.env)
 
 ```env
-APP_NAME="forsatok"
+APP_NAME="JobHub"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
@@ -478,7 +478,7 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=forsatok
+DB_DATABASE=JobHub
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -774,7 +774,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-For support, email support@forsatok.com or open an issue in the repository.
+For support, email support@JobHub.com or open an issue in the repository.
 
 ---
 
