@@ -5,7 +5,7 @@ namespace App\Livewire\Jobs;
 use App\Domains\Users\Models\User;
 use App\Events\JobCreated;
 use App\Notifications\JobCreatedNotification;
-use App\Domains\Jobs\Actions\Job\{
+use App\Domains\Jobs\Actions\job\{
     CreateJobAction,
     UpdateJobAction
 };

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Jobs;
 
-use App\Domains\Jobs\Actions\Job\SoftDeleteJobAction;
+use App\Domains\Jobs\Actions\job\SoftDeleteJobAction;
 use App\Domains\Jobs\Models\JobPost;
 use App\Events\JobApproved;
 use App\Events\JobRejected;

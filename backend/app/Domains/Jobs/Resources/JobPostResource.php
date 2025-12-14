@@ -50,6 +50,13 @@ class JobPostResource extends JsonResource
                 'id' => $this->category->id,
                 'name' => $this->category->name,
             ] : null,
+            'skills' => $this->skills->map(function ($skill) {
+                return [
+                    'id' => $skill->id,
+                    'name' => $skill->name,
+                    'slug' => $skill->slug,
+                ];
+            }),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
             'human_readable_posted_date' => $this->created_at->diffForHumans(),
