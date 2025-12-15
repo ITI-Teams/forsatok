@@ -30,7 +30,7 @@ class DashboardApplicationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = JobApplication::with(['candidate', 'jobPost.employer', 'jobPost.skills'])
+        $query = JobApplication::with(['candidate.candidateInfo', 'jobPost.employer', 'jobPost.skills'])
             ->latest();
 
         $query->whereHas('jobPost', function ($q) use ($user) {
@@ -78,7 +78,7 @@ class DashboardApplicationController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $application->load(['candidate', 'jobPost.skills']),
+            'data' => $application->load(['candidate.candidateInfo', 'jobPost.skills']),
         ]);
     }
 

@@ -21,12 +21,14 @@ class JobApplicationStatusChanged extends Notification
 
     public function toDatabase($notifiable)
     {
+        $companyName = $this->application->jobPost->employer->employerInfo->company_name ?? 'the company';
         return [
             'title' => 'Application Status Updated',
-            'message' => "Your application for '{$this->application->jobPost->title}' is now '{$this->application->status}'.",
+            'message' => "Your application for '{$this->application->jobPost->title}' is now '{$this->application->status}' by '{$companyName}'.",
         ];
     }
 
+    // {$this->application->employer_info->name}
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
