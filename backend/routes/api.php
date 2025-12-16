@@ -5,14 +5,15 @@ use App\Domains\Jobs\Controllers\Api\JobController;
 use App\Domains\Jobs\Controllers\Api\SaveJobController;
 use App\Domains\Jobs\Controllers\Api\SkillController;
 use App\Domains\Notification\Controllers\Api\NotificationController;
-use App\Domains\Users\Controllers\api\CandidateAuthController;
-use App\Domains\Candidates\controllers\Api\CandidateInfoController;
-use App\Domains\Employers\controllers\Api\EmployerController;
+use App\Domains\Users\Controllers\Api\CandidateAuthController;
+use App\Domains\Candidates\Controllers\Api\CandidateInfoController;
+use App\Domains\Employers\Controllers\Api\EmployerController;
+use App\Domains\Shared\Services\StreamService\StreamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Domains\CompanyReviews\Controllers\Api\CompanyReviewsController;
-use App\Domains\Contact\controllers\Api\ContactMessageController;
+use App\Domains\Contact\Controllers\Api\ContactMessageController;
 use App\Domains\Jobs\Controllers\Api\CategoryController;
 use App\Domains\Jobs\Controllers\Api\JobFilterController;
 use App\Domains\Location\Controllers\Api\LocationController;
@@ -129,5 +130,16 @@ Route::prefix('auth')->group(function () {
     Route::get('/candidatelist/{id}', [CandidateInfoController::class, 'show']);
 });
 
-require __DIR__.'/dashboardApi.php';
+Route::middleware('auth:sanctum')->get('/stream/token', function (Request $request, StreamService $stream) {
+    return [
+        'token' => $stream->generateToken((string) $request->user()->id),
+        'user' => [
+            'id' => (string) $request->user()->id,
+            'name' => $request->user()->name,
+        ],
+    ];
+});
+
+// Link routes from dashboardApi.php file
+require __DIR__ . '/dashboardApi.php';
 Broadcast::routes(['middleware' => ['auth:sanctum']]);

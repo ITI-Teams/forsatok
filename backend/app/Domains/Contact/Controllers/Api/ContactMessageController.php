@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Contact\controllers\Api;
+namespace App\Domains\Contact\Controllers\Api;
 
 use App\Domains\Shared\Services\Audit\AuditLogger;
 use App\Http\Controllers\Controller;

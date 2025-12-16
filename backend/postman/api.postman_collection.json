@@ -1351,6 +1351,39 @@
       ]
     },
     {
+      "name": "Stream",
+      "item": [
+        {
+          "name": "Get Stream Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/stream/token",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "stream",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Misc",
       "item": [
         {

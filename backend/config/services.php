@@ -34,11 +34,16 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    
+
     'linkedin' => [
         'client_id' => env('LINKEDIN_CLIENT_ID'),
         'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
         'redirect' => env('LINKEDIN_REDIRECT_URI'),
+    ],
+
+    'stream' => [
+        'key' => env('STREAM_API_KEY'),
+        'secret' => env('STREAM_API_SECRET'),
     ],
 
 ];
