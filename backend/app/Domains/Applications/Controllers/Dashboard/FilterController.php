@@ -13,7 +13,7 @@ class FilterController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = JobApplication::with(['candidate', 'jobPost.employer', 'jobPost.skills', 'jobPost.category'])
+        $query = JobApplication::with(['candidate.candidateInfo', 'jobPost.employer', 'jobPost.skills', 'jobPost.category'])
             ->latest();
 
         // Ensure employer only sees applications for their jobs

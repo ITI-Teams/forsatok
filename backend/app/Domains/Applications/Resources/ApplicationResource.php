@@ -15,6 +15,7 @@ class ApplicationResource extends JsonResource
                 'id' => $this->candidate->id,
                 'name' => $this->candidate->name,
                 'email' => $this->candidate->email,
+                'phone' => $this->candidate->candidateInfo->phone ?? null
             ] : null,
             'job_post' => $this->jobPost ? [
                 'id' => $this->jobPost->id,
