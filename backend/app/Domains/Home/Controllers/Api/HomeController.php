@@ -14,10 +14,18 @@ class HomeController extends Controller
     {
 
         $jobs = JobPost::select([
-                'id', 'title', 'experience', 'description',
-                'salary_min', 'salary_max', 'work_type', 'deadline', 'is_active'
-            ])
+            'id',
+            'title',
+            'experience',
+            'description',
+            'salary_min',
+            'salary_max',
+            'work_type',
+            'deadline',
+            'is_active'
+        ])
             ->where('is_active', true)
+            ->where('deadline', '>=', now())
             ->latest()
             ->take(5)
             ->get();
@@ -40,7 +48,7 @@ class HomeController extends Controller
             });
 
 
-        $candidates = CandidateInfo::with(['user:id,name,avatar','location.city:id,name', 'location.country:id,name'])
+        $candidates = CandidateInfo::with(['user:id,name,avatar', 'location.city:id,name', 'location.country:id,name'])
             ->latest()
             ->take(32)
             ->get([

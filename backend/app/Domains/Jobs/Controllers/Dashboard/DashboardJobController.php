@@ -93,7 +93,8 @@ class DashboardJobController extends Controller
             $form->rules()
         )->validate();
 
-        $job = $create->execute($validated)->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
+        $job = $create->execute($validated);
+        $job->refresh()->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
 
         event(new JobCreated($job));
         $admins = User::role('admin')->get();
@@ -121,7 +122,8 @@ class DashboardJobController extends Controller
             $form->rules()
         )->validate();
 
-        $updated = $update->execute($job, $validated)->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
+        $updated = $update->execute($job, $validated);
+        $updated->refresh()->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
 
         event(new JobCreated($updated));
         $admins = User::role('admin')->get();

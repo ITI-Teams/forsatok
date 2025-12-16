@@ -54,6 +54,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'jobhub_url'=> env('JOBHUB_URL', 'http://localhost:4200'),
+    
+    'hive_url' => env('HIVE_URL', 'http://localhost:5173'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

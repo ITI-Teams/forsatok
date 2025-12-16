@@ -39,6 +39,8 @@ class StoreJobRequest extends FormRequest
             'work_place' => 'required|in:hybrid,remote,on-site',
             'category_id' => 'nullable|exists:categories,id',
             'is_active' => 'boolean',
+            'skills' => 'nullable|array',
+            'skills.*' => 'exists:skills,id',
         ];
     }
 }

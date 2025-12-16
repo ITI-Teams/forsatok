@@ -15,7 +15,7 @@ class UpdateJobRequest extends FormRequest
         // only the creator of the job can update the job
         $job = $this->route('job'); // assuming route-model binding
 
-        return Auth::check() && Auth::id() === $job->employer_id;;
+        return Auth::check() && Auth::id() === $job->employer_id;
     }
 
     /**
@@ -42,6 +42,8 @@ class UpdateJobRequest extends FormRequest
             'work_place' => 'required|in:hybrid,remote,on-site',
             'category_id' => 'nullable|exists:categories,id',
             'is_active' => 'boolean',
+            'skills' => 'nullable|array',
+            'skills.*' => 'exists:skills,id',
         ];
     }
 }
