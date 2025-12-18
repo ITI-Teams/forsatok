@@ -54,10 +54,10 @@ class JobForm extends Component
     //             $this->country = $model->location->country_id;
     //             $this->city = $model->location->city_id;
     //             $this->address = $model->location->address;
-	// 			// Preload cities when editing existing job
-	// 			$this->cities = $this->country
-	// 				? City::where('country_id', (int) $this->country)->select('id', 'name')->orderBy('name')->get()->toArray()
-	// 				: [];
+    // 			// Preload cities when editing existing job
+    // 			$this->cities = $this->country
+    // 				? City::where('country_id', (int) $this->country)->select('id', 'name')->orderBy('name')->get()->toArray()
+    // 				: [];
     //         }
     //     }
     // }
@@ -133,22 +133,23 @@ class JobForm extends Component
     protected function getJobData(): array
     {
         return [
-            'title'           => $this->title,
-            'experience'      => $this->experience,
-            'description'     => $this->description,
-            'salary_min'      => $this->salary_min,
-            'salary_max'      => $this->salary_max,
-            'work_type'       => $this->work_type,
-            'work_place'      => $this->work_place,
-            'deadline'        => $this->deadline,
-            'category_id'     => $this->category_id,
-            'is_active'       => $this->is_active,
-            'responsibilities'=> $this->responsibilities,
-            'qualification'   => $this->qualifications,
-            'benefits'        => $this->benefits,
-            'country_id'      => $this->country,
-            'city_id'         => $this->city,
-            'address'         => $this->address,
+            'title' => $this->title,
+            'experience' => $this->experience,
+            'description' => $this->description,
+            'salary_min' => $this->salary_min,
+            'salary_max' => $this->salary_max,
+            'work_type' => $this->work_type,
+            'work_place' => $this->work_place,
+            'deadline' => $this->deadline,
+            'category_id' => $this->category_id,
+            // Rule: Job cannot be active if not approved
+            'is_active' => ($this->jobId && JobPost::find($this->jobId)->status === JobPost::STATUS_APPROVED) ? $this->is_active : false,
+            'responsibilities' => $this->responsibilities,
+            'qualification' => $this->qualifications,
+            'benefits' => $this->benefits,
+            'country_id' => $this->country,
+            'city_id' => $this->city,
+            'address' => $this->address,
         ];
     }
 
@@ -157,32 +158,32 @@ class JobForm extends Component
         return $this->redirectRoute('jobs.index', navigate: true);
     }
 
-	// When country changes, reset the cities and reload them
-	public function updatedCountry($value)
-	{
-		$this->city = null;
-		$countryId = (int) $value;
-		$this->cities = $countryId
-			? City::where('country_id', $countryId)->select('id', 'name')->orderBy('name')->get()->toArray()
-			: [];
-	}
+    // When country changes, reset the cities and reload them
+    public function updatedCountry($value)
+    {
+        $this->city = null;
+        $countryId = (int) $value;
+        $this->cities = $countryId
+            ? City::where('country_id', $countryId)->select('id', 'name')->orderBy('name')->get()->toArray()
+            : [];
+    }
 
 
-	//handler for country change from the select element.
-	public function onCountryChange($value)
-	{
-		$this->country = (int) $value;
-		$this->updatedCountry($this->country);
-	}
+    //handler for country change from the select element.
+    public function onCountryChange($value)
+    {
+        $this->country = (int) $value;
+        $this->updatedCountry($this->country);
+    }
 
     public function render()
     {
-		// Load countries for the country dropdown
-		$this->countries = Country::select('id', 'name')->orderBy('name')->get()->toArray();
-		// If country is selected, load cities dynamically
-		$this->cities = $this->country
-			? City::where('country_id', (int) $this->country)->select('id', 'name')->orderBy('name')->get()->toArray()
-			: [];
-		return view('livewire.jobs.job-form')->layout('layouts.app');
+        // Load countries for the country dropdown
+        $this->countries = Country::select('id', 'name')->orderBy('name')->get()->toArray();
+        // If country is selected, load cities dynamically
+        $this->cities = $this->country
+            ? City::where('country_id', (int) $this->country)->select('id', 'name')->orderBy('name')->get()->toArray()
+            : [];
+        return view('livewire.jobs.job-form')->layout('layouts.app');
     }
 }

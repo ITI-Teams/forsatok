@@ -22,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
+use App\Domains\Shared\Services\FrontendDetection\FrontendUrlService;
 
 /**
  * Dashboard Job Controller
@@ -195,14 +196,25 @@ class DashboardJobController extends Controller
     /**
      * Approve a job.
      */
-    public function approve(JobPost $job): JsonResponse
+    public function approve(JobPost $job, FrontendUrlService $urlService): JsonResponse
     {
-        $job->update(['is_active' => 1]);
+        $oldStatus = $job->status;
+
+        $job->update([
+            'status' => JobPost::STATUS_APPROVED
+        ]);
+
+        $job->decisions()->create([
+            'admin_id' => auth()->id(),
+            'from_status' => $oldStatus,
+            'to_status' => JobPost::STATUS_APPROVED,
+            'reason' => 'Approved by admin via API',
+        ]);
 
         event(new JobApproved($job));
         $employer = $job->employer;
         if ($employer) {
-            $employer->notify(new JobApprovedNotification($job));
+            $employer->notify(new JobApprovedNotification($job, auth()->user(), $urlService->getSource()));
         }
 
         return response()->json([
@@ -214,19 +226,61 @@ class DashboardJobController extends Controller
     /**
      * Reject a job.
      */
-    public function reject(JobPost $job): JsonResponse
+    public function reject(Request $request, JobPost $job, FrontendUrlService $urlService): JsonResponse
     {
-        $job->update(['is_active' => 0]);
+        $validated = $request->validate([
+            'reason' => 'required|string|min:5'
+        ]);
+
+        $oldStatus = $job->status;
+
+        $job->update([
+            'status' => JobPost::STATUS_REJECTED
+        ]);
+
+        $job->decisions()->create([
+            'admin_id' => auth()->id(),
+            'from_status' => $oldStatus,
+            'to_status' => JobPost::STATUS_REJECTED,
+            'reason' => $validated['reason'],
+        ]);
 
         event(new JobRejected($job));
         $employer = $job->employer;
         if ($employer) {
-            $employer->notify(new JobRejectedNotification($job));
+            $employer->notify(new JobRejectedNotification($job, auth()->user(), $urlService->getSource()));
         }
 
         return response()->json([
             'status' => true,
             'message' => 'Job rejected successfully.',
+        ]);
+    }
+
+    /**
+     * Re-submit a job for approval (Employer only).
+     */
+    public function resubmit(JobPost $job): JsonResponse
+    {
+        if (auth()->id() !== $job->employer_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!in_array($job->status, [JobPost::STATUS_REJECTED, JobPost::STATUS_EXPIRED])) {
+            return response()->json(['message' => 'Job cannot be re-submitted'], 400);
+        }
+
+        $job->update([
+            'status' => JobPost::STATUS_PENDING,
+            'is_active' => true
+        ]);
+
+        $admins = User::role('admin')->get();
+        Notification::send($admins, new JobCreatedNotification($job));
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Job re-submitted for approval.',
         ]);
     }
 

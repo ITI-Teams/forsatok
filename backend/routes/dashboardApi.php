@@ -180,6 +180,7 @@ Route::prefix('dashboard')
                         Route::delete('/{id}/force', [DashboardJobController::class, 'forceDelete'])->name('force-delete');
                         Route::post('/{job}/approve', [DashboardJobController::class, 'approve'])->name('approve');
                         Route::post('/{job}/reject', [DashboardJobController::class, 'reject'])->name('reject');
+                        Route::post('/{job}/resubmit', [DashboardJobController::class, 'resubmit'])->name('resubmit');
                     });
 
                     // Jobs with view permission

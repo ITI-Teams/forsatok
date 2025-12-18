@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -10,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Domains\Shared\Services\FrontendDetection\FrontendUrlService;
 
-class JobApprovedNotification extends Notification
+class JobExpiredNotification extends Notification
 {
     use Queueable;
 
@@ -25,19 +24,20 @@ class JobApprovedNotification extends Notification
 
     public function toMail($notifiable)
     {
+        // For expiration, actor is usually System, but we support passing it.
         $actorName = $this->actor ? $this->actor->name : 'System';
 
         // Generate dynamic link based on source
         $urlService = app(FrontendUrlService::class);
         $urlService->setSource($this->source);
-        // Assuming the frontend routes follow a pattern like /jobs/{id}
         $jobUrl = $urlService->makeUrl("jobs/{$this->job->id}");
 
         return (new MailMessage)
-            ->subject('Your Job Has Been Approved')
+            ->subject('Your Job Has Expired')
             ->greeting('Hello ' . $notifiable->name . ',')
-            ->line("Your job posting '{$this->job->title}' has been approved by {$actorName}.")
-            ->line('It is now live on our platform.')
+            ->line("Your job posting '{$this->job->title}' has expired.")
+            ->line('The deadline for this job has passed.')
+            ->line('It is no longer active on our platform.')
             ->action('View Job', $jobUrl)
             ->line('Thank you for using our application!');
     }
@@ -45,8 +45,9 @@ class JobApprovedNotification extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'title' => 'Job Approved',
-            'message' => "Your job '{$this->job->title}' has been approved by " . ($this->actor ? $this->actor->name : 'System'),
+            'id' => $this->job->id,
+            'title' => 'Job Expired',
+            'message' => "Your job '{$this->job->title}' has expired.",
         ];
     }
 

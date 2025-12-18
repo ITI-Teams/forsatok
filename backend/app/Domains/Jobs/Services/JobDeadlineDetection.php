@@ -3,6 +3,7 @@
 namespace App\Domains\Jobs\Services;
 
 use App\Domains\Jobs\Models\JobPost;
+use App\Notifications\JobExpiredNotification;
 use Carbon\Carbon;
 
 class JobDeadlineDetection
@@ -23,8 +24,17 @@ class JobDeadlineDetection
 
         if ($deadline->isPast()) {
             // If the job is expired but still marked as active, deactivate it
-            if ($job->is_active) {
-                $job->update(['is_active' => false]);
+            if ($job->is_active || $job->status !== JobPost::STATUS_EXPIRED) {
+                $job->update([
+                    'is_active' => false,
+                    'status' => JobPost::STATUS_EXPIRED
+                ]);
+
+                // Notify employer about expiration
+                $employer = $job->employer;
+                if ($employer) {
+                    $employer->notify(new JobExpiredNotification($job, null)); // Actor is System (null)
+                }
             }
             return true;
         }

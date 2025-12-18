@@ -2365,6 +2365,46 @@
                 "{{job_id}}",
                 "reject"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Incomplete description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "description": ""
+        },
+        {
+          "name": "Resubmit Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/jobs/{{job_id}}/resubmit",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "jobs",
+                "{{job_id}}",
+                "resubmit"
+              ]
             }
           },
           "response": [],

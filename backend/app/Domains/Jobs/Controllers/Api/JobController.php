@@ -22,8 +22,7 @@ class JobController extends Controller
                 'locationable.country:id,name,code',
                 'skills'
             ])
-            ->where('is_active', true)
-            ->where('deadline', '>=', now())
+            ->availableJobs()
             ->latest();
 
         // Filter by employer_id if provided
@@ -128,8 +127,7 @@ class JobController extends Controller
             'locationable.country:id,name,code',
             'skills'
         ])
-            ->where('is_active', true)
-            ->whereDate('deadline', '>=', now())
+            ->availableJobs()
             ->findOrFail($id);
 
         return response()->json([

@@ -67,13 +67,43 @@ class JobPostSeeder extends Seeder
                 'salary_min' => $salaryMin,
                 'salary_max' => $salaryMax,
                 'deadline' => now()->addDays(rand(10, 90)),
-                'is_active' => rand(0, 100) > 10,
+                // 80% approved, 10% pending, 5% rejected, 5% expired
+                'status' => $faker->randomElement([
+                    JobPost::STATUS_APPROVED, JobPost::STATUS_APPROVED, JobPost::STATUS_APPROVED, JobPost::STATUS_APPROVED, // 80%
+                    JobPost::STATUS_PENDING,
+                    JobPost::STATUS_REJECTED,
+                ]),
+                // is_active must be false if not approved. If approved, 90% chance of being active
+                'is_active' => false,
                 'responsibilities' => $this->multi($faker->sentences(rand(4, 7))),
                 'qualification' => $this->multi($faker->sentences(rand(4, 7))),
                 'benefits' => $this->multi($faker->sentences(rand(3, 5))),
                 'work_type' => $faker->randomElement($workTypes),
                 'work_place' => $faker->randomElement($workPlaces),
             ]);
+
+            // Correct boolean logic for active state
+            if ($job->status === JobPost::STATUS_APPROVED) {
+                $job->update(['is_active' => rand(0, 100) > 10]); // 90% active if approved
+                
+                // Create approval decision
+                $job->decisions()->create([
+                    'admin_id' => User::role('admin')->inRandomOrder()->first()->id ?? 1,
+                    'from_status' => JobPost::STATUS_PENDING,
+                    'to_status' => JobPost::STATUS_APPROVED,
+                    'reason' => 'Auto-approved by seeder',
+                    'created_at' => now()->subDays(rand(1, 30))
+                ]);
+            } elseif ($job->status === JobPost::STATUS_REJECTED) {
+                // Create rejection decision
+                $job->decisions()->create([
+                    'admin_id' => User::role('admin')->inRandomOrder()->first()->id ?? 1,
+                    'from_status' => JobPost::STATUS_PENDING,
+                    'to_status' => JobPost::STATUS_REJECTED,
+                    'reason' => $faker->sentence(10), // Random reason
+                    'created_at' => now()->subDays(rand(1, 10))
+                ]);
+            }
 
             $job->locationable()->updateOrCreate([], [
                 'country_id' => $city->country_id,
