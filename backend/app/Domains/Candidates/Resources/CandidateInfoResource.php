@@ -19,7 +19,7 @@ class CandidateInfoResource extends JsonResource
             'bio' => $this->bio,
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth,
-            'resume_url' => $this->resume ? Storage::url($this->resume) : null,
+            'resume_url' => $this->resume ? Storage::disk('public')->url($this->resume) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'category_id' => $this->category_id,
@@ -27,7 +27,7 @@ class CandidateInfoResource extends JsonResource
                 'id' => $this->user->id ?? null,
                 'name' => $this->user->name ?? null,
                 'email' => $this->user->email ?? null,
-                'avatar' => $this->user->avatar ?? null,
+                'avatar' => $this->user->avatar ? Storage::disk('public')->url($this->user->avatar) : null,
             ],
             'skills' => $this->whenLoaded('skills', function () {
                 return $this->skills->pluck('id')->toArray();
