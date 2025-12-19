@@ -2,6 +2,7 @@
 
 use App\Domains\Applications\Controllers\Dashboard\DashboardApplicationController;
 use App\Domains\Applications\Controllers\Dashboard\FilterController;
+use App\Domains\Candidates\Controllers\Api\CandidateSkillSearchController;
 use App\Domains\CompanyReviews\Controllers\Dashboard\DashboardCompanyReviewController;
 use App\Domains\Contact\Controllers\Dashboard\DashboardContactMessageController;
 use App\Domains\Employers\Controllers\Dashboard\EmployerProfileController;
@@ -14,6 +15,7 @@ use App\Domains\Location\Controllers\Dashboard\DashboardCountryController;
 use App\Domains\Notification\Controllers\Api\NotificationController;
 use App\Domains\Shared\Controllers\Dashboard\AuditLogController;
 use App\Domains\Shared\Controllers\Dashboard\RolePermissionController;
+use App\Domains\Users\Controllers\api\GoogleController;
 use App\Domains\Users\Controllers\Dashboard\AdminStatsController;
 use App\Domains\Users\Controllers\Dashboard\DashboardAuthController;
 use App\Domains\Users\Controllers\Dashboard\DashboardPermissionController;
@@ -241,5 +243,21 @@ Route::prefix('dashboard')
             Route::prefix('contact-messages')->middleware('role:admin|employer')->group(function () {
                 Route::get('/', [DashboardContactMessageController::class, 'sharedIndex'])->name('shared.contact.index');
             });
+
+            // ───────────────────────────────────────────────────────────────
+            // Google auth
+            // ───────────────────────────────────────────────────────────────
+            Route::get('/auth/google', [GoogleController::class, 'redirect']);
+            Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+        });
+
+
+        // Candidates skills search
+        Route::prefix('candidates')->group(function () {
+
+            //Search candidates by skills with OR logic and relevance scoring
+            Route::post('/search-by-skills', [CandidateSkillSearchController::class, 'searchBySkills']);
+            //Get statistics about skill matches
+            Route::post('/skill-match-stats', [CandidateSkillSearchController::class, 'getSkillMatchStats']);
         });
     });

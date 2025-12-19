@@ -31,6 +31,7 @@ class User extends Authenticatable
         'type',
         'password',
         'linkedin_id',
+        'google_id',
         'avatar',
         'email_verified_at'
     ];
