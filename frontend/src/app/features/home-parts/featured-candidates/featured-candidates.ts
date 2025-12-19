@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink,Router } from '@angular/router';
-import {HomeService} from '../../../core/services/home.service';
-import {ToastService} from '../../../core/services/toast.service';
-import {environment} from '../../../environments/environment';
+import { RouterLink, Router } from '@angular/router';
+import { HomeService } from '../../../core/services/home.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-featured-candidates',
@@ -13,7 +13,7 @@ import {environment} from '../../../environments/environment';
   styleUrls: ['./featured-candidates.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class FeaturedCandidates implements OnInit{
+export class FeaturedCandidates implements OnInit {
   @Input() candidates: Array<{
     id?: number;
     user_id?: number;
@@ -41,7 +41,7 @@ export class FeaturedCandidates implements OnInit{
     private router: Router,
     private homeService: HomeService,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit() {
     import('swiper/element/bundle').then(({ register }) => register());
@@ -79,15 +79,7 @@ export class FeaturedCandidates implements OnInit{
   }
 
   getCandidateImage(candidate: any): string {
-    if (!candidate.user?.avatar) {
-      return '/images/avatars/avatar.svg';
-    }
-
-    if (candidate.user.avatar.startsWith('http')) {
-      return candidate.user.avatar;
-    }
-
-    return `${environment.imageUrl}/storage/${candidate.user?.avatar}`;
+    return candidate.user?.avatar || '/images/avatars/avatar.svg';
   }
 
 }

@@ -85,11 +85,14 @@ class DashboardAuthController extends Controller
 
         $token = $user->createToken('dashboard-' . $user->type . '-token')->plainTextToken;
 
+        $userData = $user->only(['id', 'name', 'email', 'type']);
+        $userData['avatar'] = $user->avatar ? \Illuminate\Support\Facades\Storage::disk('public')->url($user->avatar) : null;
+
         return response()->json([
             'status' => true,
             'message' => 'Login successful.',
             'data' => [
-                'user' => $user->only(['id', 'name', 'email', 'type', 'avatar']),
+                'user' => $userData,
                 'token' => $token,
             ],
         ]);

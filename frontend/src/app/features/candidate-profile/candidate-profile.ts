@@ -159,9 +159,7 @@ export class CandidateProfile implements OnInit {
 
   downloadCV() {
     if (this.candidate.resume) {
-      // Assuming resume is stored in Laravel public storage
-      const resumeUrl = `${environment.imageUrl}/storage/${this.candidate.resume}`;
-      window.open(resumeUrl, '_blank');
+      window.open(this.candidate.resume, '_blank');
     } else {
       alert('No resume available for this candidate.');
     }

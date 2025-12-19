@@ -5,3 +5,11 @@ export const environment = {
   pusherKey: '1d3964aed5b0925ac685',
   pusherCluster: 'eu',
 };
+
+// export const environment = {
+//   production: false,
+//   apiUrl: 'https://dashboard.alsabaa.org/api',
+//   imageUrl: 'https://dashboard.alsabaa.org',
+//   pusherKey: '1d3964aed5b0925ac685',
+//   pusherCluster: 'eu',
+// };

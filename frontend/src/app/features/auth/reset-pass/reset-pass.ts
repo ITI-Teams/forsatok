@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-reset-pass',
@@ -18,7 +19,11 @@ export class ResetPass {
   showConfirmPassword: boolean = false;
   passwordMismatch: boolean = false;
   passwordStrength: 'weak' | 'medium' | 'strong' | '' = '';
+  loading: boolean = false;
   
+  token: string = '';
+  email: string = '';
+
   passwordRequirements = {
     minLength: false,
     uppercase: false,
@@ -26,7 +31,16 @@ export class ResetPass {
     number: false
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {
+    this.route.queryParams.subscribe(params => {
+      this.token = params['token'] || '';
+      this.email = params['email'] || '';
+    });
+  }
 
   toggleNewPassword() {
     this.showNewPassword = !this.showNewPassword;
@@ -72,24 +86,35 @@ export class ResetPass {
     const allRequirementsMet = Object.values(this.passwordRequirements).every(req => req);
     const passwordsMatch = this.newPassword === this.confirmPassword && this.confirmPassword.length > 0;
     
-    return allRequirementsMet && passwordsMatch;
+    return allRequirementsMet && passwordsMatch && !!this.token && !!this.email;
   }
 
   onSubmit() {
     if (!this.isFormValid()) {
-      alert('Please ensure all password requirements are met and passwords match');
+      if (!this.token || !this.email) {
+        alert('Invalid reset link. Please request a new one.');
+      } else {
+        alert('Please ensure all password requirements are met and passwords match');
+      }
       return;
     }
 
-    console.log('Resetting password...');
-    
-    // Handle password reset logic here
-    // Example: this.authService.resetPassword(this.newPassword).subscribe(...)
-    
-    // After successful reset, navigate to login page
-    // this.router.navigate(['/login']);
-    
-    alert('Password reset successfully! Please login with your new password.');
-    this.router.navigate(['/login']);
+    this.loading = true;
+    this.authService.resetPassword({
+      token: this.token,
+      email: this.email,
+      password: this.newPassword,
+      password_confirmation: this.confirmPassword
+    }).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        alert('Password reset successfully! Please login with your new password.');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.loading = false;
+        alert(this.authService.getErrorMessage(err));
+      }
+    });
   }
 }

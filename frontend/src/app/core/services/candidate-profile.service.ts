@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import {environment} from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 export interface Candidate {
   id: number;
@@ -82,7 +82,7 @@ export class CandidateProfileService {
   constructor(
     private http: HttpClient,
     private authService: AuthService
-  ) {}
+  ) { }
 
   private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();
@@ -93,7 +93,7 @@ export class CandidateProfileService {
   }
 
   // Get single candidate by ID
-   getCandidate(id: number): Observable<Candidate> {
+  getCandidate(id: number): Observable<Candidate> {
     return this.http.get<any>(`${this.apiUrl}/auth/candidatelist/${id}`, {
       headers: this.getHeaders()
     }).pipe(
@@ -102,17 +102,8 @@ export class CandidateProfileService {
           const data = response.data;
 
 
-             // Handle image URL
-        let imageUrl = 'https://i.pravatar.cc/300'; // default
-        if (data.user?.avatar) {
-          // If avatar is a full URL
-          if (data.user.avatar.startsWith('http')) {
-            imageUrl = data.user.avatar;
-          } else {
-            // If avatar is a relative path, prepend your storage URL
-            imageUrl = `${environment.imageUrl}/storage/${data.user.avatar}`;
-          }
-        }
+          // Handle image URL
+          const imageUrl = data.user?.avatar || 'https://i.pravatar.cc/300';
 
           // Transform API data to match frontend interface
           return {
@@ -123,13 +114,13 @@ export class CandidateProfileService {
             phone: data.phone || '',
             title: data.job_title || 'Candidate',
             location: data.location || null,
-            image:imageUrl,
+            image: imageUrl,
             salary: 'Negotiable',
             experience: data.experience || 'Not specified',
             languages: [],
             description: data.bio || '',
             bio: data.bio || '',
-            resume: data.resume,
+            resume: data.resume_url,
             education: this.parseEducation(data.education),
             workExperience: this.parseExperience(data.experience),
             skills: data.skills_details || [],
@@ -141,7 +132,7 @@ export class CandidateProfileService {
     );
   }
 
-   // Get candidate's skills
+  // Get candidate's skills
   getCandidateSkills(candidateId: number): Observable<Skill[]> {
     return this.http.get<any>(`${this.apiUrl}/auth/candidatelist/${candidateId}`, {
       headers: this.getHeaders()

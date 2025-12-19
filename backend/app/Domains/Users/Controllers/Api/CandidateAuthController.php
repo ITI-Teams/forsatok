@@ -79,7 +79,7 @@ class CandidateAuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'type' => $user->type,
-                'avatar' => $user->avatar,
+                'avatar' => $user->avatar ? \Illuminate\Support\Facades\Storage::disk('public')->url($user->avatar) : null,
             ],
             'token' => $token,
         ], 200);

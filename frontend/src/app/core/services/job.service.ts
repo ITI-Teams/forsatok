@@ -48,8 +48,21 @@ export interface Job {
     name: string;
     email: string;
   };
+  skills?: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
   created_at?: string;
   updated_at?: string;
+}
+
+export interface JobFilterOptions {
+  types: { value: string; name: string; count: number }[];
+  experience_levels: { value: string; name: string; count: number }[];
+  work_places: { value: string; name: string; count: number }[];
+  skills: { id: number; name: string; slug: string; jobs_count: number }[];
+  salary_range: { min: number; max: number };
 }
 
 export interface JobFilters {
@@ -178,6 +191,13 @@ export class JobService {
    */
   getSavedJobs(): Observable<{ data: SavedJob[] }> {
     return this.http.get<{ data: SavedJob[] }>(`${this.apiUrl}/saved`);
+  }
+
+  /**
+   * Get all available filter options for jobs
+   */
+  getFilterOptions(): Observable<{ status: boolean; data: JobFilterOptions }> {
+    return this.http.get<{ status: boolean; data: JobFilterOptions }>(`${this.apiUrl}/filters/options`);
   }
 
   /**
