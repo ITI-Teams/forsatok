@@ -15,20 +15,29 @@ class DetectFrontendSource
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
 
-    public function __construct(protected FrontendUrlService $urlService) {}
+    public function __construct(protected FrontendUrlService $urlService)
+    {
+    }
     public function handle(Request $request, Closure $next): Response
     {
         // 1. Check for new dashboard routes (React Dashboard)
         if ($request->is('api/dashboard/*') || $request->is('dashboard/*')) {
             $this->urlService->setSource('react_dashboard');
         }
-        // 2. Check header (for candidates shared between React and Angular)
-        elseif ($request->header('App-Source')) {
-            $this->urlService->setSource($request->header('App-Source'));
-        }
-        // 3. Other API routes (can be considered React by default or left as is)
+        // 2. Check for API routes
         elseif ($request->is('api/*')) {
-            // $this->urlService->setSource('react');
+            $sourceHeader = strtolower($request->header('App-Source'));
+
+            if ($sourceHeader === 'hive') {
+                $this->urlService->setSource('hive');
+            } else {
+                // jobhub or empty
+                $this->urlService->setSource('jobhub');
+            }
+        }
+        // 3. Default to Web/Livewire
+        else {
+            $this->urlService->setSource('web');
         }
 
         return $next($request);

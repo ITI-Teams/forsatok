@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notification;
 
 use App\Domains\Shared\Services\FrontendDetection\FrontendUrlService;
 
-class JobApplicationStatusChanged extends Notification
+class JobApplicationStatusChanged extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -29,18 +29,23 @@ class JobApplicationStatusChanged extends Notification
         // Generate dynamic link based on source
         $urlService = app(FrontendUrlService::class);
         $urlService->setSource($this->source);
-        // Assuming the candidate application list route is 'candidate/applications' or similar
-        // Adjust path based on your actual frontend routing for candidate applications
         $applicationUrl = $urlService->makeUrl('dashboard/candidate/applications');
+
+        $view = in_array($this->source, ['hive', 'react_dashboard']) ? 'emails.generic_hive' : 'emails.generic_jobhub';
 
         return (new MailMessage)
                     ->subject('Application Status Updated')
-                    ->greeting('Hello ' . $notifiable->name . ',')
-                    ->line("Your application for the position '{$this->application->jobPost->title}' has been updated.")
-                    ->line("New Status: {$status}")
-                    ->line("Action taken by: {$companyName}")
-                    ->action('View Application', $applicationUrl)
-                    ->line('Thank you for using our platform!');
+                    ->view($view, [
+                        'title' => 'Application Status Updated',
+                        'greeting' => 'Hello ' . $notifiable->name . ',',
+                        'lines' => [
+                            "Your application for the position '{$this->application->jobPost->title}' has been updated.",
+                            "New Status: {$status}",
+                            "Action taken by: {$companyName}"
+                        ],
+                        'actionText' => 'View Application',
+                        'actionUrl' => $applicationUrl
+                    ]);
     }
 
     public function toDatabase($notifiable)
@@ -52,7 +57,6 @@ class JobApplicationStatusChanged extends Notification
         ];
     }
 
-    // {$this->application->employer_info->name}
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([

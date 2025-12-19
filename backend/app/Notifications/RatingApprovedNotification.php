@@ -5,14 +5,15 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RatingApprovedNotification extends Notification
+class RatingApprovedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public $rating) {}
+    public function __construct(public $rating, public $source = 'web')
+    {
+    }
 
     public function via($notifiable)
     {

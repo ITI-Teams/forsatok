@@ -5,14 +5,15 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewUserRegisteredNotification extends Notification
+class NewUserRegisteredNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public $newUser) {}
+    public function __construct(public $newUser, public $source = 'web')
+    {
+    }
 
     public function via($notifiable)
     {

@@ -22,9 +22,11 @@ class FrontendUrlService
     public function getBaseUrl(): string
     {
         return match ($this->source) {
-            'react', 'react_dashboard' => config('app.hive_url'), // New React URL
-            'angular' => config('app.jobhub_url'), // Angular URL (adjust as needed)
-            default => config('app.url'), // Default Livewire URL
+            'react_dashboard' => config('app.hive_url'),
+            'hive' => config('app.hive_url'),
+            'jobhub' => config('app.jobhub_url'),
+            'web' => config('app.url'),
+            default => config('app.url'),
         };
     }
 

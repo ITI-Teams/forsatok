@@ -56,7 +56,7 @@ return [
 
     'jobhub_url'=> env('JOBHUB_URL', 'http://localhost:4200'),
     
-    'hive_url' => env('HIVE_URL', 'http://localhost:5173'),
+    'hive_url' => env('HIVE_URL', 'http://localhost:5172'),
 
     /*
     |--------------------------------------------------------------------------
