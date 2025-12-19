@@ -41,8 +41,9 @@ Route::prefix('dashboard')
         // ═══════════════════════════════════════════════════════════════════
         // AUTH ROUTES (Public)
         // ═══════════════════════════════════════════════════════════════════
-        Route::prefix('auth')->name('auth.')->group(function () {
+        Route::prefix('auth')->name('auth.')->middleware('throttle:auth')->group(function () {
             Route::post('/register', [DashboardAuthController::class, 'register'])->name('register');
+            Route::get('/email/verify/{id}/{hash}', [DashboardAuthController::class, 'verify'])->name('verification.verify.api')->middleware(['signed', 'throttle:6,1']);
             Route::post('/login', [DashboardAuthController::class, 'login'])->name('login');
             Route::post('/logout', [DashboardAuthController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
             Route::post('/forgot-password', [DashboardAuthController::class, 'forgotPassword'])->name('forgot-password');
@@ -52,10 +53,13 @@ Route::prefix('dashboard')
         // ═══════════════════════════════════════════════════════════════════
         // AUTHENTICATED ROUTES
         // ═══════════════════════════════════════════════════════════════════
-        Route::middleware(['auth:sanctum'])->group(function () {
+        Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
             // Profile
             Route::get('/profile', [DashboardAuthController::class, 'profile'])->name('profile');
+
+            // Resend Verification
+            Route::post('/email/resend-link', [DashboardAuthController::class, 'resendVerificationLink'])->name('verification.resend.link');
 
             // ───────────────────────────────────────────────────────────────
             // ADMIN ONLY ROUTES
@@ -182,6 +186,7 @@ Route::prefix('dashboard')
                         Route::delete('/{id}/force', [DashboardJobController::class, 'forceDelete'])->name('force-delete');
                         Route::post('/{job}/approve', [DashboardJobController::class, 'approve'])->name('approve');
                         Route::post('/{job}/reject', [DashboardJobController::class, 'reject'])->name('reject');
+                        Route::post('/{job}/resubmit', [DashboardJobController::class, 'resubmit'])->name('resubmit');
                     });
 
                     // Jobs with view permission

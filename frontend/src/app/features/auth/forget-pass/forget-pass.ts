@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
+import { AuthService } from '../../../core/services/auth.service';
+
 @Component({
   selector: 'app-forget-pass',
   standalone: true,
@@ -13,8 +15,12 @@ import { Router, RouterModule } from '@angular/router';
 export class ForgetPass {
 
    email: string = '';
+   loading: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   onSubmit() {
     if (!this.email) {
@@ -29,15 +35,17 @@ export class ForgetPass {
       return;
     }
 
-    console.log('Sending verification code to:', this.email);
-
-    // Handle forgot password logic here
-    // For example: send verification code via API
-    // this.authService.sendPasswordResetCode(this.email).subscribe(...)
-    
-    // After successful request, you might want to navigate to verification page
-    // this.router.navigate(['/verify-code'], { queryParams: { email: this.email } });
-    
-    alert('Verification code sent! Please check your email.');
+    this.loading = true;
+    this.authService.forgotPassword(this.email).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        alert(res.message || 'Verification link sent! Please check your email.');
+        // Optionally navigate to a page explaining that a link was sent
+      },
+      error: (err) => {
+        this.loading = false;
+        alert(this.authService.getErrorMessage(err));
+      }
+    });
   }
 }

@@ -4,7 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { ThemeService } from '../../core/services/theme-service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationsService } from '../../core/services/notifications.service';
-import {environment} from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-header-private',
@@ -69,15 +69,7 @@ export class HeaderPrivate implements OnInit {
   }
 
   getUserAvatar(): string {
-    if (!this.currentUser?.avatar) {
-      return '/images/avatars/avatar.svg';
-    }
-
-    if (this.currentUser.avatar.startsWith('http')) {
-      return this.currentUser.avatar;
-    }
-
-    return `${environment.imageUrl}/storage/${this.currentUser.avatar}`;
+    return this.currentUser?.avatar || '/images/avatars/avatar.svg';
   }
   getUserName(): string {
     return this.currentUser?.name || 'User';

@@ -14,7 +14,8 @@ class CreateJobAction
         $countryId = $data['country_id'] ?? null;
         $cityId = $data['city_id'] ?? null;
         $address = $data['address'] ?? null;
-        unset($data['country_id'], $data['city_id'],$data['address']);
+        $skills = $data['skills'] ?? [];
+        unset($data['country_id'], $data['city_id'], $data['address'], $data['skills']);
 
         $job = JobPost::create($data);
 
@@ -24,6 +25,10 @@ class CreateJobAction
                 'city_id' => $cityId,
                 'address' => $address,
             ]);
+        }
+
+        if (!empty($skills)) {
+            $job->skills()->attach($skills);
         }
 
         AuditLog::create([

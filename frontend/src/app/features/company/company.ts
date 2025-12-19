@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EmployerProfileService, Employer, ContactMessage, Job } from '../../core/services/employer-profile.service';
 import { CompanyReviewService, CompanyReview, ReviewSubmit } from '../../core/services/employer-review.service';
 import { AuthService } from '../../core/services/auth.service';
-import {environment} from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-company',
@@ -69,7 +69,7 @@ export class Company implements OnInit {
     private employerService: EmployerProfileService,
     private reviewService: CompanyReviewService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Get current user ID
@@ -175,65 +175,65 @@ export class Company implements OnInit {
   }
 
   // submit the given review
- submitReview() {
-  if (!this.reviewModel.rating || !this.reviewModel.review) {
-    this.reviewError = 'Please provide a rating and write a review';
-    return;
-  }
-
-  if (this.reviewModel.review.length < 10) {
-    this.reviewError = 'Review must be at least 10 characters long';
-    return;
-  }
-
-  this.isSubmittingReview = true;
-  this.reviewSuccess = false;
-  this.reviewError = '';
-
-  const reviewData: ReviewSubmit = {
-    company_id: this.employerId,
-    candidate_id: this.currentUserId,
-    rating: this.reviewModel.rating,
-    review: this.reviewModel.review
-  };
-
-  this.reviewService.submitReview(reviewData).subscribe({
-    next: (response) => {
-      console.log('Review submitted:', response);
-      this.reviewSuccess = true;
-      this.reviewModel = { rating: 0, review: '' };
-      this.isSubmittingReview = false;
-
-      this.loadReviews();
-      this.loadEmployerProfile();
-
-      setTimeout(() => {
-        this.reviewSuccess = false;
-      }, 3000);
-    },
-    error: (err) => {
-      console.error('Error submitting review:', err);
-
-      // Handle different error types
-      if (err.status === 409) {
-        // Duplicate review error
-        this.reviewError = 'You have already reviewed this company. Only one review per company is allowed.';
-      } else if (err.status === 422 && err.error?.errors) {
-        // Validation errors
-        const errors = Object.values(err.error.errors).flat();
-        this.reviewError = errors.join(', ');
-      } else if (err.error?.message) {
-        // Generic error message from backend
-        this.reviewError = err.error.message;
-      } else {
-        // Fallback error message
-        this.reviewError = 'Failed to submit review. Please try again.';
-      }
-
-      this.isSubmittingReview = false;
+  submitReview() {
+    if (!this.reviewModel.rating || !this.reviewModel.review) {
+      this.reviewError = 'Please provide a rating and write a review';
+      return;
     }
-  });
-}
+
+    if (this.reviewModel.review.length < 10) {
+      this.reviewError = 'Review must be at least 10 characters long';
+      return;
+    }
+
+    this.isSubmittingReview = true;
+    this.reviewSuccess = false;
+    this.reviewError = '';
+
+    const reviewData: ReviewSubmit = {
+      company_id: this.employerId,
+      candidate_id: this.currentUserId,
+      rating: this.reviewModel.rating,
+      review: this.reviewModel.review
+    };
+
+    this.reviewService.submitReview(reviewData).subscribe({
+      next: (response) => {
+        console.log('Review submitted:', response);
+        this.reviewSuccess = true;
+        this.reviewModel = { rating: 0, review: '' };
+        this.isSubmittingReview = false;
+
+        this.loadReviews();
+        this.loadEmployerProfile();
+
+        setTimeout(() => {
+          this.reviewSuccess = false;
+        }, 3000);
+      },
+      error: (err) => {
+        console.error('Error submitting review:', err);
+
+        // Handle different error types
+        if (err.status === 409) {
+          // Duplicate review error
+          this.reviewError = 'You have already reviewed this company. Only one review per company is allowed.';
+        } else if (err.status === 422 && err.error?.errors) {
+          // Validation errors
+          const errors = Object.values(err.error.errors).flat();
+          this.reviewError = errors.join(', ');
+        } else if (err.error?.message) {
+          // Generic error message from backend
+          this.reviewError = err.error.message;
+        } else {
+          // Fallback error message
+          this.reviewError = 'Failed to submit review. Please try again.';
+        }
+
+        this.isSubmittingReview = false;
+      }
+    });
+  }
 
   navigateToJob(jobId: number) {
     this.router.navigate(['/job', jobId]);
@@ -259,9 +259,9 @@ export class Company implements OnInit {
 
   getLogoUrl(): string {
     if (this.employer.user?.avatar) {
-      return `${environment.imageUrl}/storage/${this.employer.user.avatar}`;
+      return this.employer.user.avatar;
     }
-    return `${environment.imageUrl}/storage/avatars/avatar.svg`;
+    return 'assets/images/default-avatar.svg'; // Or whatever fallback you prefer
   }
 
   formatSalary(min: number, max: number): string {
@@ -306,80 +306,80 @@ export class Company implements OnInit {
 
 
   // Check if current user has already reviewed this company
-hasUserReviewed(): boolean {
-  if (!this.currentUserId || !this.reviews || this.reviews.length === 0) {
-    return false;
-  }
-
-  return this.reviews.some(review =>
-    review.candidate_id === this.currentUserId
-  );
-}
-
-// Submit contact form
-submitContact() {
-  // Validate form
-  if (!this.contactModel.full_name || !this.contactModel.email || !this.contactModel.message) {
-    this.contactError = 'Please fill in all required fields';
-    return;
-  }
-
-  // Basic email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(this.contactModel.email)) {
-    this.contactError = 'Please enter a valid email address';
-    return;
-  }
-
-  this.isSubmittingContact = true;
-  this.contactSuccess = false;
-  this.contactError = '';
-
-  const contactData: ContactMessage = {
-    full_name: this.contactModel.full_name,
-    email: this.contactModel.email,
-    subject: this.contactModel.subject,
-    message: this.contactModel.message,
-    contactable_id: this.employer.user_id,
-    contactable_type: 'App\\Domains\\Users\\Models\\User',
-    user_id: this.currentUserId || undefined
-  };
-
-  this.employerService.sendContactMessage(contactData).subscribe({
-    next: (response) => {
-      console.log('Contact message sent:', response);
-      this.contactSuccess = true;
-
-      // Reset form
-      this.contactModel = {
-        full_name: '',
-        email: '',
-        subject: '',
-        message: ''
-      };
-
-      this.isSubmittingContact = false;
-
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        this.contactSuccess = false;
-      }, 5000);
-    },
-    error: (err) => {
-      console.error('Error sending contact message:', err);
-
-      if (err.status === 422 && err.error?.errors) {
-        // Validation errors
-        const errors = Object.values(err.error.errors).flat();
-        this.contactError = errors.join(', ');
-      } else if (err.error?.message) {
-        this.contactError = err.error.message;
-      } else {
-        this.contactError = 'Failed to send message. Please try again.';
-      }
-
-      this.isSubmittingContact = false;
+  hasUserReviewed(): boolean {
+    if (!this.currentUserId || !this.reviews || this.reviews.length === 0) {
+      return false;
     }
-  });
-}
+
+    return this.reviews.some(review =>
+      review.candidate_id === this.currentUserId
+    );
+  }
+
+  // Submit contact form
+  submitContact() {
+    // Validate form
+    if (!this.contactModel.full_name || !this.contactModel.email || !this.contactModel.message) {
+      this.contactError = 'Please fill in all required fields';
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.contactModel.email)) {
+      this.contactError = 'Please enter a valid email address';
+      return;
+    }
+
+    this.isSubmittingContact = true;
+    this.contactSuccess = false;
+    this.contactError = '';
+
+    const contactData: ContactMessage = {
+      full_name: this.contactModel.full_name,
+      email: this.contactModel.email,
+      subject: this.contactModel.subject,
+      message: this.contactModel.message,
+      contactable_id: this.employer.user_id,
+      contactable_type: 'App\\Domains\\Users\\Models\\User',
+      user_id: this.currentUserId || undefined
+    };
+
+    this.employerService.sendContactMessage(contactData).subscribe({
+      next: (response) => {
+        console.log('Contact message sent:', response);
+        this.contactSuccess = true;
+
+        // Reset form
+        this.contactModel = {
+          full_name: '',
+          email: '',
+          subject: '',
+          message: ''
+        };
+
+        this.isSubmittingContact = false;
+
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          this.contactSuccess = false;
+        }, 5000);
+      },
+      error: (err) => {
+        console.error('Error sending contact message:', err);
+
+        if (err.status === 422 && err.error?.errors) {
+          // Validation errors
+          const errors = Object.values(err.error.errors).flat();
+          this.contactError = errors.join(', ');
+        } else if (err.error?.message) {
+          this.contactError = err.error.message;
+        } else {
+          this.contactError = 'Failed to send message. Please try again.';
+        }
+
+        this.isSubmittingContact = false;
+      }
+    });
+  }
 }

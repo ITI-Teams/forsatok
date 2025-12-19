@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Candidates\controllers\Api;
+namespace App\Domains\Candidates\Controllers\Api;
 
 use App\Domains\Candidates\Models\CandidateInfo;
 use App\Http\Controllers\Controller;

@@ -324,18 +324,10 @@ export class Profile implements OnInit {
       return this.profileImagePreview;
     }
     if (this.candidate?.user?.avatar) {
-      if (this.candidate.user.avatar.startsWith('http')) {
-        return this.candidate.user.avatar;
-      } else {
-        return `${environment.imageUrl}/storage/${this.candidate.user.avatar}`;
-      }
+      return this.candidate.user.avatar;
     }
     if (this.candidate?.profile_image) {
-      if (this.candidate.profile_image.startsWith('http')) {
-        return this.candidate.profile_image;
-      } else {
-        return `${environment.imageUrl}/storage/${this.candidate.profile_image}`;
-      }
+      return this.candidate.profile_image;
     }
     return null;
   }

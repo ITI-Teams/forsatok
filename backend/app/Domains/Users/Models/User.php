@@ -2,13 +2,16 @@
 
 namespace App\Domains\Users\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Domains\Applications\Models\JobApplication;
 use App\Domains\Candidates\Models\CandidateInfo;
 use App\Domains\Employers\Models\CompanyReview;
 use App\Domains\Employers\Models\EmployerInfo;
 use App\Domains\Jobs\Models\JobPost;
 use App\Domains\Jobs\Models\SavedJob;
+use App\Domains\Shared\Services\FrontendDetection\FrontendUrlService;
+use App\Notifications\Auth\CustomResetPasswordNotification;
+use App\Notifications\Auth\CustomVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,9 +19,32 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $source = app(FrontendUrlService::class)->getSource();
+        $this->notify(new CustomResetPasswordNotification($token, $source));
+    }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $source = app(FrontendUrlService::class)->getSource();
+        $this->notify(new CustomVerifyEmail($source));
+    }
 
     /**
      * The attributes that are mass assignable.

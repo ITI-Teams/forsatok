@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Jobs\Controllers\Api ;
+namespace App\Domains\Jobs\Controllers\Api;
 
 use App\Domains\Applications\Models\JobApplication;
 use App\Http\Controllers\Controller;
@@ -22,29 +22,29 @@ class JobController extends Controller
                 'locationable.country:id,name,code',
                 'skills'
             ])
-            ->where('is_active', true)
+            ->availableJobs()
             ->latest();
 
-       // Filter by employer_id if provided
+        // Filter by employer_id if provided
         if ($employerId = $request->input('employer_id')) {
             $query->where('employer_id', $employerId);
         }
 
         if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
         if ($cityId = $request->input('city_id')) {
-            $query->whereHas('locationable', function($q) use ($cityId) {
+            $query->whereHas('locationable', function ($q) use ($cityId) {
                 $q->where('city_id', $cityId);
             });
         }
 
         if ($countryId = $request->input('country_id')) {
-            $query->whereHas('locationable.city', function($q) use ($countryId) {
+            $query->whereHas('locationable.city', function ($q) use ($countryId) {
                 $q->where('country_id', $countryId);
             });
         }
@@ -101,7 +101,7 @@ class JobController extends Controller
             });
         }
 
-        if(auth()->id()){
+        if (auth()->id()) {
             $candidateId = auth()->id();
             $appliedJobsIds = JobApplication::where('candidate_id', $candidateId)->pluck('job_post_id')->toArray();
 
@@ -127,7 +127,7 @@ class JobController extends Controller
             'locationable.country:id,name,code',
             'skills'
         ])
-            ->where('is_active', true)
+            ->availableJobs()
             ->findOrFail($id);
 
         return response()->json([
@@ -145,8 +145,8 @@ class JobController extends Controller
         if (is_string($value)) {
             $value = Str::of($value)
                 ->split('/,/')
-                ->map(fn ($item) => trim($item))
-                ->filter(fn ($item) => $item !== '')
+                ->map(fn($item) => trim($item))
+                ->filter(fn($item) => $item !== '')
                 ->values()
                 ->all();
         }
@@ -157,6 +157,6 @@ class JobController extends Controller
 
         return array_values(array_filter(array_map(function ($item) {
             return trim((string) $item);
-        }, $value), fn ($item) => $item !== ''));
+        }, $value), fn($item) => $item !== ''));
     }
 }

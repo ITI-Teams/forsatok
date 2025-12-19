@@ -11,6 +11,9 @@ use App\Notifications\JobRejectedNotification;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use App\Domains\Users\Models\User;
+use App\Notifications\JobCreatedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class JobList extends Component
 {
@@ -24,6 +27,7 @@ class JobList extends Component
     public $selectedJob = null;
 
     public $selectedJobId = null;
+    public $rejectionReason = '';
 
     #[On('jobSearchUpdated')]
     public function handleSearch($payload)
@@ -49,19 +53,29 @@ class JobList extends Component
     public function closeApprovalModal()
     {
         $this->selectedJob = null;
+        $this->rejectionReason = '';
         $this->showApprovalModal = false;
     }
 
     public function approveJob($jobId)
     {
         $job = JobPost::findOrFail($jobId);
-        $job->update(['is_active' => 1]);
+        $oldStatus = $job->status;
 
+        $job->update([
+            'status' => JobPost::STATUS_APPROVED
+        ]);
+
+        $job->decisions()->create([
+            'admin_id' => auth()->id(),
+            'from_status' => $oldStatus,
+            'to_status' => JobPost::STATUS_APPROVED,
+            'reason' => 'Approved by admin',
+        ]);
 
         event(new JobApproved($job));
         $employer = $job->employer;
-        $employer->notify(new JobApprovedNotification($job));
-
+        $employer->notify(new JobApprovedNotification($job, auth()->user()));
 
         $this->dispatch('toast', [
             'type' => 'success',
@@ -74,19 +88,54 @@ class JobList extends Component
     public function rejectJob($jobId)
     {
         $job = JobPost::findOrFail($jobId);
-        $job->update(['is_active' => 0]);
+        $oldStatus = $job->status;
+
+        if (empty(trim($this->rejectionReason))) {
+            $this->addError('rejectionReason', 'Rejection reason is required.');
+            return;
+        }
+
+        $job->update([
+            'status' => JobPost::STATUS_REJECTED
+        ]);
+
+        $job->decisions()->create([
+            'admin_id' => auth()->id(),
+            'from_status' => $oldStatus,
+            'to_status' => JobPost::STATUS_REJECTED,
+            'reason' => $this->rejectionReason,
+        ]);
 
         event(new JobRejected($job));
         $employer = $job->employer;
-        $employer->notify(new JobRejectedNotification($job));
+        $employer->notify(new JobRejectedNotification($job, auth()->user()));
 
         $this->dispatch('toast', [
             'type' => 'error',
             'message' => 'Job rejected!'
         ]);
 
-
         $this->closeApprovalModal();
+    }
+
+    public function resubmitJob($jobId)
+    {
+        $job = JobPost::where('employer_id', auth()->id())->findOrFail($jobId);
+
+        if (in_array($job->status, [JobPost::STATUS_REJECTED, JobPost::STATUS_EXPIRED])) {
+            $job->update([
+                'status' => JobPost::STATUS_PENDING,
+                'is_active' => true // Re-activating for employer
+            ]);
+
+            $admins = User::role('admin')->get();
+            Notification::send($admins, new JobCreatedNotification($job));
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Job re-submitted for approval!'
+            ]);
+        }
     }
 
     public function render()

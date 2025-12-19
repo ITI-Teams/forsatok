@@ -5,6 +5,7 @@ namespace App\Domains\Employers\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 
 class EmployerInfoResource extends JsonResource
@@ -48,7 +49,7 @@ class EmployerInfoResource extends JsonResource
                 'id' => $this->user->id ?? null,
                 'name' => $this->user->name ?? null,
                 'email' => $this->user->email ?? null,
-                'avatar' => $this->user->avatar ?? null,
+                'avatar' => $this->user->avatar ? Storage::disk('public')->url($this->user->avatar) : null,
             ],
 
             'average_rating' => $this->average_rating,
@@ -93,7 +94,7 @@ class EmployerInfoResource extends JsonResource
     }
 
 
-//  Safely format a date - handles both Carbon instances and strings
+    //  Safely format a date - handles both Carbon instances and strings
 
     private function formatDate($date): ?string
     {

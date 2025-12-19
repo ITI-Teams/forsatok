@@ -15,7 +15,6 @@ import {environment} from '../../environments/environment';
   styleUrls: ['./companies-list.css']
 })
 export class CompaniesList implements OnInit {
-  public imageUrl = `${environment.imageUrl}/storage`;
   companies: CompanySearchResult[] = [];
   filteredCompanies: CompanySearchResult[] = [];
 

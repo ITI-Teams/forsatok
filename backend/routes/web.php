@@ -1,6 +1,6 @@
 <?php
 
-use App\Domains\Users\Controllers\api\LinkedinController;
+use App\Domains\Users\Controllers\Api\LinkedinController;
 use App\Livewire\Admin\Permissions\PermissionIndex;
 use App\Livewire\Admin\Roles\RoleIndex;
 use App\Livewire\Admin\Roles\RolePermission;

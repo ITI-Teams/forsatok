@@ -51,6 +51,14 @@ export class AuthService {
     this.loggedIn.next(false);
   }
 
+  forgotPassword(email: string) {
+    return this.http.post(`${this.apiUrl}/candidate/forgot-password`, { email });
+  }
+
+  resetPassword(data: any) {
+    return this.http.post(`${this.apiUrl}/candidate/reset-password`, data);
+  }
+
   getToken() {
     return localStorage.getItem('token');
   }

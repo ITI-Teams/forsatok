@@ -11,26 +11,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobPost extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-    'employer_id',
-    'title',
-    'category_id',
-    'is_active',
-    'deadline',
-    'experience',
-    'location',
-    'salary_min',
-    'salary_max',
-    'description',
-    'responsibilities',
-    'qualification',
-    'benefits',
-    'work_type',
-    'work_place',
-    'views',
-];
+        'employer_id',
+        'title',
+        'category_id',
+        'is_active',
+        'status',
+        'deadline',
+        'experience',
+        'location',
+        'salary_min',
+        'salary_max',
+        'description',
+        'responsibilities',
+        'qualification',
+        'benefits',
+        'work_type',
+        'work_place',
+        'views',
+    ];
 
 
 
@@ -68,5 +69,30 @@ class JobPost extends Model
     public function location()
     {
         return $this->locationable();
+    }
+
+    public function decisions()
+    {
+        return $this->hasMany(JobPostDecision::class)->latest();
+    }
+
+    public function latestRejection()
+    {
+        return $this->hasOne(JobPostDecision::class)
+            ->where('to_status', 'rejected')
+            ->latest();
+    }
+
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
+    const STATUS_EXPIRED = 'expired';
+
+    public function scopeAvailableJobs($query)
+    {
+        return $query
+            ->where('is_active', true)
+            ->where('status', self::STATUS_APPROVED)
+            ->where('deadline', '>=', now());
     }
 }

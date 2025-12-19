@@ -45,7 +45,7 @@ class ApplicationResource extends JsonResource
                 }),
             ] : null,
             'cover_letter' => $this->cover_letter,
-            'resume_url' => $this->resume_path ? Storage::url($this->resume_path) : null,
+            'resume_url' => $this->resume_path ? Storage::disk('public')->url($this->resume_path) : null,
             'resume_filename' => $this->resume_path ? basename($this->resume_path) : null,
             'status' => $this->status,
             'applied_date' => $this->created_at?->toDateTimeString(),

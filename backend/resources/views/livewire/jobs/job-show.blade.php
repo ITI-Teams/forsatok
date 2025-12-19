@@ -147,27 +147,76 @@
             </div>
 
             <!-- Deadline -->
-            <div class="p-3 rounded" style="background-color: var(--bs-tertiary-bg);">
-                <h5 class="fw-semibold mb-2">
-                    <i class="fa-solid fa-calendar text-danger me-2"></i> Application Deadline
-                </h5>
-                @if($job->deadline)
-                    <strong class="text-danger fs-5">
-                        {{ \Carbon\Carbon::parse($job->deadline)->format('M d, Y h:i A') }}
-                    </strong>
-                    <small class="d-block mt-1" style="color: var(--bs-secondary-color);">
-                        ({{ \Carbon\Carbon::parse($job->deadline)->diffForHumans() }})
-                    </small>
-                @else
-                    <span style="color: var(--bs-secondary-color);">No deadline specified</span>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                     <div class="p-3 rounded h-100" style="background-color: var(--bs-tertiary-bg);">
+                        <h5 class="fw-semibold mb-2">
+                            <i class="fa-solid fa-calendar text-danger me-2"></i> Application Deadline
+                        </h5>
+                        @if($job->deadline)
+                            <strong class="text-danger fs-5">
+                                {{ \Carbon\Carbon::parse($job->deadline)->format('M d, Y h:i A') }}
+                            </strong>
+                            <small class="d-block mt-1" style="color: var(--bs-secondary-color);">
+                                ({{ \Carbon\Carbon::parse($job->deadline)->diffForHumans() }})
+                            </small>
+                        @else
+                            <span style="color: var(--bs-secondary-color);">No deadline specified</span>
+                        @endif
+                    </div>
+                </div>
+
+                @if($job->decisions->count() > 0)
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                             <h6 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i> Approval History</h6>
+                        </div>
+                        <div class="card-table table-responsive">
+                            <table class="table table-sm mb-0" style="font-size: 0.9em;">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Admin</th>
+                                        <th>Status</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($decisions as $decision)
+                                        <tr>
+                                            <td>{{ $decision->created_at->format('M d, Y') }}</td>
+                                            <td>{{ $decision->admin->name ?? 'System' }}</td>
+                                            <td>
+                                                @if($decision->to_status === 'approved')
+                                                    <span class="badge bg-success">Approved</span>
+                                                @elseif($decision->to_status === 'rejected')
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                @else
+                                                    <span class="badge bg-secondary">{{ $decision->to_status }}</span>
+                                                @endif
+                                            </td>
+                                            <td title="{{ $decision->reason }}">{{ Str::limit($decision->reason, 20) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer bg-white">
+                             {{ $decisions->links() }}
+                        </div>
+                    </div>
+                </div>
                 @endif
             </div>
 
             <!-- Action Buttons -->
             <div class="mt-4 d-flex gap-2">
-                <a wire:navigate href="{{ route('jobs.edit', $job->id) }}" class="btn btn-warning">
-                    <i class="fa-solid fa-pen-to-square me-2"></i> Edit Job
-                </a>
+                @if(auth()->user()->type === 'employer')
+                    <a wire:navigate href="{{ route('jobs.edit', $job->id) }}" class="btn btn-warning">
+                        <i class="fa-solid fa-pen-to-square me-2"></i> Edit Job
+                    </a>
+                @endif
                 <a wire:navigate href="{{ route('jobs.index') }}" class="btn btn-outline-secondary">
                     <i class="fa-solid fa-list me-2"></i> View All Jobs
                 </a>
