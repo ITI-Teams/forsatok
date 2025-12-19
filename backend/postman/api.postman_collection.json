@@ -134,7 +134,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"candidate@example.com\",\n  \"token\": \"{{reset_token}}\",\n  \"password\": \"newSecret123\"\n}",
+              "raw": "{\n  \"email\": \"candidate@example.com\",\n  \"token\": \"{{reset_token}}\",\n  \"password\": \"newSecret123\",\n  \"password_confirmation\": \"newSecret123\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
