@@ -24,40 +24,45 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::prefix('auth')->group(function () {
+    Route::get('/email/verify/{id}/{hash}', [CandidateAuthController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('api.verification.verify');
+
     Route::post('candidate/register', [CandidateAuthController::class, 'register']);
-    Route::post('candidate/login', [CandidateAuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('candidate/login', [CandidateAuthController::class, 'login']);
     Route::post('candidate/forgot-password', [CandidateAuthController::class, 'forgotPassword']);
     Route::post('candidate/reset-password', [CandidateAuthController::class, 'resetPassword']);
-    Route::post('candidate/send-verification-code', [CandidateAuthController::class, 'sendVerificationCode']);
-    Route::post('candidate/verify-code', [CandidateAuthController::class, 'verifyCode']);
 
-    // cadidate api routes
-    Route::middleware(['auth:sanctum'])->group(function () {
+    // candidate api routes
+    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/candidate/info', [CandidateInfoController::class, 'showProfile']);
         Route::post('/candidate/info', [CandidateInfoController::class, 'update']);
+
+        // Resend Verification
+        Route::post('/email/resend-link', [CandidateAuthController::class, 'resendVerificationLink'])->name('verification.resend.link');
     });
 
 
     // employer api routes
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/employerinfo', [EmployerController::class, 'index']);
         Route::get('/employerinfo/{id}', [EmployerController::class, 'show']);
     });
 });
 
 // Public candidates routes
-Route::get('/candidates/search', [CandidateSearchController::class, 'search']);
-Route::get('/candidates/filter-options', [CandidateSearchController::class, 'getFilterOptions']);
+Route::get('/candidates/search', [CandidateSearchController::class, 'search'])->middleware('throttle:searching');
+Route::get('/candidates/filter-options', [CandidateSearchController::class, 'getFilterOptions'])->middleware('throttle:searching');
 // Public candidate profile routes
 Route::get('/candidates', [CandidateInfoController::class, 'index']);
 Route::get('/candidates/{id}', [CandidateInfoController::class, 'show']);
 
 // Public companies routes
-Route::get('/companies/search', [CompanySearchController::class, 'search']);
-Route::get('/companies/filter-options', [CompanySearchController::class, 'getFilterOptions']);
+Route::get('/companies/search', [CompanySearchController::class, 'search'])->middleware('throttle:searching');
+Route::get('/companies/filter-options', [CompanySearchController::class, 'getFilterOptions'])->middleware('throttle:searching');
 
 // Protected (requires token)
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('candidate/logout', [CandidateAuthController::class, 'logout']);
     // routes for applications
     Route::get('/applications', [ApplicationController::class, 'index']);
@@ -96,8 +101,8 @@ Route::prefix('company-reviews')->group(function () {
 });
 
 // Jobs Routes
-Route::get('/jobs/filter-options', [JobFilterController::class, 'getFilterOptions']);
-Route::get('/jobs', [JobController::class, 'index'])->middleware('auth:sanctum');
+Route::get('/jobs/filter-options', [JobFilterController::class, 'getFilterOptions'])->middleware('throttle:searching');
+Route::get('/jobs', [JobController::class, 'index'])->middleware(['auth:sanctum', 'throttle:api']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
 // Categories
@@ -114,8 +119,8 @@ Route::prefix('locations')->group(function () {
 
 // Contact Message Routs
 Route::prefix('contact')->group(function () {
-    Route::post('/', [ContactMessageController::class, 'store']);
-    Route::get('/', [ContactMessageController::class, 'index'])->middleware('auth:sanctum');
+    Route::post('/', [ContactMessageController::class, 'store'])->middleware('throttle:contact');
+    Route::get('/', [ContactMessageController::class, 'index'])->middleware(['auth:sanctum', 'throttle:api']);
 });
 // Skills Routs
 Route::get('/skills', [SkillController::class, 'index']);

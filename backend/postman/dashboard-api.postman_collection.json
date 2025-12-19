@@ -44,6 +44,34 @@
           "description": "Create an admin or employer user."
         },
         {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/auth/email/verify/{{user_id}}/{{hash}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "auth",
+                "email",
+                "verify",
+                "{{user_id}}",
+                "{{hash}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Login",
           "request": {
             "method": "POST",
@@ -172,6 +200,35 @@
                   "language": "json"
                 }
               }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Verification Link",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/email/resend-link",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "email",
+                "resend-link"
+              ]
             }
           },
           "response": []
