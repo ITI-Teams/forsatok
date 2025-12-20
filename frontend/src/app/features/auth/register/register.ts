@@ -9,7 +9,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule,ToastModule],
+  imports: [CommonModule, FormsModule, RouterModule, ToastModule],
   templateUrl: './register.html',
   styleUrls: ['./register.css'],
 })
@@ -25,7 +25,7 @@ export class Register {
     private router: Router,
     private authService: AuthService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   showToast(severity: string, summary: string, detail: string) {
     this.messageService.add({ severity, summary, detail, life: 2500 });
@@ -66,5 +66,9 @@ export class Register {
 
   continueWithLinkedIn() {
     this.authService.loginWithLinkedIn();
+  }
+
+  continueWithGoogle() {
+    this.authService.loginWithGoogle();
   }
 }

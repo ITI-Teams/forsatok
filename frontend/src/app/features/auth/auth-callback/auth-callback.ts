@@ -14,20 +14,20 @@ export class AuthCallback implements OnInit {
   loading = true;
   error: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.handleCallback();
   }
 
   handleCallback() {
-    const result = this.authService.handleLinkedInCallback();
+    const result = this.authService.handleExternalAuthCallback();
 
     if (result.success) {
       this.loading = false;
     } else {
       this.loading = false;
-      this.error = result.error || 'Unknown error occurred during LinkedIn authentication';
+      this.error = result.error || 'Unknown error occurred during authentication';
     }
   }
 

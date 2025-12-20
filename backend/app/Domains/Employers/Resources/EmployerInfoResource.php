@@ -49,7 +49,7 @@ class EmployerInfoResource extends JsonResource
                 'id' => $this->user->id ?? null,
                 'name' => $this->user->name ?? null,
                 'email' => $this->user->email ?? null,
-                'avatar' => $this->user->avatar ? Storage::disk('public')->url($this->user->avatar) : null,
+                'avatar' => $this->user->avatar_url ?? null,
             ],
 
             'average_rating' => $this->average_rating,

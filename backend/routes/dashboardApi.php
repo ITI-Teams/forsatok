@@ -15,7 +15,6 @@ use App\Domains\Location\Controllers\Dashboard\DashboardCountryController;
 use App\Domains\Notification\Controllers\Api\NotificationController;
 use App\Domains\Shared\Controllers\Dashboard\AuditLogController;
 use App\Domains\Shared\Controllers\Dashboard\RolePermissionController;
-use App\Domains\Users\Controllers\api\GoogleController;
 use App\Domains\Users\Controllers\Dashboard\AdminStatsController;
 use App\Domains\Users\Controllers\Dashboard\DashboardAuthController;
 use App\Domains\Users\Controllers\Dashboard\DashboardPermissionController;
@@ -248,12 +247,6 @@ Route::prefix('dashboard')
             Route::prefix('contact-messages')->middleware('role:admin|employer')->group(function () {
                 Route::get('/', [DashboardContactMessageController::class, 'sharedIndex'])->name('shared.contact.index');
             });
-
-            // ───────────────────────────────────────────────────────────────
-            // Google auth
-            // ───────────────────────────────────────────────────────────────
-            Route::get('/auth/google', [GoogleController::class, 'redirect']);
-            Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
         });
 
 

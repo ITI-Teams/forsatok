@@ -14,6 +14,7 @@ use App\Notifications\Auth\CustomResetPasswordNotification;
 use App\Notifications\Auth\CustomVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -44,6 +45,31 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $source = app(FrontendUrlService::class)->getSource();
         $this->notify(new CustomVerifyEmail($source));
+    }
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['avatar_url'];
+
+    /**
+     * Get the user's avatar URL.
+     *
+     * @return string
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if (!$this->avatar) {
+            return asset('storage/avatars/avatar.svg');
+        }
+
+        if (filter_var($this->avatar, FILTER_VALIDATE_URL)) {
+            return $this->avatar;
+        }
+
+        return Storage::disk('public')->url($this->avatar);
     }
 
     /**

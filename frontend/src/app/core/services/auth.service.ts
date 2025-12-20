@@ -90,7 +90,13 @@ export class AuthService {
     window.location.href = `${this.apiUrl}/linkedin/redirect`;
   }
 
-  handleLinkedInCallback(): { success: boolean; token?: string; user?: any; error?: string } {
+  loginWithGoogle() {
+    // Universal Google OAuth redirect route
+    const googleUrl = `${environment.apiUrl.replace('/api', '')}/auth/google?source=jobhub&type=candidate`;
+    window.location.href = googleUrl;
+  }
+
+  handleExternalAuthCallback(): { success: boolean; token?: string; user?: any; error?: string } {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userParam = urlParams.get('user');

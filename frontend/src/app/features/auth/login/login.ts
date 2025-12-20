@@ -10,7 +10,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule,ToastModule],
+  imports: [CommonModule, FormsModule, RouterModule, ToastModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
@@ -24,7 +24,7 @@ export class Login {
     private router: Router,
     private auth: AuthService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -69,5 +69,9 @@ export class Login {
 
   continueWithLinkedIn() {
     this.auth.loginWithLinkedIn();
+  }
+
+  continueWithGoogle() {
+    this.auth.loginWithGoogle();
   }
 }
