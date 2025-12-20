@@ -12,19 +12,24 @@
 
         <!-- Profile -->
         <div class="dropdown">
-            <button class="btn btn-link d-flex align-items-center text-body" id="profileDropdown" data-bs-toggle="dropdown">
+            <button class="btn btn-link d-flex align-items-center text-body" id="profileDropdown"
+                data-bs-toggle="dropdown">
                 <img src="{{ auth()->user()->avatar_url }}"
-                     class="rounded-circle me-2 border border-2 border-primary-subtle" width="36" height="36">
+                    class="rounded-circle me-2 border border-2 border-primary-subtle" width="36" height="36">
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm animate-dropdown" aria-labelledby="profileDropdown">
                 @role('employer')
-                    <li><a class="dropdown-item" wire:navigate href="{{ route('employer.profile') }}"><i class="fa-solid fa-user me-2"></i> Profile</a></li>
+                <li><a class="dropdown-item" wire:navigate href="{{ route('employer.profile') }}"><i
+                            class="fa-solid fa-user me-2"></i> Profile</a></li>
                 @endrole
                 @role('admin')
-                    <li><a class="dropdown-item" wire:navigate href="{{ route('admin.profile') }}"><i class="fa-solid fa-user me-2"></i> Profile</a></li>
+                <li><a class="dropdown-item" wire:navigate href="{{ route('admin.profile') }}"><i
+                            class="fa-solid fa-user me-2"></i> Profile</a></li>
                 @endrole
                 <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear me-2"></i> Settings</a></li>
-                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
                 <li>
                     <a wire:navigate href="{{ route('logout') }}" class="dropdown-item text-danger">
                         <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
