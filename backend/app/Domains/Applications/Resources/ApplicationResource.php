@@ -13,6 +13,7 @@ class ApplicationResource extends JsonResource
             'id' => $this->id,
             'candidate' => $this->candidate ? [
                 'id' => $this->candidate->id,
+                'candidate_id' => $this->candidate?->candidateInfo?->id, // This is the profile/info ID
                 'name' => $this->candidate->name,
                 'email' => $this->candidate->email,
                 'phone' => $this->candidate->candidateInfo->phone ?? null

@@ -25,7 +25,7 @@ class ApplicationController extends Controller
         $user = Auth::user();
 
         $applications = JobApplication::with([
-            'candidate',
+            'candidate.candidateInfo',
             'jobPost.employer',
             'jobPost.category',
             'jobPost.skills'
@@ -53,7 +53,7 @@ class ApplicationController extends Controller
     {
         $user = Auth::user();
 
-        $application = JobApplication::with(['candidate', 'jobPost.employer', 'jobPost.category', 'jobPost.skills'])
+        $application = JobApplication::with(['candidate.candidateInfo', 'jobPost.employer', 'jobPost.category', 'jobPost.skills'])
             ->where('candidate_id', $user->id)
             ->find($id);
 
@@ -108,7 +108,7 @@ class ApplicationController extends Controller
             'status' => 'pending',
         ]);
 
-        $application->load(['candidate', 'jobPost.employer', 'jobPost.category', 'jobPost.skills']);
+        $application->load(['candidate.candidateInfo', 'jobPost.employer', 'jobPost.category', 'jobPost.skills']);
 
 
         event(new JobApplied($application));

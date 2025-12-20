@@ -130,6 +130,9 @@ class JobController extends Controller
             ->availableJobs()
             ->findOrFail($id);
 
+        // Increment views count
+        $job->increment('views');
+        
         return response()->json([
             'status' => true,
             'data' => $job,

@@ -10,6 +10,7 @@ use App\Domains\Applications\Actions\application\UpdateApplicationAction;
 use App\Domains\Applications\Models\JobApplication;
 use App\Domains\Applications\Requests\StoreApplicationRequest;
 use App\Domains\Applications\Requests\UpdateApplicationRequest;
+use App\Domains\Applications\Resources\ApplicationResource;
 use App\Domains\Jobs\Models\JobPost;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -61,7 +62,7 @@ class DashboardApplicationController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $applications->items(),
+            'data' => ApplicationResource::collection($applications),
             'meta' => $this->paginationMeta($applications),
         ]);
     }
@@ -78,7 +79,7 @@ class DashboardApplicationController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $application->load(['candidate.candidateInfo', 'jobPost.skills']),
+            'data' => new ApplicationResource($application->load(['candidate.candidateInfo', 'jobPost.skills'])),
         ]);
     }
 
@@ -115,11 +116,11 @@ class DashboardApplicationController extends Controller
             ], 422);
         }
 
-        $application = $create->execute($validated)->load(['candidate', 'jobPost.skills']);
+        $application = $create->execute($validated)->load(['candidate.candidateInfo', 'jobPost.skills']);
 
         return response()->json([
             'status' => true,
-            'data' => $application,
+            'data' => new ApplicationResource($application),
         ], 201);
     }
 
@@ -154,11 +155,11 @@ class DashboardApplicationController extends Controller
             $form->rules()
         )->validate();
 
-        $updated = $update->execute($application, $validated)->load(['candidate', 'jobPost.skills']);
+        $updated = $update->execute($application, $validated)->load(['candidate.candidateInfo', 'jobPost.skills']);
 
         return response()->json([
             'status' => true,
-            'data' => $updated,
+            'data' => new ApplicationResource($updated),
         ]);
     }
 
@@ -187,7 +188,7 @@ class DashboardApplicationController extends Controller
     {
         $user = $request->user();
         $applications = JobApplication::onlyTrashed()
-            ->with(['candidate', 'jobPost.skills'])
+            ->with(['candidate.candidateInfo', 'jobPost.skills'])
             ->whereHas('jobPost', function ($q) use ($user) {
                 $q->where('employer_id', $user->id);
             })
@@ -195,7 +196,7 @@ class DashboardApplicationController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $applications,
+            'data' => ApplicationResource::collection($applications),
         ]);
     }
 
