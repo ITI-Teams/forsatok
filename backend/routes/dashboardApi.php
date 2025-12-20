@@ -7,6 +7,7 @@ use App\Domains\CompanyReviews\Controllers\Dashboard\DashboardCompanyReviewContr
 use App\Domains\Contact\Controllers\Dashboard\DashboardContactMessageController;
 use App\Domains\Employers\Controllers\Dashboard\EmployerProfileController;
 use App\Domains\Employers\Controllers\Dashboard\EmployerStatsController;
+use App\Domains\Jobs\Controllers\Api\JobSkillSearchController;
 use App\Domains\Jobs\Controllers\Dashboard\DashboardCategoryController;
 use App\Domains\Jobs\Controllers\Dashboard\DashboardJobController;
 use App\Domains\Jobs\Controllers\Dashboard\DashboardSkillController;
@@ -259,10 +260,16 @@ Route::prefix('dashboard')
 
         // Candidates skills search
         Route::prefix('candidates')->group(function () {
-
             //Search candidates by skills with OR logic and relevance scoring
             Route::post('/search-by-skills', [CandidateSkillSearchController::class, 'searchBySkills']);
             //Get statistics about skill matches
             Route::post('/skill-match-stats', [CandidateSkillSearchController::class, 'getSkillMatchStats']);
+        });
+
+        Route::prefix('jobs')->group(function () {
+            //Search jobs by skills with OR logic and relevance scoring
+            Route::post('/search-by-skills', [JobSkillSearchController::class, 'searchBySkills']);
+            //Get statistics about skill matches for jobs
+            Route::post('/skill-match-stats', [JobSkillSearchController::class, 'getSkillMatchStats']);
         });
     });
