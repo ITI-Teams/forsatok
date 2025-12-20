@@ -247,3 +247,4 @@ class CandidateSkillSearchController extends Controller
         ]);
     }
 }
+
