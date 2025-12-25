@@ -27,6 +27,8 @@ class RolesAndUsersSeeder extends Seeder
                 'name' => 'Super Admin',
                 'type' => 'admin',
                 'password' => Hash::make('admin123'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
             ]
         );
         $admin->assignRole('admin');
@@ -37,6 +39,8 @@ class RolesAndUsersSeeder extends Seeder
                 'name' => 'Demo Employer',
                 'type' => 'employer',
                 'password' => Hash::make('employer123'),
+                'status' => 'pending', // For testing approval
+                'email_verified_at' => now(),
             ]
         );
         $employer->assignRole('employer');
@@ -47,6 +51,8 @@ class RolesAndUsersSeeder extends Seeder
                 'name' => 'Demo Candidate',
                 'type' => 'candidate',
                 'password' => Hash::make('candidate123'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
             ]
         );
         $candidate->assignRole('candidate');

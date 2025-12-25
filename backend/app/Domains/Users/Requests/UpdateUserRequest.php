@@ -18,6 +18,7 @@ class UpdateUserRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users,email,' . $this->userId,
             'password' => 'nullable|string|min:8|confirmed',
             'type' => 'required|string|in:admin,employer,candidate',
+            'status' => 'nullable|string|in:pending,active,rejected,banned',
         ];
     }
 }

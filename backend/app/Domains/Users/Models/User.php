@@ -85,7 +85,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'linkedin_id',
         'google_id',
         'avatar',
-        'email_verified_at'
+        'email_verified_at',
+        'status',
+        'approved_by',
+        'approved_at',
     ];
 
     /**
@@ -107,6 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'approved_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -136,5 +140,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function employerInfo()
     {
         return $this->hasOne(EmployerInfo::class, 'user_id');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

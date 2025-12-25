@@ -34,12 +34,16 @@ class DashboardAuthController extends Controller
             'type' => 'required|in:admin,employer',
         ])->validate();
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'type' => $data['type'],
-        ]);
+        $user = new User();
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        $user->password = Hash::make($data['password']);
+        $user->type = $data['type'];
+        
+        // Approval system applies ONLY to Employers
+        $user->status = ($data['type'] === 'employer') ? 'pending' : 'approved';
+        
+        $user->save();
 
         if (method_exists($user, 'assignRole')) {
             $user->assignRole($data['type']);
@@ -74,6 +78,13 @@ class DashboardAuthController extends Controller
                 'status' => false,
                 'message' => 'Invalid email or password.',
             ], 401);
+        }
+
+        if ($user->status !== 'approved') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Your account is ' . $user->status . '. Please verify your email and wait for admin approval.',
+            ], 403);
         }
 
         if (!in_array($user->type, ['admin', 'employer'])) {

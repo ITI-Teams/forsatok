@@ -43,7 +43,7 @@ class UpdateJobRequest extends FormRequest
             'category_id' => 'nullable|exists:categories,id',
             'is_active' => 'boolean',
             'skills' => 'nullable|array',
-            'skills.*' => 'exists:skills,id',
+            'skills.*' => 'exists:skills,id|distinct',
         ];
     }
 }

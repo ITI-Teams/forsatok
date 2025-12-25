@@ -29,7 +29,7 @@ class UpdateCandidateInfoRequest extends FormRequest
             'bio' => 'nullable|string',
             'job_title' => 'nullable|string|max:255',
             'skills' => 'nullable|array',
-            'skills.*' => 'integer|exists:skills,id',
+            'skills.*' => 'integer|exists:skills,id|distinct',
             'gender' => 'nullable|string|in:male,female,other',
             'date_of_birth' => 'nullable|date',
             'country_id' => 'nullable|exists:countries,id',

@@ -38,6 +38,8 @@ use App\Livewire\Skills\SkillTrash;
 use App\Livewire\User\UserForm;
 use App\Livewire\User\UserList;
 use App\Livewire\User\UserTrash;
+use App\Livewire\User\RejectedUserList;
+use App\Livewire\User\UserDetail;
 use Illuminate\Support\Facades\Route;
 
 // Controllers
@@ -65,7 +67,7 @@ Route::middleware(['web'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     // admin dashboard
     Route::get('/admin/dashboard', AdminDashboard::class)
-        ->middleware('role:admin')
+        ->middleware('role:admin|super-admin')
         ->name('admin.dashboard');
 
     // employer dashboard
@@ -76,7 +78,7 @@ Route::middleware(['auth'])->group(function () {
     // optionally a generic dashboard route that redirect based on role
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        if ($user->hasRole('admin'))
+        if ($user->hasRole('admin') || $user->hasRole('super-admin'))
             return to_route('admin.dashboard');
         if ($user->hasRole('employer'))
             return to_route('employer.dashboard');
@@ -84,7 +86,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
     Route::get('/', function () {
         $user = auth()->user();
-        if ($user->hasRole('admin'))
+        if ($user->hasRole('admin') || $user->hasRole('super-admin'))
             return to_route('admin.dashboard');
         if ($user->hasRole('employer'))
             return to_route('employer.dashboard');
@@ -99,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
 // ================================
 // ADMIN ROUTES
 // ================================
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 
     // Categories
     Route::prefix('categories')->group(function () {
@@ -152,9 +154,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Users
     Route::prefix('users')->group(function () {
         Route::get('/', UserList::class)->name('users.index');
+        Route::get('/rejected', RejectedUserList::class)->name('users.rejected');
         Route::get('/create', UserForm::class)->name('users.create');
         Route::get('/edit/{user}', UserForm::class)->name('users.edit');
         Route::get('/trash', UserTrash::class)->name('users.trash');
+        Route::get('/{id}', UserDetail::class)->name('users.show'); // User Details
     });
 });
 

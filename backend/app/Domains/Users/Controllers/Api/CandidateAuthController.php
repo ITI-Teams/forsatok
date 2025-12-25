@@ -65,6 +65,12 @@ class CandidateAuthController extends Controller
                 'message' => 'Invalid email or password.'
             ], 401);
         }
+
+        if ($user->status !== 'active') {
+            return response()->json([
+                'message' => 'Your account is ' . $user->status . '. Please contact support.',
+            ], 403);
+        }
         if ($user->type !== 'candidate') {
             return response()->json([
                 'message' => 'Access denied for this user type.'

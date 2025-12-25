@@ -18,6 +18,7 @@ class StoreUserRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'type' => 'required|string|in:admin,employer,candidate',
+            'status' => 'nullable|string|in:pending,active,rejected,banned',
         ];
     }
 }

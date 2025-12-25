@@ -11,7 +11,7 @@
         </li>
 
         {{-- --------------------- ADMIN ONLY --------------------- --}}
-        @role('admin')
+        @hasanyrole('admin|super-admin')
             <li>
                 <a wire:navigate href="{{ route('jobs.index') }}"
                    class="nav-link {{ request()->routeIs('jobs.*') ? 'active' : '' }}">
@@ -71,11 +71,31 @@
             </li>
 
             {{-- Users --}}
-            <li>
-                <a wire:navigate href="{{ route('users.index') }}"
-                   class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-user-gear"></i><span>Users</span>
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center"
+                   data-bs-toggle="collapse" href="#usersMenu" role="button"
+                   aria-expanded="{{ request()->routeIs('users.*') ? 'true' : 'false' }}">
+                    <div>
+                        <i class="fa-solid fa-user-gear me-2"></i><span>Users</span>
+                    </div>
+                    <i class="fa-solid fa-angle-down small"></i>
                 </a>
+                <div class="collapse {{ request()->routeIs('users.*') ? 'show' : '' }}" id="usersMenu">
+                    <ul class="nav flex-column ms-3 border-start ps-2">
+                        <li>
+                            <a wire:navigate href="{{ route('users.index') }}"
+                               class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
+                                <i class="fa-solid fa-list"></i><span>All Users</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a wire:navigate href="{{ route('users.rejected') }}"
+                               class="nav-link {{ request()->routeIs('users.rejected') ? 'active' : '' }}">
+                                <i class="fa-solid fa-user-xmark"></i><span>Rejected Archive</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </li>
 
             {{-- Roles & Permissions --}}
@@ -119,7 +139,7 @@
                     <i class="fa-solid fa-user-tie"></i><span>Admin Profile</span>
                 </a>
             </li>
-        @endrole
+        @endhasanyrole
 
         {{-- --------------------- EMPLOYER ONLY --------------------- --}}
         @role('employer')

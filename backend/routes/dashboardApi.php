@@ -118,9 +118,15 @@ Route::prefix('dashboard')
                     Route::get('/', [DashboardUserController::class, 'index'])->name('index');
                     Route::post('/', [DashboardUserController::class, 'store'])->name('store');
                     Route::get('/trashed', [DashboardUserController::class, 'trashed'])->name('trashed');
+                    Route::get('/rejected', [DashboardUserController::class, 'rejectedUsers'])->name('rejected');
+                    Route::get('/rejection-history/{email}', [DashboardUserController::class, 'rejectionHistory'])->name('rejection-history');
                     Route::post('/{id}/restore', [DashboardUserController::class, 'restore'])->name('restore');
                     Route::delete('/{id}/force', [DashboardUserController::class, 'forceDelete'])->name('force-delete');
                     Route::put('/{user}', [DashboardUserController::class, 'update'])->name('update');
+                    Route::post('/{user}/approve', [DashboardUserController::class, 'approve'])->name('approve');
+                    Route::post('/{user}/reject', [DashboardUserController::class, 'reject'])->name('reject');
+                    Route::post('/{user}/ban', [DashboardUserController::class, 'ban'])->name('ban');
+                    Route::post('/{user}/unban', [DashboardUserController::class, 'unban'])->name('unban');
                     Route::delete('/{user}', [DashboardUserController::class, 'destroy'])->name('destroy');
                 });
 

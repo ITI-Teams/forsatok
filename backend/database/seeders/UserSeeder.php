@@ -34,39 +34,50 @@ class UserSeeder extends Seeder
         // 2) Create Roles
         //-----------------------------------
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
         $employerRole = Role::firstOrCreate(['name' => 'employer']);
         $candidateRole = Role::firstOrCreate(['name' => 'candidate']);
 
         // Assign permissions
         $adminRole->syncPermissions($permissions);
+        $superAdminRole->syncPermissions($permissions); // Super admin gets all permissions (conceptually)
         $employerRole->syncPermissions(['jobs.view', 'jobs.manage']);
         $candidateRole->syncPermissions([]); // no permissions for now
 
         //-----------------------------------
-        // 3) Admins
+        // 3) Admins (auto-approved)
         //-----------------------------------
         $admins = [
             [
                 'name' => 'Super Admin',
+                'email' => 'superadmin@jobhub.com',
+                'type' => 'admin',
+                'password' => Hash::make('password'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
+            ],
+            [
+                'name' => 'Admin User',
                 'email' => 'admin1@jobboard.com',
                 'type' => 'admin',
                 'password' => Hash::make('password'),
-            ],
-            [
-                'name' => 'Main Admin',
-                'email' => 'admin2@jobboard.com',
-                'type' => 'admin',
-                'password' => Hash::make('password'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
             ],
         ];
 
         foreach ($admins as $admin) {
             $user = User::firstOrCreate(['email' => $admin['email']], $admin);
-            $user->assignRole('admin');
+
+            if ($user->email === 'superadmin@jobhub.com') {
+                $user->assignRole('super-admin');
+            } else {
+                $user->assignRole('admin');
+            }
         }
 
         //-----------------------------------
-        // 4) Employers
+        // 4) Employers (some pending for testing, some approved)
         //-----------------------------------
         $employers = [
             [
@@ -74,36 +85,48 @@ class UserSeeder extends Seeder
                 'email' => 'employer1@company.com',
                 'type' => 'employer',
                 'password' => Hash::make('password'),
+                'status' => 'pending', // For testing approval
+                'email_verified_at' => now(),
             ],
             [
                 'name' => 'Digital Innovations',
                 'email' => 'employer2@company.com',
                 'type' => 'employer',
                 'password' => Hash::make('password'),
+                'status' => 'pending', // For testing approval
+                'email_verified_at' => now(),
             ],
             [
                 'name' => 'Creative Vision',
                 'email' => 'employer3@company.com',
                 'type' => 'employer',
                 'password' => Hash::make('password'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
             ],
             [
                 'name' => 'Global Systems',
                 'email' => 'employer4@company.com',
                 'type' => 'employer',
                 'password' => Hash::make('password'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
             ],
             [
                 'name' => 'Startup Hub',
                 'email' => 'employer5@company.com',
                 'type' => 'employer',
                 'password' => Hash::make('password'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
             ],
             [
                 'name' => 'NextGen Software',
                 'email' => 'employer6@company.com',
                 'type' => 'employer',
                 'password' => Hash::make('password'),
+                'status' => 'approved',
+                'email_verified_at' => now(),
             ],
         ];
 
@@ -145,6 +168,8 @@ class UserSeeder extends Seeder
                     'name' => $c['name'],
                     'type' => 'candidate',
                     'password' => Hash::make('password'),
+                    'status' => 'approved', // Candidates auto-approved
+                    'email_verified_at' => now(),
                 ]
             );
 
