@@ -122,12 +122,12 @@ Route::prefix('dashboard')
                     Route::get('/rejection-history/{email}', [DashboardUserController::class, 'rejectionHistory'])->name('rejection-history');
                     Route::post('/{id}/restore', [DashboardUserController::class, 'restore'])->name('restore');
                     Route::delete('/{id}/force', [DashboardUserController::class, 'forceDelete'])->name('force-delete');
-                    Route::put('/{user}', [DashboardUserController::class, 'update'])->name('update');
-                    Route::post('/{user}/approve', [DashboardUserController::class, 'approve'])->name('approve');
-                    Route::post('/{user}/reject', [DashboardUserController::class, 'reject'])->name('reject');
-                    Route::post('/{user}/ban', [DashboardUserController::class, 'ban'])->name('ban');
-                    Route::post('/{user}/unban', [DashboardUserController::class, 'unban'])->name('unban');
-                    Route::delete('/{user}', [DashboardUserController::class, 'destroy'])->name('destroy');
+                    Route::put('/{id}', [DashboardUserController::class, 'update'])->name('update');
+                    Route::post('/{id}/approve', [DashboardUserController::class, 'approve'])->name('approve');
+                    Route::post('/{id}/reject', [DashboardUserController::class, 'reject'])->name('reject');
+                    Route::post('/{id}/ban', [DashboardUserController::class, 'ban'])->name('ban');
+                    Route::post('/{id}/unban', [DashboardUserController::class, 'unban'])->name('unban');
+                    Route::delete('/{id}', [DashboardUserController::class, 'destroy'])->name('destroy');
                 });
 
                 // Roles

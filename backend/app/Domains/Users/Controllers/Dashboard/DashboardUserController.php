@@ -100,8 +100,9 @@ class DashboardUserController extends Controller
     /**
      * Update an existing user.
      */
-    public function update(Request $request, User $user, UpdateUserAction $update): JsonResponse
+    public function update(Request $request, $id, UpdateUserAction $update): JsonResponse
     {
+        $user = User::findOrFail($id);
         $form = new UpdateUserRequest();
         $payload = array_merge($request->all(), ['user_id' => $user->id]);
         $validated = Validator::make(
@@ -128,8 +129,9 @@ class DashboardUserController extends Controller
     /**
      * Soft delete a user.
      */
-    public function destroy(User $user, SoftDeleteUserAction $delete): JsonResponse
+    public function destroy($id, SoftDeleteUserAction $delete): JsonResponse
     {
+        $user = User::findOrFail($id);
         // Security Check: Super Admin protection (Cannot delete Super Admin user or role holder)
         if ($user->email === 'superadmin@jobhub.com' || $user->hasRole('super-admin')) {
             return response()->json(['message' => 'Cannot delete Super Admin.'], 403);
@@ -216,8 +218,9 @@ class DashboardUserController extends Controller
     /**
      * Approve a user (specifically employer).
      */
-    public function approve(User $user): JsonResponse
+    public function approve($id): JsonResponse
     {
+        $user = User::findOrFail($id);
         if ($user->status === 'approved') {
             return response()->json([
                 'status' => false,
@@ -245,8 +248,9 @@ class DashboardUserController extends Controller
     /**
      * Reject a user (specifically employer).
      */
-    public function reject(User $user, Request $request): JsonResponse
+    public function reject($id, Request $request): JsonResponse
     {
+        $user = User::findOrFail($id);
         if ($user->status === 'approved') {
             return response()->json([
                 'status' => false,
@@ -290,8 +294,9 @@ class DashboardUserController extends Controller
     /**
      * Ban an approved user.
      */
-    public function ban(User $user, Request $request): JsonResponse
+    public function ban($id, Request $request): JsonResponse
     {
+        $user = User::findOrFail($id);
         if ($user->status === 'banned') {
             return response()->json([
                 'status' => false,
@@ -322,8 +327,9 @@ class DashboardUserController extends Controller
     /**
      * Unban a banned user.
      */
-    public function unban(User $user): JsonResponse
+    public function unban($id): JsonResponse
     {
+        $user = User::findOrFail($id);
         if ($user->status !== 'banned') {
             return response()->json([
                 'status' => false,
