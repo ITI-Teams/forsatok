@@ -51,7 +51,7 @@
                             style="background: linear-gradient(90deg, #6a11cb, #2575fc);">Reset Password</button>
                     </form>
                     <div class="text-center mt-3"><small>Remembered your password? <a
-                                href="{{ route('auth.login') }}">Login</a></small></div>
+                                href="{{ route('login') }}">Login</a></small></div>
                 </div>
             </div>
         </div>

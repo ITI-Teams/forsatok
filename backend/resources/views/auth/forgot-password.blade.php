@@ -53,7 +53,7 @@
                     </form>
 
                     <div class="text-center mt-3">
-                        <small>Remembered your password? <a href="{{ route('auth.login') }}">Login</a></small>
+                        <small>Remembered your password? <a href="{{ route('login') }}">Login</a></small>
                     </div>
                 </div>
             </div>

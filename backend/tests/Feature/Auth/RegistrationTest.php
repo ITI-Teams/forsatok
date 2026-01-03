@@ -21,6 +21,10 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        \Spatie\Permission\Models\Role::create(['name' => 'admin', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::create(['name' => 'employer', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::create(['name' => 'candidate', 'guard_name' => 'web']); // Seeding candidate too just in case
+
         $component = Volt::test('pages.auth.register')
             ->set('name', 'Test User')
             ->set('email', 'test@example.com')

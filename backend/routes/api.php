@@ -90,14 +90,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // Delete all notifications
     Route::delete('/notifications', [NotificationController::class, 'clearAll']);
 
-});
-
-//  company reviews
-Route::prefix('company-reviews')->group(function () {
-    Route::get('/company/{companyId}', [CompanyReviewsController::class, 'showCompanyReviews']);
-    Route::post('/', [CompanyReviewsController::class, 'store']);
-    Route::put('/{id}', [CompanyReviewsController::class, 'update']);
-    Route::delete('/{id}', [CompanyReviewsController::class, 'destroy']);
+    // company reviews (protected)
+    Route::prefix('company-reviews')->group(function () {
+        Route::get('/company/{companyId}', [CompanyReviewsController::class, 'showCompanyReviews']);
+        Route::post('/', [CompanyReviewsController::class, 'store']);
+        Route::put('/{id}', [CompanyReviewsController::class, 'update']);
+        Route::delete('/{id}', [CompanyReviewsController::class, 'destroy']);
+    });
 });
 
 // Jobs Routes

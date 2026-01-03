@@ -81,20 +81,14 @@ class DashboardJobController extends Controller
     /**
      * Create a new job.
      */
-    public function store(Request $request, CreateJobAction $create): JsonResponse
+    public function store(StoreJobRequest $request, CreateJobAction $create): JsonResponse
     {
-        $payload = $request->all();
-        if (isset($payload['qualifications']) && !isset($payload['qualification'])) {
-            $payload['qualification'] = $payload['qualifications'];
+        $payload = $request->validated();
+        if ($request->has('qualifications') && !$request->has('qualification')) {
+            $payload['qualification'] = $request->input('qualifications');
         }
 
-        $form = new StoreJobRequest();
-        $validated = Validator::make(
-            $payload,
-            $form->rules()
-        )->validate();
-
-        $job = $create->execute($validated);
+        $job = $create->execute($payload);
         $job->refresh()->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
 
         event(new JobCreated($job));
@@ -110,20 +104,14 @@ class DashboardJobController extends Controller
     /**
      * Update an existing job.
      */
-    public function update(Request $request, JobPost $job, UpdateJobAction $update): JsonResponse
+    public function update(UpdateJobRequest $request, JobPost $job, UpdateJobAction $update): JsonResponse
     {
-        $payload = $request->all();
-        if (isset($payload['qualifications']) && !isset($payload['qualification'])) {
-            $payload['qualification'] = $payload['qualifications'];
+        $payload = $request->validated();
+        if ($request->has('qualifications') && !$request->has('qualification')) {
+            $payload['qualification'] = $request->input('qualifications');
         }
 
-        $form = new UpdateJobRequest();
-        $validated = Validator::make(
-            $payload,
-            $form->rules()
-        )->validate();
-
-        $updated = $update->execute($job, $validated);
+        $updated = $update->execute($job, $payload);
         $updated->refresh()->load(['category', 'employer', 'location.country', 'location.city', 'skills']);
 
         event(new JobCreated($updated));

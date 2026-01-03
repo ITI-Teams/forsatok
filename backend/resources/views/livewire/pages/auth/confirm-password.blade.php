@@ -76,7 +76,7 @@ new #[Layout('layouts.guest')] class extends Component
 
     <div class="text-center mt-3">
         <small>
-            <a href="{{ route('auth.login') }}" class="text-decoration-none">
+            <a href="{{ route('login') }}" class="text-decoration-none">
                 Back to Login
             </a>
         </small>
