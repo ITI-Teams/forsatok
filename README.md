@@ -4,6 +4,8 @@
 
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![Angular](https://img.shields.io/badge/Angular-20.x-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![React](https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9+-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
@@ -41,15 +43,29 @@
 
 **JobHub** is a modern, feature-rich job board platform designed to streamline the recruitment process. Built with cutting-edge technologies, it provides a seamless experience for employers to post jobs, candidates to discover opportunities, and administrators to manage the platform efficiently.
 
+---
+
+## 📱 Multi-Platform Ecosystem
+
+JobHub has evolved into a unified backend service capable of supporting multiple frontends simultaneously:
+
+- **Web (Monolith)**: The original implementation using **Laravel Blade & Livewire**, providing an immediate management interface.
+- **Web (Angular SPA)**: The primary, production-ready frontend built with **Angular 20**, offering a full-featured SPA experience.
+- **Web (Modern React)**: A supplementary modern frontend built with **React**, designed for the latest web standards.
+- **Mobile (Cross-Platform)**: A dedicated mobile experience built with **Flutter**, for high-performance iOS and Android apps.
+
+All platforms share the same robust business logic, database, and background services, ensuring data consistency across the entire ecosystem.
+
 ### Key Highlights
 
 - ✨ **Modern Tech Stack**: Built with Laravel 12 and Angular 20
-- 🔐 **Secure Authentication**: Laravel Sanctum API authentication with role-based access control
+- 🏗️ **API-First Evolution**: Transformed from a monolith to a unified backend for React and Flutter
+- 🔐 **Secure Authentication**: Social Logins (Google/LinkedIn) + Laravel Sanctum for API-first apps
+- 💬 **Real-time Chat**: Fully integrated Chat system using **GetStream**
 - 🎨 **Beautiful UI/UX**: Responsive design with Tailwind CSS, PrimeNG, and Flowbite
 - 🔍 **Advanced Search**: Powerful filtering and search capabilities for jobs and candidates
-- 📱 **Fully Responsive**: Mobile-first design that works on all devices
-- ⚡ **Real-time Features**: Live notifications using Pusher
-- 🏗️ **Clean Architecture**: Domain-driven design with separation of concerns
+- ✨ **Clean Architecture**: Domain-driven design (DDD) with clear API/Dashboard split
+- ⚡ **Real-time Features**: Live notifications using Pusher and background events
 
 ---
 
@@ -68,9 +84,9 @@
 - **Application Management**: Review, accept, or reject candidate applications
 - **Analytics Dashboard**: Track job views, applications, and performance metrics
 - **Company Reviews**: View and manage company reviews from candidates
-- **Direct Communication**: Contact accepted candidates directly
 - **Notifications**: Real-time notifications for job approvals/rejections
 - **Comment System**: Engage with job posts through comments
+- **Direct Communication**: Real-time Chat with candidates via **GetStream** integration
 
 ### 👤 For Candidates
 
@@ -92,6 +108,8 @@
   - Track application status
   - Save favorite jobs
   - LinkedIn integration for auto-filling forms
+  - **Social Integration**: One-click login/registration via **Google** and **LinkedIn**
+- **Real-time Chat**: Communicate directly with employers via the platform's chat system
 - **Candidate Search**: Employers can search and filter candidates by skills, location, education, and experience
 - **Notifications**: Real-time updates on application status
 - **Dashboard**: Manage applications and profile in one place
@@ -100,11 +118,11 @@
 
 - **Job Moderation**: Approve or reject job posts submitted by employers
 - **User Management**: Manage employers and candidates
-- **Content Moderation**: Remove inappropriate comments and content
+- **Content Moderation**: Moderate inappropriate comments, media, and reports
 - **System Monitoring**: Track overall system activity and analytics
 - **Email Management**: Create and manage email templates
 - **Role & Permission Management**: Full control over user roles and permissions
-- **Audit Logging**: Track all system changes and user activities
+- **Audit Logging**: Comprehensive trail of all system changes and user activities
 
 ### 🌟 Platform Features
 
@@ -116,6 +134,12 @@
   - Pusher integration for live notifications
   - Email notifications
   - Dashboard notification center
+- **Real-time Messaging**: 
+  - **GetStream** integration for person-to-person chat
+  - Presence indicators and read receipts
+- **Content Integrity**: 
+  - Reporting system for inappropriate content/users
+  - Polymorphic media management for secure file uploads
 - **Location Management**: 
   - Country and city-based location system
   - Location-based job and candidate filtering
@@ -151,7 +175,8 @@
 | **Livewire Volt** | 1.7+ | Single File Components |
 | **Spatie Permission** | 6.22+ | Role & Permission Management |
 | **Pusher** | 7.2+ | Real-time Notifications |
-| **Laravel Socialite** | 5.23+ | OAuth Integration (LinkedIn) |
+| **Laravel Socialite** | 5.23+ | OAuth Integration (Google & LinkedIn) |
+| **GetStream** | Latest | Full-featured Chat Engine |
 | **Laravel Pint** | 1.24+ | Code Style Fixer |
 | **PHPUnit** | 11.5+ | Testing Framework |
 
@@ -170,6 +195,15 @@
 | **ngx-toastr** | 19.1+ | Toast Notifications |
 | **Swiper** | 12.0+ | Touch Slider |
 | **ng-select** | 20.7+ | Select Component |
+
+### Modern API Clients (React & Flutter)
+
+| Technology | Platform | Purpose |
+|------------|----------|---------|
+| **React** | Web | Supplementary SPA frontend |
+| **Flutter** | Mobile | High-performance mobile application |
+| **GetStream SDK** | Chat | Real-time messaging integration |
+| **Pusher JS** | Notifications | Live updates across all platforms |
 
 ### Development Tools
 
@@ -204,7 +238,8 @@ backend/
 │   ├── Notifications/       # Notification classes
 │   └── Http/               # HTTP layer
 ├── routes/
-│   ├── api.php             # API routes
+│   ├── api.php             # Public REST API routes
+│   ├── dashboardApi.php    # Dashboard API routes
 │   └── web.php             # Web routes
 └── database/
     ├── migrations/         # Database migrations
@@ -226,6 +261,14 @@ Domain/
 ├── Resources/            # API resources
 └── Services/             # Domain services (if needed)
 ```
+
+### Architecture Principles (Multi-Platform)
+
+The ecosystem is designed for scalability:
+- **Unified Backend**: A single Laravel source serving Blade, Angular, React, and Flutter.
+- **API-First Maturity**: Decoupled architecture allowing independent client development.
+- **Stateless Auth**: Leverages Sanctum for secure, token-based sessions across all SPAs.
+- **Event-Driven**: Uses Broadcaster (Pusher) for real-time state synchronization.
 
 ### Frontend Architecture
 
@@ -261,7 +304,25 @@ frontend/
 
 ---
 
-## 🔄 Workflows & Process Flows
+## � Request Routing & Frontend Detection
+
+To support a multi-platform ecosystem, the backend implements an intelligent request detection mechanism via the `DetectFrontendSource` middleware and `FrontendUrlService`.
+
+### Detection Logic
+The system automatically identifies the origin of each request to adapt its behavior (e.g., URL generation, redirection, authentication response):
+
+1.  **Dashboard Identification**: 
+    - Requests to `api/dashboard/*` or `dashboard/*` are marked as `react_dashboard`.
+2.  **API Client Identification**: 
+    - Requests to `api/*` are inspected for the `App-Source` header:
+        - `App-Source: hive` -> Marked as `hive` (Angular Frontend).
+        - `App-Source: react_web` -> Marked as `react_web` (React Frontend).
+        - Default/`App-Source: jobhub` -> Marked as `jobhub` (Flutter/Mobile).
+3.  **Monolith Fallback**: 
+    - All other requests default to `web` (Blade/Livewire Monolith).
+
+### Platform-Specific URL Generation
+The `FrontendUrlService` uses the detected source to generate accurate URLs for emails and redirects, ensuring users are sent back to the correct platform (Angular, React, Flutter, or Monolith) based on their current session.
 
 ### 1. Candidate Workflow
 
@@ -305,16 +366,23 @@ backend/
 │   │   │   └── Resources/
 │   │   ├── Candidates/            # Candidate management
 │   │   ├── Employers/             # Employer management
+│   │   ├── Home/                  # Landing page
+│   │   ├── Interactions/          # Comments, Media, and Reports
 │   │   ├── Jobs/                  # Job postings
 │   │   ├── Location/              # Location system
-│   │   ├── Users/                # User management
-│   │   ├── CompanyReviews/        # Review system
-│   │   └── Contact/              # Contact messages
+│   │   ├── Notification/          # Real-time notifications
+│   │   ├── Shared/                # Audit, Stream, and Detection services
+│   │   └── Users/                 # User management
 │   ├── Livewire/                  # Livewire components
 │   │   ├── Admin/                # Admin components
 │   │   ├── Jobs/                 # Job components
 │   │   ├── Applications/         # Application components
 │   │   └── ...
+│   ├── Http/                     # HTTP layer
+│   │   ├── Controllers/ 
+│   │   │   ├── Api/              # Public REST API
+│   │   │   └── Dashboard/        # Admin/Employer Dashboard API
+│   │   └── Middleware/ 
 │   ├── Events/                    # Event classes
 │   ├── Notifications/            # Notification classes
 │   └── Http/                     # HTTP layer
@@ -324,6 +392,7 @@ backend/
 │   └── seeders/                 # Database seeders
 ├── routes/
 │   ├── api.php                  # API routes
+│   ├── dashboardApi.php        # Dashboard API routes
 │   └── web.php                  # Web routes
 ├── resources/
 │   ├── views/                   # Blade templates
@@ -492,7 +561,22 @@ SANCTUM_STATEFUL_DOMAINS=localhost:4200
 
 LINKEDIN_CLIENT_ID=your-linkedin-client-id
 LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
-LINKEDIN_REDIRECT_URI=http://localhost:8000/auth/linkedin/callback
+LINKEDIN_REDIRECT_URI=http://localhost:8000/api/auth/linkedin/callback
+
+# Social Authentication
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URL=http://localhost:8000/auth/google/callback
+
+# Frontend URLs (for Detection Service)
+HIVE_URL=http://localhost:4200          # Angular Frontend
+REACT_WEB_URL=http://localhost:3000    # React Frontend
+JOBHUB_URL=http://localhost:8080        # Flutter/Mobile
+APP_URL=http://localhost:8000           # Monolith/API Base
+
+# Real-time Services (GetStream)
+STREAM_API_KEY=your-stream-key
+STREAM_API_SECRET=your-stream-secret
 ```
 
 #### Frontend
@@ -519,6 +603,14 @@ POST /api/auth/candidate/forgot-password
 POST /api/auth/candidate/reset-password
 POST /api/auth/candidate/send-verification-code
 POST /api/auth/candidate/verify-code
+
+#### Social Authentication (Multi-Platform)
+```http
+GET  /auth/google               # Redirect to Google (via Web/Redirect)
+GET  /auth/google/callback      # Google callback handler
+GET  /api/auth/linkedin/redirect # Redirect to LinkedIn (API Source)
+GET  /api/auth/linkedin/callback # LinkedIn callback handler
+```
 ```
 
 ### Job Endpoints
@@ -576,6 +668,83 @@ POST /api/company-reviews         # Create review (authenticated)
 GET  /api/home                    # Get home page data
 ```
 
+### 🖥️ Dashboard & Platform APIs
+
+These endpoints support modern **React** and **Flutter** frontends for administrative and platform-wide tasks. All routes in this section are prefixed with `/api/dashboard/` and require Sanctum authentication unless otherwise noted.
+
+#### 🔐 Dashboard Authentication (Public)
+```http
+POST /api/dashboard/auth/register       # Register as admin/employer
+POST /api/dashboard/auth/login          # Dashboard login
+POST /api/dashboard/auth/forgot-password # Request reset link
+POST /api/dashboard/auth/reset-password  # Reset password with token
+```
+
+#### 🛡️ Admin Dashboard (Authenticated)
+**Global Statistics & Meta**
+```http
+GET  /api/dashboard/stats/admin          # Global platform metrics
+GET  /api/dashboard/profile              # Get current admin profile
+GET  /api/dashboard/audit-logs           # System-wide immutable activity trail
+```
+
+**User & Access Management**
+```http
+GET  /api/dashboard/users                # List all users (with filters)
+POST /api/dashboard/users/{id}/approve   # Approve pending employer/user
+POST /api/dashboard/users/{id}/reject    # Reject user application
+POST /api/dashboard/users/{id}/ban       # Prevent user from logging in
+GET  /api/dashboard/roles                # Manage system roles
+GET  /api/dashboard/permissions          # Manage granular permissions
+GET  /api/dashboard/role-permissions     # Bulk edit role-permission mapping
+```
+
+**Content & System Management**
+```http
+GET  /api/dashboard/categories           # CRUD for job categories
+GET  /api/dashboard/skills               # CRUD for platform skill taxonomy
+GET  /api/dashboard/countries            # CRUD for supported countries
+GET  /api/dashboard/cities               # CRUD for supported cities
+GET  /api/dashboard/contact-messages     # Manage platform inquiries
+```
+
+#### 👔 Employer Dashboard (Authenticated)
+**Company Performance**
+```http
+GET  /api/dashboard/stats/employer       # Company-specific analytics
+GET  /api/dashboard/employer/profile      # Manage company profile/info
+```
+
+**Job & Application Lifecycle**
+```http
+GET  /api/dashboard/jobs                 # Manage company job postings
+POST /api/dashboard/jobs                 # Create new job post
+PUT  /api/dashboard/jobs/{id}            # Update job post
+GET  /api/dashboard/applications/filter  # Multi-criteria application search
+PUT  /api/dashboard/applications/{id}     # Process application (Accept/Reject)
+```
+
+**Reviews & Feedback**
+```http
+GET  /api/dashboard/company-reviews      # Moderation center for company reviews
+POST /api/dashboard/reviews/{id}/approve # Approve candidate review
+```
+
+#### 🔍 High-Performance Skill Search (Shared)
+```http
+POST /api/dashboard/candidates/search-by-skills   # AI-like matching with relevance scoring
+POST /api/dashboard/jobs/search-by-skills         # Finding best job matches via skill vectors
+POST /api/dashboard/candidates/skill-match-stats   # Statistics on skill saturation
+```
+
+#### 🔔 Notification & Real-time (Shared)
+```http
+GET  /api/dashboard/notifications        # Unified notification history
+GET  /api/dashboard/notifications/unread # Count of pending alerts
+POST /api/dashboard/notifications/read-all # Clear notification queue
+GET  /api/stream/token                   # Secure JWT for GetStream Chat integration
+```
+
 ### Authentication
 
 All protected endpoints require authentication via Laravel Sanctum. Include the token in the Authorization header:
@@ -605,9 +774,10 @@ Authorization: Bearer {token}
 - **cities**: Cities
 - **company_reviews**: Company reviews
 - **contact_messages**: Contact form messages
-- **comments**: Polymorphic comments
-- **notifications**: System notifications
-- **audit_logs**: Audit trail
+- **comments** & **reports**: Social engagement and content moderation system
+- **notifications**: Cross-platform push and database notifications
+- **media**: Polymorphic storage for resumes, logos, and attachments
+- **audit_logs**: Immutable trail of platform-wide activities (for React/Dashboard)
 
 ### Key Relationships
 
@@ -766,6 +936,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Laravel community
 - Angular team
+- React & Flutter teams
+- GetStream for Real-time Chat
+- Pusher for Live Notifications
 - All open-source contributors
 - PrimeNG team
 - Tailwind CSS team
@@ -780,7 +953,7 @@ For support, email support@JobHub.com or open an issue in the repository.
 
 <div align="center">
 
-**Built with ❤️ using Laravel & Angular**
+**Built with ❤️ for a Seamless Multi-Platform Experience (Laravel, Angular, React & Flutter)**
 
 ⭐ Star this repo if you find it helpful!
 
