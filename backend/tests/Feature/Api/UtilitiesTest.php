@@ -35,18 +35,19 @@ class UtilitiesTest extends TestCase
 
     public function test_can_list_countries()
     {
-        // Assuming Country model has 'name' and maybe 'code'
-        // If Country model is different, this test might need adjustment.
-        // Let's try basic creation.
-        // Checking if Country uses a factory or manual create
-        try {
-             Country::create(['name' => 'Egypt', 'code' => 'EG', 'phone_code' => '20']);
-        } catch (\Exception $e) {
-             // Fallback if schema is different, but for now assuming standard fields
-             Country::create(['name' => 'Egypt']);
-        }
+        Country::create(['name' => 'Egypt', 'code' => 'EG']);
 
         $response = $this->getJson('/api/locations/countries');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_can_list_cities()
+    {
+        $country = Country::create(['name' => 'Egypt', 'code' => 'EG']);
+        \App\Domains\Location\Models\City::create(['name' => 'Cairo', 'country_id' => $country->id]);
+
+        $response = $this->getJson('/api/locations/cities');
 
         $response->assertStatus(200);
     }

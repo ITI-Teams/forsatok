@@ -64,7 +64,7 @@ Route::prefix('dashboard')
             // ───────────────────────────────────────────────────────────────
             // ADMIN ONLY ROUTES
             // ───────────────────────────────────────────────────────────────
-            Route::middleware('role:admin')->group(function () {
+            Route::middleware('role:admin|super-admin')->group(function () {
 
                 // Admin Stats
                 Route::get('/stats/admin', [AdminStatsController::class, 'index'])->name('stats.admin');
@@ -186,7 +186,7 @@ Route::prefix('dashboard')
             // ───────────────────────────────────────────────────────────────
             // ADMIN | EMPLOYER ROUTES (Jobs)
             // ───────────────────────────────────────────────────────────────
-            Route::middleware('role:admin|employer')->group(function () {
+            Route::middleware('role:admin|employer|super-admin')->group(function () {
                 Route::prefix('jobs')->name('jobs.')->group(function () {
 
                     // Jobs with manage permission
@@ -258,7 +258,7 @@ Route::prefix('dashboard')
             // ───────────────────────────────────────────────────────────────
             // SHARED ROUTES (Admin | Employer)
             // ───────────────────────────────────────────────────────────────
-            Route::prefix('contact-messages')->middleware('role:admin|employer')->group(function () {
+            Route::prefix('contact-messages')->middleware('role:admin|employer|super-admin')->group(function () {
                 Route::get('/', [DashboardContactMessageController::class, 'sharedIndex'])->name('shared.contact.index');
             });
         });

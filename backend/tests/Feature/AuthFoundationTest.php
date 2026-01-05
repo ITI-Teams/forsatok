@@ -93,8 +93,8 @@ class AuthFoundationTest extends TestCase
 
         $response = $this->actingAs($superAdmin, 'sanctum')->getJson('/api/dashboard/stats/admin');
         
-        // Super admin should ideally have access. If not, this test documents current state.
-        $response->assertStatus(403); 
+        // Super admin should have access.
+        $response->assertStatus(200); 
     }
 
     /** @test */
@@ -118,7 +118,7 @@ class AuthFoundationTest extends TestCase
             'email' => 'login@example.com',
             'password' => bcrypt('password'),
             'type' => 'candidate',
-            'status' => 'active'
+            'status' => 'approved'
         ]);
 
         $response = $this->postJson('/api/auth/candidate/login', [

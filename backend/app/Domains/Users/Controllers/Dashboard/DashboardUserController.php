@@ -111,6 +111,7 @@ class DashboardUserController extends Controller
         }
         
         $form = new UpdateUserRequest();
+        $form->user_id = $user->id;
         $payload = array_merge($request->all(), ['user_id' => $user->id]);
         $validated = Validator::make(
             $payload,

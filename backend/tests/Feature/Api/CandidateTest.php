@@ -44,4 +44,10 @@ class CandidateTest extends TestCase
         $response->assertStatus(200)
                  ->assertJsonPath('data.id', $candidate->id);
     }
+
+    public function test_can_get_candidate_filter_options()
+    {
+        $response = $this->getJson('/api/candidates/filter-options');
+        $response->assertStatus(200);
+    }
 }

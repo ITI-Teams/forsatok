@@ -94,4 +94,78 @@ class UserManagementTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
+
+    public function test_admin_can_update_user()
+    {
+        $admin = $this->setupAdmin();
+        $user = User::factory()->create(['type' => 'candidate', 'name' => 'Old Name']);
+
+        $response = $this->actingAs($admin, 'sanctum')->putJson("/api/dashboard/users/{$user->id}", [
+            'name' => 'New Name',
+            'email' => $user->email,
+            'type' => 'candidate',
+            'status' => 'approved'
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'New Name']);
+    }
+
+    public function test_admin_can_list_rejected_users()
+    {
+        $admin = $this->setupAdmin();
+        \Illuminate\Support\Facades\DB::table('rejected_users')->insert([
+            'email' => 'rejected@test.com',
+            'name' => 'Rejected Guy',
+            'type' => 'employer',
+            'rejection_reason' => 'Bad docs',
+            'rejected_by' => $admin->id,
+            'rejected_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'sanctum')->getJson('/api/dashboard/users/rejected');
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['email' => 'rejected@test.com']);
+    }
+
+    public function test_admin_can_view_rejection_history()
+    {
+        $admin = $this->setupAdmin();
+        \Illuminate\Support\Facades\DB::table('rejected_users')->insert([
+            'email' => 'rejected@test.com',
+            'name' => 'Rejected Guy',
+            'type' => 'employer',
+            'rejection_reason' => 'Bad docs',
+            'rejected_by' => $admin->id,
+            'rejected_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'sanctum')->getJson('/api/dashboard/users/rejection-history/rejected@test.com');
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['rejection_reason' => 'Bad docs']);
+    }
+
+    public function test_admin_can_view_user_status_history()
+    {
+        $admin = $this->setupAdmin();
+        $user = User::factory()->create(['type' => 'candidate']);
+        
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'banned',
+            'reason' => 'Spam',
+            'actioned_by' => $admin->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'sanctum')->getJson("/api/dashboard/users/{$user->id}/status-history");
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['action' => 'banned', 'reason' => 'Spam']);
+    }
 }

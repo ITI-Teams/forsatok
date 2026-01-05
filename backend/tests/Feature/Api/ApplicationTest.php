@@ -115,4 +115,39 @@ class ApplicationTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonFragment(['total' => 1, 'pending' => 1]);
     }
+
+    public function test_candidate_can_list_own_applications()
+    {
+        $candidate = $this->setupCandidate();
+        $response = $this->actingAs($candidate, 'sanctum')->getJson('/api/applications');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_candidate_can_view_single_application()
+    {
+        $candidate = $this->setupCandidate();
+        $employer = $this->setupEmployer();
+        $category = Category::create(['name' => 'IT']);
+        $job = JobPost::create([
+            'employer_id' => $employer->id, 'title' => 'Test Job', 'category_id' => $category->id,
+            'is_active' => true, 'status' => 'approved', 'deadline' => now()->addDays(10),
+            'description' => 'Desc', 'responsibilities' => 'Resp', 'qualification' => 'Quals', 'benefits' => 'Benefits', 'experience' => '1-3 years',
+            'work_type' => 'full-time', 'work_place' => 'remote',
+        ]);
+        $app = JobApplication::create(['candidate_id' => $candidate->id, 'job_post_id' => $job->id, 'status' => 'pending']);
+
+        $response = $this->actingAs($candidate, 'sanctum')->getJson("/api/applications/{$app->id}");
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['id' => $app->id]);
+    }
+
+    public function test_can_view_available_jobs()
+    {
+        $candidate = $this->setupCandidate();
+        $response = $this->actingAs($candidate, 'sanctum')->getJson('/api/applications/available-jobs');
+
+        $response->assertStatus(200);
+    }
 }

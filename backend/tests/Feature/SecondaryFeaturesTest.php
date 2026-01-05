@@ -53,6 +53,15 @@ class SecondaryFeaturesTest extends TestCase
         // Delete
         $this->actingAs($user, 'sanctum')->deleteJson("/api/notifications/{$id}")->assertStatus(200);
         $this->assertDatabaseMissing('notifications', ['id' => $id]);
+
+        // Mark all as read
+        $this->actingAs($user, 'sanctum')->postJson('/api/notifications/read-all')->assertStatus(200);
+
+        // List unread
+        $this->actingAs($user, 'sanctum')->getJson('/api/notifications/unread')->assertStatus(200);
+
+        // Clear all
+        $this->actingAs($user, 'sanctum')->deleteJson('/api/notifications')->assertStatus(200);
     }
 
     // ═══════════════════════════════════════════════════════════════════

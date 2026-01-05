@@ -151,4 +151,18 @@ class JobTest extends TestCase
         $response->assertJsonFragment(['title' => 'Available Job']);
         $response->assertJsonMissing(['title' => 'Applied Job']);
     }
+
+    public function test_can_get_job_filter_options()
+    {
+        $response = $this->getJson('/api/jobs/filter-options');
+        $response->assertStatus(200);
+    }
+
+    public function test_candidate_can_list_saved_jobs()
+    {
+        $candidate = User::factory()->create(['type' => 'candidate', 'status' => 'approved']);
+        $response = $this->actingAs($candidate, 'sanctum')->getJson('/api/jobs/saved');
+
+        $response->assertStatus(200);
+    }
 }

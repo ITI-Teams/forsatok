@@ -31,7 +31,7 @@ class AuthTest extends TestCase
             'email' => 'candidate@test.com',
             'password' => bcrypt('password'),
             'type' => 'candidate',
-            'status' => 'active'
+            'status' => 'approved'
         ]);
 
         $response = $this->postJson('/api/auth/candidate/login', [
@@ -48,7 +48,20 @@ class AuthTest extends TestCase
         $user = User::factory()->create(['type' => 'candidate']);
         \App\Domains\Candidates\Models\CandidateInfo::create(['user_id' => $user->id]);
         
-        $response = $this->actingAs($user)->getJson('/api/auth/candidate/info');
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/auth/candidate/info');
+        $response->assertStatus(200);
+    }
+
+    public function test_can_list_candidates()
+    {
+        $response = $this->getJson('/api/auth/candidatelist');
+        $response->assertStatus(200);
+    }
+
+    public function test_can_get_employer_info()
+    {
+        $employer = User::factory()->create(['type' => 'employer', 'status' => 'approved']);
+        $response = $this->actingAs($employer, 'sanctum')->getJson('/api/auth/employerinfo');
 
         $response->assertStatus(200);
     }

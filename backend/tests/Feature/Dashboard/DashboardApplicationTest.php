@@ -120,4 +120,97 @@ class DashboardApplicationTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_employer_can_filter_applications()
+    {
+        $employer = $this->setupEmployer();
+        $job = $this->createJob($employer->id);
+        $candidate = User::factory()->create(['type' => 'candidate']);
+        
+        JobApplication::create([
+            'candidate_id' => $candidate->id,
+            'job_post_id' => $job->id,
+            'status' => 'pending'
+        ]);
+
+        $response = $this->actingAs($employer, 'sanctum')->getJson('/api/dashboard/applications/filter?status=pending');
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['status' => 'pending']);
+    }
+
+    public function test_employer_can_soft_delete_application()
+    {
+        $employer = $this->setupEmployer();
+        $job = $this->createJob($employer->id);
+        $candidate = User::factory()->create(['type' => 'candidate']);
+        
+        $app = JobApplication::create([
+            'candidate_id' => $candidate->id,
+            'job_post_id' => $job->id,
+            'status' => 'pending'
+        ]);
+
+        $response = $this->actingAs($employer, 'sanctum')->deleteJson("/api/dashboard/applications/{$app->id}");
+
+        $response->assertStatus(200);
+        $this->assertSoftDeleted($app);
+    }
+
+    public function test_employer_can_list_trashed_applications()
+    {
+        $employer = $this->setupEmployer();
+        $job = $this->createJob($employer->id);
+        $candidate = User::factory()->create(['type' => 'candidate']);
+        
+        $app = JobApplication::create([
+            'candidate_id' => $candidate->id,
+            'job_post_id' => $job->id,
+            'status' => 'pending'
+        ]);
+        $app->delete();
+
+        $response = $this->actingAs($employer, 'sanctum')->getJson('/api/dashboard/applications/trashed');
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['id' => $app->id]);
+    }
+
+    public function test_employer_can_restore_application()
+    {
+        $employer = $this->setupEmployer();
+        $job = $this->createJob($employer->id);
+        $candidate = User::factory()->create(['type' => 'candidate']);
+        
+        $app = JobApplication::create([
+            'candidate_id' => $candidate->id,
+            'job_post_id' => $job->id,
+            'status' => 'pending'
+        ]);
+        $app->delete();
+
+        $response = $this->actingAs($employer, 'sanctum')->postJson("/api/dashboard/applications/{$app->id}/restore");
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('job_applications', ['id' => $app->id, 'deleted_at' => null]);
+    }
+
+    public function test_employer_can_force_delete_application()
+    {
+        $employer = $this->setupEmployer();
+        $job = $this->createJob($employer->id);
+        $candidate = User::factory()->create(['type' => 'candidate']);
+        
+        $app = JobApplication::create([
+            'candidate_id' => $candidate->id,
+            'job_post_id' => $job->id,
+            'status' => 'pending'
+        ]);
+        $app->delete();
+
+        $response = $this->actingAs($employer, 'sanctum')->deleteJson("/api/dashboard/applications/{$app->id}/force");
+
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('job_applications', ['id' => $app->id]);
+    }
 }

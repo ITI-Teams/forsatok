@@ -43,4 +43,13 @@ class AuthTest extends TestCase
         $response->assertStatus(200)
                  ->assertJsonStructure(['data' => ['token']]);
     }
+
+    public function test_can_get_profile()
+    {
+        $user = User::factory()->create(['type' => 'admin', 'status' => 'approved']);
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/dashboard/profile');
+
+        $response->assertStatus(200)
+                 ->assertJsonStructure(['data' => ['user', 'roles', 'permissions']]);
+    }
 }
