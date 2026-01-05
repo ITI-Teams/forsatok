@@ -73,6 +73,20 @@
         },
         {
           "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "    pm.environment.set(\"token\", response.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -2875,7 +2889,7 @@
                   "value": "Developer",
                   "description": "Filter by job title"
                 },
-                 {
+                {
                   "key": "job_id",
                   "value": "1",
                   "description": "Filter by job ID"

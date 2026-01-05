@@ -33,6 +33,13 @@ new #[Layout('layouts.guest')] class extends Component {
     <!-- Session Status -->
     <x-auth-session-status class="mb-3" :status="session('status')" />
 
+    <!-- Session Error Messages (from middleware) -->
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Error Messages -->
     @if ($errors->any())
         <div class="alert alert-danger">

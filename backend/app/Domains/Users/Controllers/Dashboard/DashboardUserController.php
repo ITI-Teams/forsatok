@@ -103,6 +103,13 @@ class DashboardUserController extends Controller
     public function update(Request $request, $id, UpdateUserAction $update): JsonResponse
     {
         $user = User::findOrFail($id);
+        
+        // Security Check: Only Super Admin can edit other admins
+        if (($user->type === 'admin' || $user->hasRole(['admin', 'super-admin'])) 
+            && !auth()->user()->hasRole('super-admin')) {
+            return response()->json(['message' => 'Only Super Admin can edit admin users.'], 403);
+        }
+        
         $form = new UpdateUserRequest();
         $payload = array_merge($request->all(), ['user_id' => $user->id]);
         $validated = Validator::make(
@@ -235,6 +242,18 @@ class DashboardUserController extends Controller
             'approved_at' => now(),
         ]);
 
+        // Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'approved',
+            'reason' => null,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         // Send approval email notification
         Mail::to($user->email)->send(new AccountApproved($user));
 
@@ -279,10 +298,22 @@ class DashboardUserController extends Controller
             'updated_at' => now(),
         ]);
 
-        // 2. Force Delete User (before sending email so we don't block on email)
+        // 2. Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'rejected',
+            'reason' => $reason,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // 3. Force Delete User (before sending email so we don't block on email)
         $user->forceDelete();
 
-        // 3. Send Rejection Email
+        // 4. Send Rejection Email
         Mail::to($userEmail)->send(new AccountRejected($userName, $userEmail, $reason));
 
         return response()->json([
@@ -314,6 +345,21 @@ class DashboardUserController extends Controller
         // Update status to banned
         $user->update(['status' => 'banned']);
 
+        // Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'banned',
+            'reason' => $reason,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Revoke all tokens to force logout from all devices
+        $user->tokens()->delete();
+
         // Send Ban Email
         Mail::to($user->email)->send(new AccountBanned($user, $reason));
 
@@ -338,6 +384,18 @@ class DashboardUserController extends Controller
         }
 
         $user->update(['status' => 'approved']);
+
+        // Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'unbanned',
+            'reason' => null,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return response()->json([
             'status' => true,
@@ -385,6 +443,57 @@ class DashboardUserController extends Controller
             'status' => true,
             'message' => 'Rejection history retrieved successfully.',
             'data' => $history,
+        ]);
+    }
+
+    /**
+     * Get user status history (approve, reject, ban, unban actions).
+     */
+    public function getUserStatusHistory($userId): JsonResponse
+    {
+        $user = User::withTrashed()->find($userId);
+        
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        // Get history from user_status_history table
+        $history = \Illuminate\Support\Facades\DB::table('user_status_history')
+            ->where('user_id', $userId)
+            ->orWhere('email', $user->email)  // Also check by email in case user was deleted
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($record) {
+                // Get admin who performed the action
+                $admin = User::find($record->actioned_by);
+                
+                return [
+                    'id' => $record->id,
+                    'action' => $record->action,
+                    'reason' => $record->reason,
+                    'actioned_by' => [
+                        'id' => $record->actioned_by,
+                        'name' => $admin?->name ?? 'Unknown Admin',
+                        'email' => $admin?->email ?? 'N/A',
+                    ],
+                    'created_at' => $record->created_at,
+                ];
+            });
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'current_status' => $user->status,
+                ],
+                'history' => $history,
+            ],
         ]);
     }
 }

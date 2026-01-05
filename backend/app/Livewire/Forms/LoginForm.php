@@ -40,11 +40,28 @@ class LoginForm extends Form
 
         $user = Auth::user();
 
+        // Dashboard is only for admins and employers, not candidates
         if ($user && $user->type === 'candidate') {
             Auth::logout();
 
             throw ValidationException::withMessages([
-                'form.email' => 'You are not authorized to login from this portal.',
+                'form.email' => 'This dashboard is for admins and employers only. If you are a candidate, please use the candidate portal.',
+            ]);
+        }
+
+        // Check if employer account is approved
+        if ($user && $user->type === 'employer' && $user->status !== 'approved') {
+            Auth::logout();
+
+            $message = match ($user->status) {
+                'pending' => 'Your account is pending admin approval. Please wait for approval before logging in.',
+                'rejected' => 'Your account has been rejected. Please contact support.',
+                'banned' => 'Your account has been banned. Please contact support.',
+                default => 'Your account status does not allow access. Please contact support.',
+            };
+
+            throw ValidationException::withMessages([
+                'form.email' => $message,
             ]);
         }
 

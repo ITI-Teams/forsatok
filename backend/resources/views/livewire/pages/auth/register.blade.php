@@ -29,6 +29,7 @@ new #[Layout('layouts.guest')] class extends Component {
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['type'] = 'employer';
+        $validated['status'] = 'pending';  // Set status to pending for employer approval
 
         $user = User::create($validated);
 
@@ -47,15 +48,20 @@ new #[Layout('layouts.guest')] class extends Component {
         $admins = User::role('admin')->get();
         Notification::send($admins, new NewUserRegisteredNotification($user));
 
-        Auth::login($user);
+        // DO NOT auto-login employer - they need admin approval first
+        // Removed: Auth::login($user);
+        
+        // Log the registration without authenticating
         app(AuditLogger::class)->log([
             'action' => 'Create New account',
-            'user' => auth()->user(),
-            'model' => auth()->user(),
-            'changes' => ['message' => 'A new account has been created', 'User' => $user->name,]
+            'user' => $user,  // Log with the new user object
+            'model' => $user,
+            'changes' => ['message' => 'A new employer account has been created and is pending approval', 'User' => $user->name,]
         ]);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        // Redirect to login with success message
+        session()->flash('status', 'Registration successful! Please check your email to verify your account and wait for admin approval before you can login.');
+        $this->redirect(route('login', absolute: false), navigate: true);
     }
 };
 ?>

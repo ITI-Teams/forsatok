@@ -13,6 +13,8 @@ class RolePermission extends Component
 
     public function render()
     {
+        abort_unless(auth()->user()->hasRole('super-admin'), 403);
+
         return view('livewire.admin.roles.role-permission', [
             'roles' => Role::all(),
             'permissions' => Permission::all(),

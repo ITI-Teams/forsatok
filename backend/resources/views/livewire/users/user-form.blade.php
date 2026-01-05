@@ -63,7 +63,9 @@
                         <select wire:model.defer="type"
                             class="form-select @error('type') is-invalid @enderror">
                             <option value="">Select type</option>
-                            <option value="admin">Admin</option>
+                            @role('super-admin')
+                                <option value="admin">Admin</option>
+                            @endrole
                             <option value="employer">Employer</option>
                             <option value="candidate">Candidate</option>
                         </select>

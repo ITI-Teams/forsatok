@@ -15,6 +15,8 @@ class UserRolePermission extends Component
 
     public function render()
     {
+        abort_unless(auth()->user()->hasRole('super-admin'), 403);
+
         return view('livewire.admin.users.user-role-permission', [
             'users' => User::all(),
             'roles' => Role::all(),
@@ -35,7 +37,7 @@ class UserRolePermission extends Component
     }
 
     /**
-     * Add (not sync) roles and permissions to user
+     * Sync roles and permissions for the selected user
      */
     public function updateUserRolesPermissions()
     {
@@ -46,21 +48,13 @@ class UserRolePermission extends Component
 
         $user = User::findOrFail($this->user_id);
 
-        // ✅ Add new roles only (without removing existing)
-        foreach ($this->selectedRoles as $roleName) {
-            if (!$user->hasRole($roleName)) {
-                $user->assignRole($roleName);
-            }
-        }
+        // ✅ Sync roles (adds new, removes unchecked)
+        $user->syncRoles($this->selectedRoles);
 
-        // ✅ Add new permissions only (without removing existing)
-        foreach ($this->selectedPermissions as $permissionName) {
-            if (!$user->hasPermissionTo($permissionName)) {
-                $user->givePermissionTo($permissionName);
-            }
-        }
+        // ✅ Sync permissions (adds new, removes unchecked)
+        $user->syncPermissions($this->selectedPermissions);
 
-        session()->flash('message', 'New roles and permissions added successfully.');
+        session()->flash('message', 'Roles and permissions updated successfully.');
     }
 
 }

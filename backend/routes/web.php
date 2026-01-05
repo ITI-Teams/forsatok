@@ -64,7 +64,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.approved'])->group(function () {
     // admin dashboard
     Route::get('/admin/dashboard', AdminDashboard::class)
         ->middleware('role:admin|super-admin')
@@ -101,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
 // ================================
 // ADMIN ROUTES
 // ================================
-Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
+Route::middleware(['auth', 'check.approved', 'role:admin|super-admin'])->group(function () {
 
     // Categories
     Route::prefix('categories')->group(function () {
@@ -135,15 +135,19 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
         Route::get('/trash', CityTrash::class)->name('cities.trash');
     });
 
+    // Roles & Permissions (Super Admin Only)
+    Route::middleware('role:super-admin')->prefix('admin')->group(function () {
+        Route::get('/roles', RoleIndex::class)->name('admin.roles');
+        Route::get('/roles/permissions', RolePermission::class)->name('admin.roles.permissions');
+        Route::get('/permissions', PermissionIndex::class)->name('admin.permissions');
+        Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
+    });
+
     // Admin Panel
     Route::prefix('admin')->group(function () {
         Route::get('/', function () {
             return redirect()->route('dashboard');
         })->name('admin.');
-        Route::get('/roles', RoleIndex::class)->name('admin.roles');
-        Route::get('/roles/permissions', RolePermission::class)->name('admin.roles.permissions');
-        Route::get('/permissions', PermissionIndex::class)->name('admin.permissions');
-        Route::get('/users/assign', UserRolePermission::class)->name('admin.user.assign');
         Route::get('/contact-messages', ListContactMessages::class)->name('admin.contact-messages');
         Route::get('/profile', function () {
             return view('profile');
@@ -165,7 +169,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 // ================================
 // Employer ROUTES
 // ================================
-Route::middleware(['auth', 'role:employer'])->group(function () {
+Route::middleware(['auth', 'check.approved', 'role:employer'])->group(function () {
     // Applications
     Route::prefix('job/application')->name('job.app.')->group(function () {
         Route::get('/', ApplicationList::class)->name('index');
@@ -191,7 +195,7 @@ Route::middleware(['auth', 'role:employer'])->group(function () {
 // ================================
 // ADMIN & Employer ROUTES
 // ================================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.approved'])->group(function () {
     Route::prefix('jobs')->name('jobs.')->group(function () {
         // Employer only
         Route::middleware(['permission:jobs.manage'])->group(function () {

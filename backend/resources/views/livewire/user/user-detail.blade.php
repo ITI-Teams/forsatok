@@ -10,7 +10,7 @@
 
     <div class="row">
         <!-- Personal Info -->
-        <div class="col-md-6 mb-4">
+        <div class="col-12 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-white fw-bold">
                     Profile Information
@@ -66,34 +66,54 @@
             </div>
         </div>
 
-        <!-- Rejection History (Only for Employers usually, but good for all) -->
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100 border-danger">
-                <div class="card-header bg-danger text-white fw-bold">
-                    <i class="fa-solid fa-user-clock me-2"></i> Rejection History
+        
+
+        <!-- Status History (Approve, Reject, Ban, Unban) -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm border-primary">
+                <div class="card-header bg-primary text-white fw-bold">
+                    <i class="fa-solid fa-clock-rotate-left me-2"></i> Status History (Approve/Reject/Ban/Unban)
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
+                                    <th>Action</th>
                                     <th>Reason</th>
-                                    <th>Rejected By</th>
+                                    <th>Admin</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($this->rejectedHistory as $history)
+                                @forelse($this->statusHistory as $record)
                                     <tr>
-                                        <td>{{ Str::limit($history->rejection_reason, 50) }}</td>
-                                        <td>{{ $history->rejected_by }}</td>
-                                        <!-- ID, maybe fetch name if easy, keep simple for now -->
-                                        <td>{{ \Carbon\Carbon::parse($history->rejected_at)->format('Y-m-d') }}</td>
+                                        <td>
+                                            @php
+                                                $badgeClass = match($record->action) {
+                                                    'approved' => 'bg-success',
+                                                    'rejected' => 'bg-danger',
+                                                    'banned' => 'bg-dark',
+                                                    'unbanned' => 'bg-info',
+                                                    default => 'bg-secondary'
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $badgeClass }}">
+                                                {{ ucfirst($record->action) }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $record->reason ?? '-' }}</td>
+                                        <td>
+                                            {{ $record->admin_name }}
+                                            <br>
+                                            <small class="text-muted">{{ $record->admin_email }}</small>
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($record->created_at)->format('Y-m-d H:i') }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="text-center text-muted py-4">
-                                            No previous rejections found.
+                                        <td colspan="4" class="text-center text-muted py-4">
+                                            No status history found.
                                         </td>
                                     </tr>
                                 @endforelse

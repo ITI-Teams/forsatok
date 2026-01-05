@@ -66,16 +66,26 @@ class CandidateAuthController extends Controller
             ], 401);
         }
 
-        if ($user->status !== 'active') {
-            return response()->json([
-                'message' => 'Your account is ' . $user->status . '. Please contact support.',
-            ], 403);
-        }
+        // Check if user is a candidate
         if ($user->type !== 'candidate') {
             return response()->json([
-                'message' => 'Access denied for this user type.'
+                'message' => 'This account is not for candidates. Please use the correct login page.'
             ], 403);
         }
+
+        // Check if account is approved (candidates should be auto-approved)
+        if ($user->status === 'banned') {
+            return response()->json([
+                'message' => 'Your account has been banned. Please contact support.',
+            ], 403);
+        }
+
+        if ($user->status !== 'approved') {
+            return response()->json([
+                'message' => 'Your account is under review. Please contact support.',
+            ], 403);
+        }
+
         $token = $user->createToken('candidate-token')->plainTextToken;
 
         return response()->json([

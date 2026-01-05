@@ -42,6 +42,18 @@ class UserForm extends Component
             'type' => $this->type,
         ];
 
+        // Security Check: Only Super Admin can create or edit admins
+        $isTargetingAdmin = ($this->type === 'admin');
+        if ($this->userId) {
+            $user = User::withTrashed()->findOrFail($this->userId);
+            $isTargetingAdmin = $isTargetingAdmin || $user->type === 'admin' || $user->hasRole('admin');
+        }
+
+        if ($isTargetingAdmin && !auth()->user()->hasRole('super-admin')) {
+            $this->addError('type', 'Only Super Admin can manage admin accounts.');
+            return;
+        }
+
         if ($this->userId) {
             $data['user_id'] = $this->userId;
 

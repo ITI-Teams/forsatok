@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Shared\Middleware\DetectFrontendSource;
+use App\Domains\Shared\Middleware\CheckApprovedStatus;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'check.approved' => CheckApprovedStatus::class,
         ]);
 
         $middleware->append(DetectFrontendSource::class);

@@ -24,6 +24,14 @@ class UserTrash extends Component
 
     public function restore($id, RestoreUserAction $restore)
     {
+        $user = User::onlyTrashed()->findOrFail($id);
+
+        // Security Check: Only Super Admin can restore admins
+        if (($user->type === 'admin' || $user->hasRole('admin')) && !auth()->user()->hasRole('super-admin')) {
+            session()->flash('error', 'Only Super Admin can restore admin accounts.');
+            return;
+        }
+
         $restore->execute($id);
         session()->flash('message', 'User restored successfully!');
         $this->loadTrashed();
@@ -31,6 +39,14 @@ class UserTrash extends Component
 
     public function forceDelete($id, DeleteUserAction $forceDelet)
     {
+        $user = User::onlyTrashed()->findOrFail($id);
+
+        // Security Check: Only Super Admin can delete admins
+        if (($user->type === 'admin' || $user->hasRole('admin')) && !auth()->user()->hasRole('super-admin')) {
+            session()->flash('error', 'Only Super Admin can permanently delete admins.');
+            return;
+        }
+
         try {
             $forceDelet->execute($id);
             session()->flash( 'User deleted permanently.');

@@ -38,6 +38,13 @@ class UserList extends Component
     public function delete($id, SoftDeleteUserAction $delete)
     {
         $user = User::findOrFail($id);
+
+        // Security Check: Only Super Admin can delete admins
+        if (($user->type === 'admin' || $user->hasRole('admin')) && !auth()->user()->hasRole('super-admin')) {
+            $this->dispatch('user-error', message: 'Only Super Admin can delete other admins.');
+            return;
+        }
+
         $delete->execute($user);
 
         session()->flash('success', 'User moved to trash!');
@@ -56,6 +63,18 @@ class UserList extends Component
             'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
+        ]);
+
+        // Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'approved',
+            'reason' => null,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // TODO: Send approval email notification
@@ -118,6 +137,18 @@ class UserList extends Component
             'updated_at' => now(),
         ]);
 
+        // Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'rejected',
+            'reason' => $rejectionReason,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $user->forceDelete();
 
         // Send rejection email
@@ -169,6 +200,21 @@ class UserList extends Component
 
         $user->update(['status' => 'banned']);
 
+        // Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'banned',
+            'reason' => $this->banReason,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Revoke all tokens to force logout from all devices
+        $user->tokens()->delete();
+
         // Send ban email
         \Illuminate\Support\Facades\Mail::to($user->email)->send(
             new \App\Mail\AccountBanned($user, $this->banReason)
@@ -188,6 +234,18 @@ class UserList extends Component
         }
 
         $user->update(['status' => 'approved']);
+
+        // Log to user_status_history
+        \Illuminate\Support\Facades\DB::table('user_status_history')->insert([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+            'action' => 'unbanned',
+            'reason' => null,
+            'actioned_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         $this->dispatch('user-unbanned');
     }
 

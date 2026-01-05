@@ -20,6 +20,8 @@ class RoleIndex extends Component
 
     public function render()
     {
+        abort_unless(auth()->user()->hasRole('super-admin'), 403);
+
         return view('livewire.admin.roles.role-index', [
             'roles' => Role::orderBy('id', 'desc')->paginate(5),
         ])->layout('layouts.app');

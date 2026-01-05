@@ -99,6 +99,7 @@
             </li>
 
             {{-- Roles & Permissions --}}
+            @role('super-admin')
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center"
                    data-bs-toggle="collapse" href="#rolePermissionMenu" role="button"
@@ -116,6 +117,7 @@
                     </ul>
                 </div>
             </li>
+            @endrole
 
             {{-- Contact Messages --}}
             <li>

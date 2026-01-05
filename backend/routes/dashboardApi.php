@@ -120,6 +120,7 @@ Route::prefix('dashboard')
                     Route::get('/trashed', [DashboardUserController::class, 'trashed'])->name('trashed');
                     Route::get('/rejected', [DashboardUserController::class, 'rejectedUsers'])->name('rejected');
                     Route::get('/rejection-history/{email}', [DashboardUserController::class, 'rejectionHistory'])->name('rejection-history');
+                    Route::get('/{id}/status-history', [DashboardUserController::class, 'getUserStatusHistory'])->name('status-history');
                     Route::post('/{id}/restore', [DashboardUserController::class, 'restore'])->name('restore');
                     Route::delete('/{id}/force', [DashboardUserController::class, 'forceDelete'])->name('force-delete');
                     Route::put('/{id}', [DashboardUserController::class, 'update'])->name('update');
@@ -129,6 +130,21 @@ Route::prefix('dashboard')
                     Route::post('/{id}/unban', [DashboardUserController::class, 'unban'])->name('unban');
                     Route::delete('/{id}', [DashboardUserController::class, 'destroy'])->name('destroy');
                 });
+
+                // Contact Messages (Admin)
+                Route::prefix('contact-messages')->name('contact.')->group(function () {
+                    Route::get('/', [DashboardContactMessageController::class, 'index'])->name('index');
+                    Route::delete('/{message}', [DashboardContactMessageController::class, 'destroy'])->name('destroy');
+                });
+
+                // Audit Logs
+                Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+            });
+
+            // ───────────────────────────────────────────────────────────────
+            // SUPER ADMIN ONLY ROUTES
+            // ───────────────────────────────────────────────────────────────
+            Route::middleware('role:super-admin')->group(function () {
 
                 // Roles
                 Route::prefix('roles')->name('roles.')->group(function () {
@@ -153,15 +169,6 @@ Route::prefix('dashboard')
                 // User-Access
                 Route::get('/user-access', [RolePermissionController::class, 'userAccess'])->name('users.access');
                 Route::post('/user-access', [RolePermissionController::class, 'updateUserAccess'])->name('users.access.update');
-
-                // Contact Messages (Admin)
-                Route::prefix('contact-messages')->name('contact.')->group(function () {
-                    Route::get('/', [DashboardContactMessageController::class, 'index'])->name('index');
-                    Route::delete('/{message}', [DashboardContactMessageController::class, 'destroy'])->name('destroy');
-                });
-
-                // Audit Logs
-                Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
             });
 
             // ───────────────────────────────────────────────────────────────

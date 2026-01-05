@@ -72,11 +72,20 @@ class GoogleController extends Controller
                     'password' => Hash::make(Str::random(24)),
                     'email_verified_at' => now(),
                     'type' => $userType,
+                    'status' => $userType === 'employer' ? 'pending' : 'approved',
                 ]);
 
                 // Assign role if method exists
                 if (method_exists($user, 'assignRole')) {
                     $user->assignRole($userType);
+                }
+
+                // Create employer info if type is employer
+                if ($userType === 'employer') {
+                    \App\Domains\Employers\Models\EmployerInfo::create([
+                        'user_id' => $user->id,
+                        'company_name' => '',
+                    ]);
                 }
 
                 // Create candidate info if type is candidate
@@ -96,6 +105,30 @@ class GoogleController extends Controller
                     'avatar' => $googleUser->getAvatar() ?? $user->avatar,
                     'email_verified_at' => $user->email_verified_at ?? now(),
                 ]);
+            }
+
+            // Check user status and type before allowing dashboard access
+            // Block candidates from dashboard
+            if ($userType === 'candidate' && ($source === 'web' || $source === 'livewire')) {
+                return $this->redirectWithError($source, 'This dashboard is for admins and employers only. Candidates cannot access this area.');
+            }
+
+            // Check status for dashboard users (admin and employer)
+            if (in_array($user->type, ['admin', 'employer'])) {
+                // Check if banned
+                if ($user->status === 'banned') {
+                    return $this->redirectWithError($source, 'Your account has been banned. Please contact support.');
+                }
+
+                // Check if employer is approved
+                if ($user->type === 'employer' && $user->status !== 'approved') {
+                    $message = match ($user->status) {
+                        'pending' => 'Your account is pending admin approval. Please wait for approval before logging in.',
+                        'rejected' => 'Your account has been rejected. Please contact support.',
+                        default => 'Your account status does not allow access. Please contact support.',
+                    };
+                    return $this->redirectWithError($source, $message);
+                }
             }
 
             // Handle Response based on Source

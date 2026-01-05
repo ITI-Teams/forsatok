@@ -20,6 +20,8 @@ class PermissionIndex extends Component
 
     public function render()
     {
+        abort_unless(auth()->user()->hasRole('super-admin'), 403);
+
         return view('livewire.admin.permissions.permission-index', [
             'permissions' => Permission::orderBy('id', 'desc')->paginate(10),
         ])->layout('layouts.app');

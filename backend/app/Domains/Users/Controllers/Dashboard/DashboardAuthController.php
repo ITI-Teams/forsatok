@@ -49,19 +49,34 @@ class DashboardAuthController extends Controller
             $user->assignRole($data['type']);
         }
 
-        $token = $user->createToken('dashboard-' . $data['type'] . '-token')->plainTextToken;
+        // Only create token for admin users; employers must wait for approval
+        $token = null;
+        $message = 'Registration successful. Please verify your email.';
+        
+        if ($data['type'] === 'admin') {
+            $token = $user->createToken('dashboard-' . $data['type'] . '-token')->plainTextToken;
+        } else {
+            // Employer - no token until approved
+            $message = 'Registration successful! Please verify your email and wait for admin approval before you can login.';
+        }
 
         // Send email verification notification
         $user->sendEmailVerificationNotification();
 
-        return response()->json([
+        $response = [
             'status' => true,
-            'message' => 'Registration successful. Please verify your email.',
+            'message' => $message,
             'data' => [
                 'user' => $user,
-                'token' => $token,
             ],
-        ], 201);
+        ];
+        
+        // Only include token if it was created (admin users)
+        if ($token) {
+            $response['data']['token'] = $token;
+        }
+
+        return response()->json($response, 201);
     }
 
     /**
@@ -80,17 +95,32 @@ class DashboardAuthController extends Controller
             ], 401);
         }
 
-        if ($user->status !== 'approved') {
-            return response()->json([
-                'status' => false,
-                'message' => 'Your account is ' . $user->status . '. Please verify your email and wait for admin approval.',
-            ], 403);
-        }
-
+        // Check if user type is allowed for dashboard
         if (!in_array($user->type, ['admin', 'employer'])) {
             return response()->json([
                 'status' => false,
-                'message' => 'Access denied for this user type.',
+                'message' => 'This dashboard is for admins and employers only. Candidates cannot access this area.',
+            ], 403);
+        }
+
+        // Check user status
+        if ($user->status === 'banned') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Your account has been banned. Please contact support.',
+            ], 403);
+        }
+
+        if ($user->status !== 'approved') {
+            $message = match ($user->status) {
+                'pending' => 'Your account is pending. Please verify your email and wait for admin approval.',
+                'rejected' => 'Your account has been rejected. Please contact support.',
+                default => 'Your account status does not allow access. Please contact support.',
+            };
+
+            return response()->json([
+                'status' => false,
+                'message' => $message,
             ], 403);
         }
 
