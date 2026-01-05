@@ -44,6 +44,7 @@ class LinkedinController extends Controller
                     'avatar' => $linkedinUser->getAvatar(),
                     'password' => Hash::make(Str::random(24)),
                     'email_verified_at' => now(),
+                    'status' => 'approved',
                 ]);
                 $user->candidateInfo()->create([
                     'phone' => null,

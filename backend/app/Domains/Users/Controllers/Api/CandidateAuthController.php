@@ -28,6 +28,7 @@ class CandidateAuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'type' => 'candidate',
+            'status' => 'approved',
         ]);
 
         if (method_exists($user, 'assignRole')) {

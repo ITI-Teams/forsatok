@@ -12,7 +12,9 @@ class CreateUserAction
 {
     public function execute(array $data): User
     {
-
+        if (!isset($data['status'])) {
+            $data['status'] = 'approved';
+        }
         return User::create($data);
     }
 }
