@@ -120,6 +120,7 @@ Route::prefix('dashboard')
                     Route::get('/trashed', [DashboardUserController::class, 'trashed'])->name('trashed');
                     Route::get('/rejected', [DashboardUserController::class, 'rejectedUsers'])->name('rejected');
                     Route::get('/rejection-history/{email}', [DashboardUserController::class, 'rejectionHistory'])->name('rejection-history');
+                    Route::get('/{id}', [DashboardUserController::class, 'show'])->name('show');
                     Route::get('/{id}/status-history', [DashboardUserController::class, 'getUserStatusHistory'])->name('status-history');
                     Route::post('/{id}/restore', [DashboardUserController::class, 'restore'])->name('restore');
                     Route::delete('/{id}/force', [DashboardUserController::class, 'forceDelete'])->name('force-delete');

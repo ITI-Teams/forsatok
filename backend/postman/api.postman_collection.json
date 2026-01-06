@@ -51,7 +51,7 @@
                 "exec": [
                   "const response = pm.response.json();",
                   "if (response.token) {",
-                  "    pm.environment.set(\"token\", response.token);",
+                  "    pm.collectionVariables.set(\"token\", response.token);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -628,6 +628,74 @@
                 "api",
                 "jobs",
                 "{{job_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Jobs by Skills",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skill_ids\": [1, 2],\n  \"per_page\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/jobs/search-by-skills",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "jobs",
+                "search-by-skills"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Job Skill Match Stats",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skill_ids\": [1, 2]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/jobs/skill-match-stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "jobs",
+                "skill-match-stats"
               ]
             }
           },

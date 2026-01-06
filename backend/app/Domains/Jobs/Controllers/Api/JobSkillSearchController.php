@@ -33,8 +33,14 @@ class JobSkillSearchController extends Controller
             'locationable.city:id,name,country_id',
             'locationable.city.country:id,name,code',
             'locationable.country:id,name,code'
-        ])
-        ->where('is_active', true);
+        ]);
+
+        $user = auth('sanctum')->user();
+        if (!$user || $user->hasRole('candidate')) {
+            $query->availableJobs();
+        } else {
+            $query->where('is_active', true);
+        }
 
         // Filter jobs that have AT LEAST ONE of the selected skills (OR logic)
         $query->whereHas('skills', function($q) use ($skillIds) {
@@ -188,11 +194,18 @@ class JobSkillSearchController extends Controller
         $skillIds = $request->input('skill_ids');
 
         // Base query
-        $baseQuery = JobPost::query()
-            ->where('is_active', true)
-            ->whereHas('skills', function($q) use ($skillIds) {
-                $q->whereIn('skills.id', $skillIds);
-            });
+        $baseQuery = JobPost::query();
+
+        $user = auth('sanctum')->user();
+        if (!$user || $user->hasRole('candidate')) {
+            $baseQuery->availableJobs();
+        } else {
+            $baseQuery->where('is_active', true);
+        }
+
+        $baseQuery->whereHas('skills', function($q) use ($skillIds) {
+            $q->whereIn('skills.id', $skillIds);
+        });
 
         // Get jobs with matching skill counts
         $jobs = $baseQuery

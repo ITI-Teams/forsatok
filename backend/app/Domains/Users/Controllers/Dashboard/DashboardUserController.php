@@ -31,16 +31,18 @@ class DashboardUserController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()->latest();
+        $query = User::query()->with(['roles', 'permissions'])->latest();
         $search = $request->input('search');
-        $fields = $request->input('fields', ['name', 'email']);
 
         if ($search) {
-            $query->where(function ($q) use ($search, $fields) {
-                foreach ($fields as $index => $field) {
-                    $method = $index === 0 ? 'where' : 'orWhere';
-                    $q->{$method}($field, 'like', "%{$search}%");
-                }
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%")
+                  ->orWhereHas('roles', function ($roleQuery) use ($search) {
+                      $roleQuery->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -59,6 +61,19 @@ class DashboardUserController extends Controller
             'status' => true,
             'data' => $users->items(),
             'meta' => $this->paginationMeta($users),
+        ]);
+    }
+
+    /**
+     * Show a single user details.
+     */
+    public function show($id): JsonResponse
+    {
+        $user = User::with(['roles', 'permissions', 'candidateInfo', 'employerInfo'])->findOrFail($id);
+
+        return response()->json([
+            'status' => true,
+            'data' => $user,
         ]);
     }
 
