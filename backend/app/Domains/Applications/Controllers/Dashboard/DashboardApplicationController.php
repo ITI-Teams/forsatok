@@ -31,7 +31,7 @@ class DashboardApplicationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = JobApplication::with(['candidate.candidateInfo', 'jobPost.employer', 'jobPost.skills'])
+        $query = JobApplication::with(['candidate.candidateInfo.skills', 'jobPost.employer', 'jobPost.skills'])
             ->latest();
 
         $query->whereHas('jobPost', function ($q) use ($user) {
@@ -79,7 +79,7 @@ class DashboardApplicationController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => new ApplicationResource($application->load(['candidate.candidateInfo', 'jobPost.skills'])),
+            'data' => new ApplicationResource($application->load(['candidate.candidateInfo.skills', 'jobPost.skills'])),
         ]);
     }
 
@@ -116,7 +116,7 @@ class DashboardApplicationController extends Controller
             ], 422);
         }
 
-        $application = $create->execute($validated)->load(['candidate.candidateInfo', 'jobPost.skills']);
+        $application = $create->execute($validated)->load(['candidate.candidateInfo.skills', 'jobPost.skills']);
 
         return response()->json([
             'status' => true,
@@ -155,7 +155,7 @@ class DashboardApplicationController extends Controller
             $form->rules()
         )->validate();
 
-        $updated = $update->execute($application, $validated)->load(['candidate.candidateInfo', 'jobPost.skills']);
+        $updated = $update->execute($application, $validated)->load(['candidate.candidateInfo.skills', 'jobPost.skills']);
 
         return response()->json([
             'status' => true,
@@ -188,7 +188,7 @@ class DashboardApplicationController extends Controller
     {
         $user = $request->user();
         $applications = JobApplication::onlyTrashed()
-            ->with(['candidate.candidateInfo', 'jobPost.skills'])
+            ->with(['candidate.candidateInfo.skills', 'jobPost.skills'])
             ->whereHas('jobPost', function ($q) use ($user) {
                 $q->where('employer_id', $user->id);
             })

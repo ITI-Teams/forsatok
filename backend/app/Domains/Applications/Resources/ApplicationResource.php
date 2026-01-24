@@ -16,7 +16,14 @@ class ApplicationResource extends JsonResource
                 'candidate_id' => $this->candidate?->candidateInfo?->id, // This is the profile/info ID
                 'name' => $this->candidate->name,
                 'email' => $this->candidate->email,
-                'phone' => $this->candidate->candidateInfo->phone ?? null
+                'phone' => $this->candidate->candidateInfo->phone ?? null,
+                'skills' => $this->candidate->candidateInfo?->skills->map(function ($skill) {
+                    return [
+                        'id' => $skill->id,
+                        'name' => $skill->name,
+                        'slug' => $skill->slug,
+                    ];
+                }) ?? [],
             ] : null,
             'job_post' => $this->jobPost ? [
                 'id' => $this->jobPost->id,

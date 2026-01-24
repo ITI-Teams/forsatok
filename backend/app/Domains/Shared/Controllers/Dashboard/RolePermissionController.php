@@ -70,7 +70,7 @@ class RolePermissionController extends Controller
         return response()->json([
             'status' => true,
             'data' => [
-                'users' => User::all(['id', 'name']),
+                'users' => User::all(['id', 'name', 'email']),
                 'roles' => Role::all(['id', 'name']),
                 'permissions' => Permission::all(['id', 'name']),
                 'selected_roles' => $user
